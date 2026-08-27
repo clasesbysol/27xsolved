@@ -1,0 +1,9 @@
+{
+  "name": "ET 27 · Biblioteca de estudio",
+  "short_name": "ET 27",
+  "description": "Materias y clases de la ET 27 Hipólito Yrigoyen",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f5fffd",
+  "theme_color": "#0f9f9a"
+}

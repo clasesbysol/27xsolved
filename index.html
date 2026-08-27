@@ -1,58 +1,46 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#087f91">
-  <title>ET 27 · Biblioteca de materias</title>
-  <style>
-    :root{font-family:"Trebuchet MS","Segoe UI",sans-serif;color:#17343b;background:#f3fbfc;line-height:1.5}
-    *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 10% 0,#d8f8fb,transparent 35rem),#f3fbfc}
-    button,a{font:inherit}.shell{width:min(1120px,calc(100% - 28px));margin:auto;padding:28px 0 60px}
-    header{display:flex;justify-content:space-between;gap:24px;align-items:center;margin-bottom:30px}
-    .brand{display:flex;align-items:center;gap:12px}.sun{display:grid;place-items:center;width:48px;height:48px;border-radius:50%;background:#ffc53d;font-size:25px}
-    .brand strong{display:block;font-size:1.2rem}.brand span,.muted{color:#60777c}
-    .hero{padding:32px;border-radius:28px;background:linear-gradient(135deg,#087f91,#0d6472);color:white;box-shadow:0 22px 50px #075b6728}
-    .hero small{font-weight:900;letter-spacing:.12em}.hero h1{font-size:clamp(2rem,6vw,4.2rem);line-height:1;margin:.3rem 0 1rem}.hero p{max-width:680px;margin:0;color:#e0fbff}
-    .years{display:flex;gap:9px;overflow:auto;padding:22px 2px 8px}.year{border:1px solid #bfdee2;background:white;color:#31565c;border-radius:999px;padding:9px 16px;font-weight:900;cursor:pointer;white-space:nowrap}
-    .year.active{background:#17343b;color:white;border-color:#17343b}.section{margin-top:30px}.section-head{display:flex;justify-content:space-between;align-items:end;gap:16px}.section h2{margin:0;font-size:1.55rem}.section p{margin:.25rem 0 0}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:16px}
-    .card{position:relative;display:flex;flex-direction:column;min-height:220px;padding:22px;border:1px solid #cbe3e6;border-radius:22px;background:white;box-shadow:0 10px 28px #17343b0c}
-    .card.physics{background:linear-gradient(145deg,#eef8ff,#fff);border-color:#c8dff0}.tag{align-self:flex-start;padding:5px 9px;border-radius:999px;background:#e4f5f6;color:#087080;font-size:.76rem;font-weight:900}
-    .card h3{font-size:1.45rem;margin:18px 0 6px}.card p{color:#60777c}.actions{display:flex;gap:8px;align-items:center;margin-top:auto}
-    .open{display:inline-flex;justify-content:center;flex:1;padding:11px 14px;border-radius:12px;background:#087f91;color:white;text-decoration:none;font-weight:900}.pin{width:44px;height:44px;border:1px solid #c8dfe2;border-radius:12px;background:white;cursor:pointer;font-size:1.1rem}.pin.active{background:#fff1b9;border-color:#e7bd35}
-    .empty{grid-column:1/-1;padding:26px;border:1px dashed #b9d7db;border-radius:18px;color:#60777c;text-align:center;background:#ffffffa8}
-    [hidden]{display:none!important}@media(max-width:620px){header{align-items:flex-start}.hero{padding:25px 20px}.shell{padding-top:18px}.card{min-height:205px}}
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f9f9a" />
+  <meta name="description" content="Biblioteca de estudio de la ET 27 Hipólito Yrigoyen" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="./styles-v2.css" />
+  <title>ET 27 · Biblioteca de estudio</title>
 </head>
 <body>
-  <main class="shell">
-    <header><div class="brand"><span class="sun">☀️</span><div><strong>ET 27 · SOLved</strong><span>Biblioteca de estudio</span></div></div><span class="muted">Todas tus materias, en un solo lugar</span></header>
-    <section class="hero"><small>ESCUELA TÉCNICA N.º 27</small><h1>¿Qué vamos a estudiar hoy?</h1><p>Elegí un año y entrá a la materia. Tus accesos recientes y fijados quedan guardados en este dispositivo.</p></section>
-    <nav class="years" aria-label="Elegir año">
-      <button class="year" data-year="1">1.º año</button><button class="year" data-year="2">2.º año</button><button class="year" data-year="3">3.º año</button><button class="year active" data-year="4">4.º año</button><button class="year" data-year="5">5.º año</button><button class="year" data-year="6">6.º año</button>
-    </nav>
-    <section class="section"><div class="section-head"><div><h2 id="yearTitle">Materias de 4.º año</h2><p class="muted">Seleccioná una materia para ver sus unidades.</p></div></div><div class="grid" id="subjects"></div></section>
-    <section class="section"><div class="section-head"><div><h2>Fijadas</h2><p class="muted">Tus materias principales, siempre a mano.</p></div></div><div class="grid" id="pinned"></div></section>
-    <section class="section"><div class="section-head"><div><h2>Recientes</h2><p class="muted">Volvé rápido a lo último que estuviste viendo.</p></div></div><div class="grid" id="recent"></div></section>
-  </main>
+  <div id="app" class="loading">Cargando biblioteca de estudio…</div>
+
   <script>
-    const data=[
-      {id:"quimica",year:4,name:"Química General",term:"Resumen integral",desc:"Gases, soluciones, estequiometría, cinética, equilibrio, ácidos y bases.",href:"quimica-general.html"},
-      {id:"fisica",year:4,name:"Física Aplicada",term:"2.º cuatrimestre",desc:"Tensión superficial: teoría y guía completa resuelta paso a paso.",href:"fisica-aplicada.html",physics:true}
-    ];
-    const key="et27-home-v1";let state=JSON.parse(localStorage.getItem(key)||'{"pinned":["quimica"],"recent":[]}'),year=4;
-    const save=()=>localStorage.setItem(key,JSON.stringify(state));
-    function card(s){return `<article class="card ${s.physics?"physics":""}"><span class="tag">${s.term}</span><h3>${s.name}</h3><p>${s.desc}</p><div class="actions"><a class="open" href="${s.href}" data-open="${s.id}">Abrir materia</a><button class="pin ${state.pinned.includes(s.id)?"active":""}" data-pin="${s.id}" aria-label="Fijar materia">★</button></div></article>`}
-    function render(){
-      document.querySelectorAll(".year").forEach(b=>b.classList.toggle("active",+b.dataset.year===year));
-      yearTitle.textContent=`Materias de ${year}.º año`;
-      const found=data.filter(s=>s.year===year);subjects.innerHTML=found.length?found.map(card).join(""):'<div class="empty">Todavía no cargamos materias para este año.</div>';
-      const fixed=data.filter(s=>state.pinned.includes(s.id));pinned.innerHTML=fixed.length?fixed.map(card).join(""):'<div class="empty">Usá la estrella para fijar una materia.</div>';
-      const seen=state.recent.map(id=>data.find(s=>s.id===id)).filter(Boolean);recent.innerHTML=seen.length?seen.map(card).join(""):'<div class="empty">Las materias que abras aparecerán acá.</div>';
-    }
-    document.addEventListener("click",e=>{const y=e.target.closest("[data-year]"),p=e.target.closest("[data-pin]"),o=e.target.closest("[data-open]");if(y){year=+y.dataset.year;render()}if(p){const id=p.dataset.pin;state.pinned=state.pinned.includes(id)?state.pinned.filter(x=>x!==id):[...state.pinned,id];save();render()}if(o){state.recent=[o.dataset.open,...state.recent.filter(x=>x!==o.dataset.open)].slice(0,4);save()}});
-    render();
+    window.__cbcBootError = function(message){
+      var el=document.getElementById('app');
+      if(!el) return;
+      el.className='';
+      el.innerHTML='<main style="min-height:100vh;display:grid;place-items:center;padding:24px;font-family:system-ui,sans-serif;background:#f7fbfb;color:#173232"><section style="max-width:560px;background:white;border:1px solid #dceaea;border-radius:22px;padding:28px;box-shadow:0 18px 50px rgba(15,80,80,.08)"><h1 style="margin:10px 0 8px">ET 27 · Biblioteca de estudio</h1><p style="line-height:1.5">La app encontró un problema al iniciar.</p><p style="font-size:13px;opacity:.7;word-break:break-word">'+String(message||'Error desconocido').replace(/[&<>]/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;'})[c]})+'</p><button onclick="location.reload()" style="margin-top:12px;border:0;border-radius:12px;padding:12px 18px;background:#0f9f9a;color:white;font-weight:700;cursor:pointer">Reintentar</button></section></main>';
+    };
+    window.addEventListener('error',function(e){
+      if(document.getElementById('app') && document.getElementById('app').classList.contains('loading')){
+        window.__cbcBootError((e.message||'Error de JavaScript')+(e.filename?' · '+e.filename.split('/').pop()+':'+e.lineno:''));
+      }
+    });
+    window.addEventListener('unhandledrejection',function(e){
+      if(document.getElementById('app') && document.getElementById('app').classList.contains('loading')){
+        window.__cbcBootError(e.reason && e.reason.message ? e.reason.message : 'Error de conexión al iniciar');
+      }
+    });
+    window.setTimeout(function(){
+      var el=document.getElementById('app');
+      if(el && el.classList.contains('loading')) window.__cbcBootError('El inicio tardó demasiado. Probá Reintentar.');
+    },12000);
   </script>
+
+  <script src="./config.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script type="module" src="./app.js"></script>
 </body>
 </html>
