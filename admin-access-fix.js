@@ -1,19 +1,11 @@
-// ET 27 · corrección robusta del guardado de accesos del panel admin.
+// ET 27 · guardado robusto de accesos del panel admin.
+// Importante: NO crea un segundo cliente de Supabase. Usa REST con la sesión ya persistida
+// por la app para evitar que un evento de Auth saque al administrador del panel mientras guarda.
 (function(){
   'use strict';
 
   const CFG=window.CBCLASES_CONFIG||{};
-  let clientPromise=null;
-
-  function client(){
-    if(!clientPromise){
-      clientPromise=import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm')
-        .then(({createClient})=>createClient(CFG.supabaseUrl,CFG.supabaseAnonKey,{
-          auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
-        }));
-    }
-    return clientPromise;
-  }
+  sessionStorage.removeItem('et27-return-admin');
 
   function feedback(button,text,type='info'){
     let box=document.querySelector('.accessSaveFeedback');
@@ -64,68 +56,125 @@
     return d.toISOString();
   }
 
-  function readGrants(){
+  function readGrantsNow(){
+    // Se ejecuta SIN await: primero congelamos exactamente lo que está tildado en pantalla.
     const out=[];
     document.querySelectorAll('[data-full-unit]:checked').forEach(x=>{
-      out.push({
-        subject:x.dataset.subject||'chemistry',
-        unit_no:Number(x.dataset.fullUnit),
-        grant_type:'unit',
-        grant_key:'*'
-      });
+      out.push({subject:x.dataset.subject||'chemistry',unit_no:Number(x.dataset.fullUnit),grant_type:'unit',grant_key:'*'});
     });
     document.querySelectorAll('[data-grant-section]:checked').forEach(x=>{
       const [subject,u,type,key]=String(x.dataset.grantSection||'').split('|');
       if(!subject||!u||!type||!key)return;
-      const full=document.querySelector(`[data-full-unit="${CSS.escape(u)}"][data-subject="${CSS.escape(subject)}"]`);
+      const full=[...document.querySelectorAll('[data-full-unit]')].find(y=>
+        String(y.dataset.fullUnit)===String(u)&&String(y.dataset.subject||'chemistry')===String(subject)
+      );
       if(full?.checked)return;
       out.push({subject,unit_no:Number(u),grant_type:type,grant_key:key});
     });
     return out;
   }
 
+  function storedSession(){
+    const projectRef=(()=>{try{return new URL(CFG.supabaseUrl).hostname.split('.')[0]}catch(_){return''}})();
+    const preferred=projectRef?`sb-${projectRef}-auth-token`:'';
+    const keys=[];
+    if(preferred)keys.push(preferred);
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(k&&/^sb-.+-auth-token$/.test(k)&&!keys.includes(k))keys.push(k);
+    }
+    for(const key of keys){
+      try{
+        let value=JSON.parse(localStorage.getItem(key)||'null');
+        if(typeof value==='string')value=JSON.parse(value);
+        const token=value?.access_token||value?.currentSession?.access_token||value?.session?.access_token;
+        if(token)return {token,raw:value,key};
+      }catch(_err){}
+    }
+    return null;
+  }
+
+  async function api(path,options={}){
+    const auth=storedSession();
+    if(!auth)throw new Error('No pude leer la sesión activa. Cerrá y volvé a abrir la app.');
+    const response=await fetch(`${CFG.supabaseUrl}${path}`,{
+      ...options,
+      headers:{
+        apikey:CFG.supabaseAnonKey,
+        Authorization:`Bearer ${auth.token}`,
+        'Content-Type':'application/json',
+        ...(options.headers||{})
+      },
+      cache:'no-store'
+    });
+    const text=await response.text();
+    let data=null;
+    if(text){try{data=JSON.parse(text)}catch(_){data=text}}
+    if(!response.ok){
+      const message=data?.message||data?.hint||data?.details||`Error ${response.status}`;
+      throw new Error(message);
+    }
+    return data;
+  }
+
+  function query(table,params){
+    const q=new URLSearchParams(params);
+    return api(`/rest/v1/${table}?${q.toString()}`);
+  }
+
+  function grantKey(g){return `${g.subject}|${Number(g.unit_no)}|${g.grant_type}|${g.grant_key}`}
+
   async function save(button){
     addStyles();
+
+    // TODO se lee ANTES de cualquier operación asíncrona para que ningún render pueda borrar la selección.
     const email=String(document.querySelector('#accessEmail')?.value||'').trim().toLowerCase();
+    const grants=readGrantsNow();
+    const duration=selectedDuration();
+
     if(!email){feedback(button,'Ingresá el email del alumno.','error');return;}
 
     const original=button.textContent;
     button.disabled=true;
     button.textContent='Guardando…';
-    feedback(button,'Guardando perfil y permisos…');
+    feedback(button,`Guardando ${grants.length} permiso${grants.length===1?'':'s'}…`);
 
     try{
-      const sb=await client();
-      const {data:{session},error:sessionError}=await sb.auth.getSession();
-      if(sessionError)throw sessionError;
-      if(!session)throw new Error('La sesión venció. Volvé a iniciar sesión.');
-
-      const {data:existing,error:profileError}=await sb
-        .from('access_profiles')
-        .select('email,access_starts_at,access_expires_at')
-        .eq('email',email)
-        .maybeSingle();
-      if(profileError)throw profileError;
-
-      const {mode,date}=selectedDuration();
-      const expires=computeExpiry(mode,date,existing);
-      const starts=mode==='keep'&&existing?.access_starts_at
-        ? existing.access_starts_at
-        : new Date().toISOString();
-      const grants=readGrants();
-
-      const {error}=await sb.rpc('save_student_access',{
-        p_email:email,
-        p_access_starts_at:starts,
-        p_access_expires_at:expires,
-        p_grants:grants
+      const profiles=await query('access_profiles',{
+        select:'access_starts_at,access_expires_at',
+        email:`eq.${email}`
       });
-      if(error)throw error;
+      const existing=Array.isArray(profiles)?profiles[0]||null:null;
+      const expires=computeExpiry(duration.mode,duration.date,existing);
+      const starts=duration.mode==='keep'&&existing?.access_starts_at?existing.access_starts_at:new Date().toISOString();
 
-      feedback(button,`✓ Acceso actualizado. ${grants.length} permiso${grants.length===1?'':'s'} guardado${grants.length===1?'':'s'}.`,'success');
+      await api('/rest/v1/rpc/save_student_access',{
+        method:'POST',
+        body:JSON.stringify({
+          p_email:email,
+          p_access_starts_at:starts,
+          p_access_expires_at:expires,
+          p_grants:grants
+        })
+      });
+
+      // Verificación real: no informamos éxito hasta releer lo que quedó en PostgreSQL.
+      const saved=await query('access_grants',{
+        select:'subject,unit_no,grant_type,grant_key',
+        email:`eq.${email}`
+      });
+      const wantedKeys=grants.map(grantKey).sort();
+      const savedKeys=(Array.isArray(saved)?saved:[]).map(grantKey).sort();
+      if(JSON.stringify(wantedKeys)!==JSON.stringify(savedKeys)){
+        throw new Error(`La base respondió, pero la verificación no coincide (${savedKeys.length}/${wantedKeys.length} permisos).`);
+      }
+
+      feedback(button,`✓ Guardado y verificado: ${savedKeys.length} permiso${savedKeys.length===1?'':'s'} activo${savedKeys.length===1?'':'s'}.`,'success');
       button.textContent='✓ Guardado';
-      sessionStorage.setItem('et27-return-admin','1');
-      window.setTimeout(()=>location.reload(),650);
+      button.disabled=false;
+
+      // Nos quedamos EXACTAMENTE en el panel y en la misma edición. No reload, no navegación.
+      window.setTimeout(()=>{if(document.contains(button))button.textContent=original},1800);
     }catch(err){
       console.error('Error guardando acceso',err);
       feedback(button,`No se pudo guardar: ${err?.message||'error desconocido'}`,'error');
@@ -134,7 +183,7 @@
     }
   }
 
-  // Interceptamos antes del onclick original: el flujo viejo se rompe con durationMode="keep".
+  // Captura el botón antes del handler viejo, que falla con durationMode="keep".
   document.addEventListener('click',event=>{
     const button=event.target.closest?.('[data-a="saveAccess"]');
     if(!button)return;
@@ -143,16 +192,5 @@
     save(button);
   },true);
 
-  // Después de guardar y recargar, volvemos solos al panel para mostrar los datos frescos.
-  function returnToAdmin(){
-    if(sessionStorage.getItem('et27-return-admin')!=='1')return;
-    const button=document.querySelector('[data-v="admin"]');
-    if(!button)return;
-    sessionStorage.removeItem('et27-return-admin');
-    button.click();
-  }
-  const observer=new MutationObserver(returnToAdmin);
-  observer.observe(document.documentElement,{childList:true,subtree:true});
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',returnToAdmin);
-  else returnToAdmin();
+  addStyles();
 })();
