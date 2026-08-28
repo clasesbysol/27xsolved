@@ -133,6 +133,10 @@
     const duration=selectedDuration();
 
     if(!email){feedback(button,'Ingresá el email del alumno.','error');return;}
+    if(!grants.length){
+      feedback(button,'No hay ninguna materia o sección seleccionada. No se guardó nada para evitar borrar permisos por error.','error');
+      return;
+    }
 
     const original=button.textContent;
     button.disabled=true;
