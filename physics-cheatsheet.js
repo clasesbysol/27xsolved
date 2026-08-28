@@ -1,4 +1,4 @@
-// ET 27 · Física Aplicada — machete fijo de fórmulas para la vista Administrador.
+// ET 27 · Física Aplicada — machete fijo de fórmulas visible para toda cuenta con acceso a la materia.
 // Se inyecta debajo del índice lateral únicamente dentro de Física Aplicada.
 (function(){
   'use strict';
@@ -109,12 +109,15 @@
         box-shadow:0 13px 36px rgba(18,64,61,.07);
       }
       .physicsCheatHead{
-        position:sticky;top:-12px;z-index:2;margin:-12px -11px 8px;padding:12px 12px 9px;
+        position:sticky;top:-12px;z-index:2;margin:-12px -11px 8px;padding:11px 11px 9px;
         background:color-mix(in srgb,var(--surface) 97%,var(--accent));border-bottom:1px solid var(--border)
       }
+      .physicsCheatTop{display:grid;grid-template-columns:minmax(0,1fr) 34px;gap:7px;align-items:center}
       .physicsCheatHead span{display:block;color:var(--accent);font-size:.62rem;font-weight:950;letter-spacing:.14em;text-transform:uppercase}
       .physicsCheatHead b{display:block;margin-top:2px;font-size:.9rem;letter-spacing:-.015em}
       .physicsCheatHead small{display:block;margin-top:2px;color:var(--muted);font-size:.64rem;line-height:1.25}
+      .physicsPrintButton{width:34px;height:34px;padding:0;border:1px solid var(--border);border-radius:10px;background:var(--surface);display:grid;place-items:center;font-size:1rem;color:var(--text)}
+      .physicsPrintButton:hover{border-color:var(--accent);color:var(--accent);background:color-mix(in srgb,var(--accent) 7%,var(--surface))}
       .physicsCheatGroup{padding:7px 2px 4px;border-top:1px solid var(--border)}
       .physicsCheatGroup:first-of-type{border-top:0;padding-top:2px}
       .physicsCheatGroup>strong{display:block;margin:0 3px 5px;color:var(--muted);font-size:.61rem;font-weight:950;letter-spacing:.11em;text-transform:uppercase}
@@ -137,8 +140,10 @@
   function sheetHtml(){
     return `<section class="physicsFormulaCheat" aria-label="Machete fijo de fórmulas de Física Aplicada">
       <header class="physicsCheatHead">
-        <span>ADMIN · MACHETE FIJO</span>
-        <b>Fórmulas que usamos</b>
+        <div class="physicsCheatTop">
+          <div><span>MACHETE FIJO</span><b>Fórmulas que usamos</b></div>
+          <button class="physicsPrintButton" type="button" title="Imprimir hoja A4 de fórmulas" aria-label="Imprimir hoja A4 de fórmulas">🖨</button>
+        </div>
         <small>Geometría + tensión superficial + métodos</small>
       </header>
       ${groups.map(group=>`<div class="physicsCheatGroup"><strong>${group.title}</strong>${group.items.map(([label,latex])=>`<div class="physicsCheatItem"><span>${label}</span><div class="physicsCheatMath" data-cheat-latex="${encodeURIComponent(latex)}"></div></div>`).join('')}</div>`).join('')}
@@ -156,15 +161,14 @@
     });
   }
 
-  function isAdminPhysics(){
-    const role=document.querySelector('.pill')?.textContent?.trim();
+  function isPhysics(){
     const title=document.querySelector('.unitHero h1')?.textContent?.trim();
-    return role==='Administrador'&&title==='Física Aplicada';
+    return title==='Física Aplicada';
   }
 
   function inject(){
     addStyles();
-    if(!isAdminPhysics())return;
+    if(!isPhysics())return;
     const layout=document.querySelector('.studyLayout');
     if(!layout||layout.querySelector(':scope > .'+RAIL_CLASS))return;
     const toc=layout.querySelector(':scope > .unitToc');
@@ -174,6 +178,9 @@
     layout.insertBefore(rail,toc);
     rail.appendChild(toc);
     rail.insertAdjacentHTML('beforeend',sheetHtml());
+    rail.querySelector('.physicsPrintButton')?.addEventListener('click',()=>{
+      window.open('./fisica-formulas-a4.html?print=1','_blank','noopener');
+    });
     renderMath(rail);
   }
 
