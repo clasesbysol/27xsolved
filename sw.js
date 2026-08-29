@@ -1,12 +1,12 @@
-const CACHE='et27-study-v0.2.6';
-const CORE=['./','./index.html','./styles-v2.css','./app.js','./config.js','./manifest.webmanifest','./sun.svg','./physics-content.js','./physics-admin-guide.js','./physics-cheatsheet.js','./admin-access-fix.js','./fisica-formulas-a4.html','./fisica-aplicada.html','./quimica-general.html','./assets/chemistry/periodic-table.json','./assets/chemistry/history/jj-thomson.jpg','./assets/chemistry/history/ernest-rutherford.jpg','./assets/chemistry/history/niels-bohr.jpg','./assets/chemistry/unit-01/matter-models.svg','./assets/chemistry/unit-01/states-particles.svg','./assets/chemistry/unit-01/density-lab.svg','./assets/chemistry/unit-01/phases-components.svg','./assets/chemistry/unit-01/substances-molecules.svg','./assets/chemistry/unit-01/separation-methods.svg','./assets/chemistry/unit-01/composition-percent.svg','./assets/chemistry/unit-02/atomic-models.svg','./assets/chemistry/unit-02/rutherford-experiment-wikimedia.svg','./assets/chemistry/unit-02/nuclear-notation.svg','./assets/chemistry/unit-02/hydrogen-spectrum-wikimedia.png','./assets/chemistry/unit-02/orbital-clouds-wikimedia.png','./assets/chemistry/unit-02/electron-configuration.svg','./assets/chemistry/unit-02/periodic-trends.svg'];
+const CACHE='27xsolved-shell-v1.0.0';
+const CORE=['./','./index.html','./styles-v2.css','./app.js','./config.js','./manifest.webmanifest','./assets/brand/27xsolved-logo.webp','./assets/brand/icon-192.png','./assets/brand/icon-512.png','./assets/brand/favicon-32.png','./physics-content.js','./physics-admin-guide.js','./physics-cheatsheet.js','./admin-access-fix.js','./assets/chemistry/periodic-table.json'];
 
 self.addEventListener('install',event=>event.waitUntil(
   caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting())
 ));
 self.addEventListener('activate',event=>event.waitUntil(
   caches.keys()
-    .then(keys=>Promise.all(keys.filter(key=>(key.startsWith('cbc-x-solved-')||key.startsWith('et27-study-'))&&key!==CACHE).map(key=>caches.delete(key))))
+    .then(keys=>Promise.all(keys.filter(key=>(key.startsWith('cbc-x-solved-')||key.startsWith('et27-study-')||key.startsWith('27xsolved-'))&&key!==CACHE).map(key=>caches.delete(key))))
     .then(()=>self.clients.claim())
 ));
 self.addEventListener('fetch',event=>{
@@ -15,7 +15,7 @@ self.addEventListener('fetch',event=>{
   const url=new URL(request.url);
   if(url.origin!==self.location.origin)return;
 
-  // Navegación y shell: red primero, caché sólo como respaldo offline.
+  // Red primero: conserva lo visitado para el modo offline sin fijar versiones viejas.
   event.respondWith(fetch(request,{cache:'no-store'}).then(response=>{
     if(response.ok)caches.open(CACHE).then(cache=>cache.put(request,response.clone()));
     return response;

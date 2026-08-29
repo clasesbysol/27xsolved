@@ -1,9 +1,24 @@
 {
-  "name": "ET 27 · Biblioteca de estudio",
-  "short_name": "ET 27",
-  "description": "Materias y clases de la ET 27 Hipólito Yrigoyen",
-  "start_url": "./",
+  "id": "./",
+  "name": "27xSOLved",
+  "short_name": "27xSOLved",
+  "description": "Tu espacio para organizar, practicar y conservar lo que aprendés.",
+  "lang": "es-AR",
+  "start_url": "./?source=pwa",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#f5fffd",
-  "theme_color": "#0f9f9a"
+  "display_override": ["window-controls-overlay", "standalone"],
+  "orientation": "any",
+  "background_color": "#f5f7fb",
+  "theme_color": "#1768ac",
+  "categories": ["education", "productivity"],
+  "icons": [
+    {"src":"./assets/brand/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
+    {"src":"./assets/brand/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+  ],
+  "shortcuts": [
+    {"name":"Mis materias","short_name":"Materias","url":"./?view=subjects","icons":[{"src":"./assets/brand/icon-192.png","sizes":"192x192"}]},
+    {"name":"Mesa de estudio","short_name":"Mesa","url":"./?view=desk","icons":[{"src":"./assets/brand/icon-192.png","sizes":"192x192"}]},
+    {"name":"Calendario","short_name":"Calendario","url":"./?view=calendar","icons":[{"src":"./assets/brand/icon-192.png","sizes":"192x192"}]}
+  ]
 }

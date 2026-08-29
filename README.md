@@ -1,6 +1,6 @@
-# ☀️ CBC x SOLved
+# 27xSOLved
 
-Primera versión funcional de **CBC x SOLved**, la plataforma de clases y estudio para materias del CBC.
+**27xSOLved** es una plataforma educativa independiente para organizar, practicar y conservar lo aprendido. No es un sitio oficial de la Escuela Técnica N.º 27.
 
 ## Qué trae v0.1.0
 
