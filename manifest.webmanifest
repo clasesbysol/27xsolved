@@ -9,16 +9,16 @@
   "display": "standalone",
   "display_override": ["window-controls-overlay", "standalone"],
   "orientation": "any",
-  "background_color": "#f5f7fb",
-  "theme_color": "#1768ac",
+  "background_color": "#f4f8f8",
+  "theme_color": "#0f9f9a",
   "categories": ["education", "productivity"],
   "icons": [
     {"src":"./assets/brand/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
     {"src":"./assets/brand/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
   ],
   "shortcuts": [
-    {"name":"Mis materias","short_name":"Materias","url":"./?view=subjects","icons":[{"src":"./assets/brand/icon-192.png","sizes":"192x192"}]},
-    {"name":"Mesa de estudio","short_name":"Mesa","url":"./?view=desk","icons":[{"src":"./assets/brand/icon-192.png","sizes":"192x192"}]},
-    {"name":"Calendario","short_name":"Calendario","url":"./?view=calendar","icons":[{"src":"./assets/brand/icon-192.png","sizes":"192x192"}]}
+    {"name":"Plan y materias","short_name":"Plan","url":"./?view=subjects","icons":[{"src":"./assets/brand/icon-192.png","sizes":"192x192"}]},
+    {"name":"Calendario","short_name":"Calendario","url":"./?view=calendar","icons":[{"src":"./assets/brand/icon-192.png","sizes":"192x192"}]},
+    {"name":"Configuración","short_name":"Ajustes","url":"./?view=settings","icons":[{"src":"./assets/brand/icon-192.png","sizes":"192x192"}]}
   ]
 }
