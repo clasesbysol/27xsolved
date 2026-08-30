@@ -15,9 +15,7 @@
     { id: 'chemistry', view: 'chemistry', letter: 'Q', name: 'Química General', meta: 'Unidades, teoría y práctica' },
     { id: 'physics', view: 'physics', letter: 'F', name: 'Física Aplicada', meta: 'Teoría, fórmulas y ejercicios' }
   ];
-  const DAYS = [
-    [1, 'Lunes'], [2, 'Martes'], [3, 'Miércoles'], [4, 'Jueves'], [5, 'Viernes']
-  ];
+  const DAYS = [[1, 'Lunes'], [2, 'Martes'], [3, 'Miércoles'], [4, 'Jueves'], [5, 'Viernes']];
 
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -38,8 +36,6 @@
   const appStore = (name, fallback) => readJSON(`27xsolved-${name}`, fallback);
   const uid = () => crypto.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
-  // El color molecular del logo pasa a ser la identidad global. También migra
-  // instalaciones que todavía conservaban el azul anterior como valor por defecto.
   try {
     localStorage.setItem(APP_ACCENT_KEY, BRAND);
     localStorage.setItem(APP_STORED_ACCENT_KEY, JSON.stringify(BRAND));
@@ -49,15 +45,24 @@
   document.documentElement.style.setProperty('--brand-accent-strong', BRAND_STRONG);
   document.documentElement.style.setProperty('--brand-sun', SUN);
 
+  function setText(node, value) {
+    if (node && node.textContent !== value) node.textContent = value;
+  }
+
   function setButtonLabel(button, label) {
     if (!button) return;
+    const current = [...button.childNodes]
+      .filter(node => node.nodeType === Node.TEXT_NODE)
+      .map(node => node.textContent)
+      .join('')
+      .trim();
+    if (current === label) return;
     [...button.childNodes].filter(node => node.nodeType === Node.TEXT_NODE).forEach(node => node.remove());
     button.append(document.createTextNode(label));
   }
 
   function routeTo(view) {
-    const candidates = $$('[data-v]').filter(node => node.dataset.v === view && !node.closest('[data-ui-generated]'));
-    const native = candidates.find(node => node.isConnected);
+    const native = $$('[data-v]').find(node => node.dataset.v === view && !node.closest('[data-ui-generated]') && node.isConnected);
     if (native) {
       native.click();
       return;
@@ -93,16 +98,14 @@
     const profile = $('.sideBottom button[data-v="profile"]');
     if (profile) profile.remove();
 
-    const label = $('.compactIndex .sideLabel');
-    if (label) label.textContent = 'Materias a mano';
+    setText($('.compactIndex .sideLabel'), 'Materias a mano');
 
     let recent = $('.ui-recent-sidebar', sidebar);
     if (!recent) {
       recent = document.createElement('section');
       recent.className = 'ui-recent-sidebar';
       recent.dataset.uiGenerated = 'true';
-      const index = $('.compactIndex', sidebar);
-      if (index) index.after(recent);
+      $('.compactIndex', sidebar)?.after(recent);
     }
     const recents = appStore('recent', []).slice(0, 4);
     const signature = JSON.stringify(recents.map(item => [item.key, item.at]));
@@ -131,8 +134,7 @@
       setButtonLabel(mobileCalendar, 'Calendario');
       if (oldDesk) {
         oldDesk.dataset.v = 'settings';
-        const icon = $('span', oldDesk);
-        if (icon) icon.textContent = '⚙';
+        setText($('span', oldDesk), '⚙');
         setButtonLabel(oldDesk, 'Ajustes');
         mobileCalendar?.after(oldDesk);
       }
@@ -142,9 +144,8 @@
   function patchTopbar() {
     const title = $('.top > b');
     if (!title) return;
-    if (title.textContent.trim() === 'Mis materias') title.textContent = 'Plan y materias';
-    if (title.textContent.trim() === 'Ajustes') title.textContent = 'Configuración';
-    if (title.textContent.trim() === 'Perfil') title.textContent = 'Configuración';
+    if (title.textContent.trim() === 'Mis materias') setText(title, 'Plan y materias');
+    if (title.textContent.trim() === 'Ajustes' || title.textContent.trim() === 'Perfil') setText(title, 'Configuración');
   }
 
   function courseCards() {
@@ -261,7 +262,7 @@
         <img src="./assets/brand/27xsolved-logo.webp" alt="Logo de 27xSOLved">`;
     }
 
-    let courseSection = $('section.homeSection', content);
+    const courseSection = $('section.homeSection', content);
     if (courseSection && !courseSection.classList.contains('ui-current-section')) {
       courseSection.classList.add('ui-current-section');
       const head = $('.sectionHead', courseSection);
@@ -291,8 +292,7 @@
       renderHomeSecondary(content);
     }
 
-    const independent = $('.independentNote', content);
-    if (independent) independent.classList.add('ui-independent-note');
+    $('.independentNote', content)?.classList.add('ui-independent-note');
   }
 
   function accountInfo() {
@@ -339,6 +339,15 @@
       <div><i style="--usage-height:${Math.max(4, Math.round(item.minutes / max * 100))}%"></i><span>${new Intl.DateTimeFormat('es-AR', { weekday: 'narrow' }).format(item.date)}</span><small>${item.minutes}</small></div>`).join('')}</div>`;
   }
 
+  function renderUsagePanel(root = document) {
+    const panel = $('.ui-usage-panel', root);
+    if (!panel) return;
+    const signature = JSON.stringify(usageData());
+    if (panel.dataset.signature === signature) return;
+    panel.dataset.signature = signature;
+    panel.innerHTML = usageMarkup();
+  }
+
   function patchSettings() {
     const appearance = $('.appearanceCard');
     if (!appearance) return;
@@ -346,10 +355,8 @@
     if (!content) return;
     const intro = $('.pageIntro', content);
     if (intro) {
-      const title = $('h1', intro);
-      const paragraph = $('p', intro);
-      if (title) title.textContent = 'Configuración';
-      if (paragraph) paragraph.textContent = 'Tu perfil, actividad, apariencia y datos de la aplicación.';
+      setText($('h1', intro), 'Configuración');
+      setText($('p', intro), 'Tu perfil, actividad, apariencia y datos de la aplicación.');
     }
 
     let grid = $('.ui-settings-grid', content);
@@ -362,8 +369,7 @@
       grid.insertAdjacentHTML('beforeend', `
         <section class="ui-settings-card ui-profile-settings"><div class="ui-settings-heading"><div><h2>Perfil</h2><p>Tu cuenta y el alcance del guardado.</p></div></div><div class="ui-profile-panel"><img src="./assets/brand/icon-192.png" alt="Logo de 27xSOLved"><div><strong>${esc(info.name)}</strong><span>${esc(info.email)}</span><small>${esc(info.status)}</small></div></div></section>
         <section class="ui-settings-card ui-usage-settings"><div class="ui-settings-heading"><div><h2>Tiempo de uso</h2><p>Actividad de estudio de los últimos siete días.</p></div></div><div class="ui-usage-panel">${usageMarkup()}</div></section>`);
-      const cards = $$('.settingsCard', content).filter(card => !card.closest('.ui-settings-grid'));
-      cards.forEach(card => grid.append(card));
+      $$('.settingsCard', content).filter(card => !card.closest('.ui-settings-grid')).forEach(card => grid.append(card));
     }
 
     const accentField = $$('fieldset', appearance).find(fieldset => /color de acento/i.test(fieldset.textContent || ''));
@@ -371,53 +377,35 @@
     if (!$('.ui-brand-color-note', appearance)) {
       appearance.insertAdjacentHTML('beforeend', `<div class="ui-brand-color-note"><i></i><span><b>Color de marca</b><small>El turquesa de las moléculas del logo identifica acciones y estados activos.</small></span></div>`);
     }
-    const appearanceDescription = $('p', appearance);
-    if (appearanceDescription) appearanceDescription.textContent = 'Elegí claro, oscuro o sistema. La identidad de 27xSOLved conserva el color del logo.';
+    setText($('p', appearance), 'Elegí claro, oscuro o sistema. La identidad de 27xSOLved conserva el color del logo.');
     renderUsagePanel(content);
   }
 
-  function renderUsagePanel(root = document) {
-    const panel = $('.ui-usage-panel', root);
-    if (!panel) return;
-    const signature = JSON.stringify(usageData());
-    if (panel.dataset.signature === signature) return;
-    panel.dataset.signature = signature;
-    panel.innerHTML = usageMarkup();
-  }
-
   function patchSubjects() {
-    const intros = $$('.pageIntro');
-    const intro = intros.find(node => $('h1', node)?.textContent.trim() === 'Mis materias');
+    const intro = $$('.pageIntro').find(node => $('h1', node)?.textContent.trim() === 'Mis materias');
     if (intro) {
-      $('h1', intro).textContent = 'Plan y materias';
-      const eyebrow = $('.eyebrow', intro);
-      if (eyebrow) eyebrow.textContent = 'Organización académica';
-      const p = $('p', intro);
-      if (p) p.textContent = 'Tus materias, accesos y recorrido académico en un mismo lugar.';
-      const content = intro.closest('.content');
-      const planLink = content ? $('.planLink', content) : null;
+      setText($('h1', intro), 'Plan y materias');
+      setText($('.eyebrow', intro), 'Organización académica');
+      setText($('p', intro), 'Tus materias, accesos y recorrido académico en un mismo lugar.');
+      const planLink = $('.planLink', intro.closest('.content'));
       if (planLink) {
-        const b = $('b', planLink);
-        const text = $('p', planLink);
-        const button = $('button', planLink);
-        if (b) b.textContent = 'Avance de la carrera';
-        if (text) text.textContent = 'Consultá el plan por años y las materias disponibles en 27xSOLved.';
-        if (button) button.textContent = 'Ver plan por años';
+        setText($('b', planLink), 'Avance de la carrera');
+        setText($('p', planLink), 'Consultá el plan por años y las materias disponibles en 27xSOLved.');
+        setText($('button', planLink), 'Ver plan por años');
       }
     }
 
     const planHero = $$('.hero.compact').find(node => $('h1', node)?.textContent.trim() === 'Materias por año');
     if (planHero) {
-      $('h1', planHero).textContent = 'Plan y materias';
-      const p = $('p', planHero);
-      if (p) p.textContent = 'Recorrido por años. Solo se muestran como confirmadas las materias ya verificadas en el proyecto.';
+      setText($('h1', planHero), 'Plan y materias');
+      setText($('p', planHero), 'Recorrido por años. Solo se muestran como confirmadas las materias ya verificadas en el proyecto.');
     }
   }
 
   function patchGlobal() {
     document.documentElement.style.setProperty('--accent', BRAND);
     const meta = $('meta[name="theme-color"]');
-    if (meta && document.documentElement.dataset.theme !== 'dark') meta.setAttribute('content', BRAND);
+    if (meta && document.documentElement.dataset.theme !== 'dark' && meta.getAttribute('content') !== BRAND) meta.setAttribute('content', BRAND);
     $$('[data-favorite]').forEach(button => button.remove());
     patchSidebar();
     patchTopbar();
@@ -514,7 +502,6 @@
     }
     const colorChoice = event.target.closest('[data-color]');
     if (colorChoice) {
-      // La identidad de marca queda fija; no se permite volver accidentalmente al azul anterior.
       event.preventDefault();
       event.stopImmediatePropagation();
     }
@@ -523,8 +510,7 @@
   document.addEventListener('change', event => {
     const checkbox = event.target.closest('[data-ui-check]');
     if (!checkbox) return;
-    const next = checklistData().map(item => item.id === checkbox.dataset.uiCheck ? { ...item, done: checkbox.checked } : item);
-    writeJSON(CHECKLIST_KEY, next);
+    writeJSON(CHECKLIST_KEY, checklistData().map(item => item.id === checkbox.dataset.uiCheck ? { ...item, done: checkbox.checked } : item));
     renderHomeSecondary();
   });
 
