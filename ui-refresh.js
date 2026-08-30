@@ -62,6 +62,10 @@
   }
 
   function routeTo(view) {
+    // Los recientes de Química pueden guardar destinos del tipo unit:2. Como el
+    // motor interno no lee ese formato desde la URL, abrimos la materia en vez de
+    // mandar al usuario a una ruta inválida.
+    if (String(view).startsWith('unit:')) view = 'chemistry';
     const native = $$('[data-v]').find(node => node.dataset.v === view && !node.closest('[data-ui-generated]') && node.isConnected);
     if (native) {
       native.click();
@@ -563,7 +567,9 @@
     const app = $('#app');
     if (!app) return;
     const observer = new MutationObserver(queueRefresh);
-    observer.observe(app, { childList: true, subtree: true });
+    // El motor principal reemplaza los hijos directos de #app en cada render.
+    // Observar sólo ese nivel evita recorrer simuladores, fórmulas y contenidos dinámicos.
+    observer.observe(app, { childList: true });
     startUsageTracking();
     queueRefresh();
   }
