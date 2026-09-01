@@ -24,6 +24,13 @@
   <div id="app" class="loading">Abriendo 27xSOLved…</div>
 
   <script>
+    document.addEventListener('click',function(e){
+      var target=e.target && e.target.closest ? e.target.closest('[data-a="google"]') : null;
+      if(target){
+        try{ localStorage.setItem('27xsolved-auth-return','1'); }catch(_){ }
+      }
+    },true);
+
     window.__cbcBootError = function(message){
       var el=document.getElementById('app');
       if(!el) return;
