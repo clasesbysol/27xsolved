@@ -1,4 +1,4 @@
-const CACHE='27xsolved-shell-v1.1.10';
+const CACHE='27xsolved-shell-v1.1.11';
 const CORE=['./','./index.html','./styles-v2.css','./ui-refresh.css','./ui-refresh.js','./academic-plan.css','./academic-catalog.js','./academic-plan.js','./materia.html','./materia.css','./materia-v2.css','./materia.js','./procesos-u4-content-1.js','./procesos-u4-content-2.js','./procesos-u4-content-3.js','./procesos-u4-ui.js','./app.js','./config.js','./manifest.webmanifest','./assets/brand/27xsolved-logo.webp','./assets/brand/icon-192.png','./assets/brand/icon-512.png','./assets/brand/favicon-32.png','./physics-content.js','./physics-admin-guide.js','./physics-admin-guide-access-fix.js','./physics-model-evaluations.js','./physics-model-admin-deep.js','./physics-evaluations-ux-fix.js','./physics-cheatsheet.js','./admin-access-fix.js','./assets/chemistry/periodic-table.json'];
 
 self.addEventListener('install',event=>event.waitUntil(
