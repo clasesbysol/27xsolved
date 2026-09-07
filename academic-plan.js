@@ -1,4 +1,4 @@
-// Plan por años de 27xSOLved. Se monta sobre la vista actual sin tocar el motor académico.
+// Plan académico 27xSOLved · parche estable e idempotente.
 (function () {
   'use strict';
 
@@ -46,62 +46,91 @@
 
   function markup() {
     const years = catalog().years || [];
-    return `<section class="academic-plan-shell" data-academic-plan>
+    return `<section class="academic-plan-shell" data-academic-plan data-plan-version="1.1.7">
       <nav class="academic-year-jump" aria-label="Ir a un año">
         ${years.map(year => `<a href="#anio-${year.year}">${year.year}.º</a>`).join('')}
       </nav>
       <div class="academic-plan-years">${years.map(yearMarkup).join('')}</div>
-      <aside class="academic-plan-note"><b>Esqueleto inicial</b><p>Las materias ya quedan separadas por año. Cada materia nueva abre con Resumen, Ejercicios, Evaluaciones y una hoja de fórmulas lateral; el contenido se completa a medida que agregamos material.</p></aside>
+      <aside class="academic-plan-note"><b>Esqueleto académico actualizado</b><p>Cada materia nueva abre con Resumen, Mapa mental, Ejercicios, Parciales y hoja de fórmulas. Versión 1.1.7.</p></aside>
     </section>`;
   }
 
   window.ET27AcademicPlanMarkup = markup;
 
-  function patchSubjects() {
-    const intro = $$('.pageIntro').find(node => /Mis materias|Plan y materias/i.test($('h1', node)?.textContent || ''));
-    if (!intro) return;
-    const content = intro.closest('.content');
-    if (!content) return;
+  function setText(node, value) {
+    if (node && node.textContent !== value) node.textContent = value;
+  }
 
-    const h1 = $('h1', intro);
-    const eyebrow = $('.eyebrow', intro);
-    const p = $('p', intro);
-    if (h1) h1.textContent = 'Plan y materias';
-    if (eyebrow) eyebrow.textContent = '4.º · 5.º · 6.º año';
-    if (p) p.textContent = 'Entrá por año y después por materia. Los TP y laboratorios quedan como materias separadas.';
+  function mountPlan(content, replaceNode) {
+    let plan = $('[data-academic-plan]', content);
+    if (plan) return plan;
+    const host = document.createElement('div');
+    host.innerHTML = markup();
+    plan = host.firstElementChild;
+    if (replaceNode) replaceNode.replaceWith(plan);
+    else content.append(plan);
+    return plan;
+  }
+
+  function patchSubjects() {
+    const content = $('#app .main .content');
+    if (!content) return;
+    const intro = $$('.pageIntro', content).find(node => /Mis materias|Plan y materias/i.test($('h1', node)?.textContent || ''));
+    if (!intro) return;
+
+    setText($('h1', intro), 'Plan y materias');
+    setText($('.eyebrow', intro), '4.º · 5.º · 6.º año');
+    setText($('p', intro), 'Entrá por año y después por materia. Los TP y laboratorios quedan separados para encontrarlos rápido.');
 
     const nativeSubjects = $('.subjects', content);
-    let plan = $('[data-academic-plan]', content);
-    if (!plan) {
-      const host = document.createElement('div');
-      host.innerHTML = markup();
-      plan = host.firstElementChild;
-      if (nativeSubjects) nativeSubjects.replaceWith(plan);
-      else intro.after(plan);
-    }
-
+    mountPlan(content, nativeSubjects);
     $('.planLink', content)?.remove();
   }
 
-  function patchPlanRoute() {
-    const topTitle = $('.top > b');
-    if (topTitle && topTitle.textContent.trim() === 'Plan por años') topTitle.textContent = 'Plan y materias';
+  function patchLibrary() {
+    const content = $('#app .main .content');
+    if (!content) return;
+    const intro = $$('.pageIntro', content).find(node => /^Biblioteca$/i.test($('h1', node)?.textContent?.trim() || ''));
+    if (!intro) return;
+
+    setText($('p', intro), 'Todo el contenido disponible, ordenado por año y por materia.');
+    const nativeSubjects = $('.subjects', content);
+    mountPlan(content, nativeSubjects);
+  }
+
+  function patchTopbar() {
+    const topTitle = $('#app .top > b');
+    if (!topTitle) return;
+    if (topTitle.textContent.trim() === 'Plan por años' || topTitle.textContent.trim() === 'Mis materias') {
+      setText(topTitle, 'Plan y materias');
+    }
   }
 
   function patch() {
     patchSubjects();
-    patchPlanRoute();
+    patchLibrary();
+    patchTopbar();
   }
 
-  const observer = new MutationObserver(() => patch());
+  let scheduled = false;
+  function schedulePatch() {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(() => {
+      scheduled = false;
+      patch();
+    });
+  }
+
   const app = document.getElementById('app');
-  if (app) observer.observe(app, { childList: true, subtree: true });
-  document.addEventListener('DOMContentLoaded', patch, { once: true });
-  window.setTimeout(patch, 0);
+  if (app) {
+    const observer = new MutationObserver(schedulePatch);
+    observer.observe(app, { childList: true, subtree: true });
+  }
+  document.addEventListener('DOMContentLoaded', schedulePatch, { once: true });
+  schedulePatch();
 })();
 
-// El motor actual referencia planPage como función global. La definimos acá para que
-// la ruta ?view=plan también use el mismo catálogo por años.
 function planPage() {
-  return `<section class="pageIntro"><span class="eyebrow">4.º · 5.º · 6.º año</span><h1>Plan y materias</h1><p>Entrá por año y después por materia. Los TP y laboratorios quedan como materias separadas.</p></section>${window.ET27AcademicPlanMarkup ? window.ET27AcademicPlanMarkup() : ''}`;
+  return `<section class="pageIntro"><span class="eyebrow">4.º · 5.º · 6.º año</span><h1>Plan y materias</h1><p>Entrá por año y después por materia. Los TP y laboratorios quedan separados para encontrarlos rápido.</p></section>${window.ET27AcademicPlanMarkup ? window.ET27AcademicPlanMarkup() : ''}`;
 }
