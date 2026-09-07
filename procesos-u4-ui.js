@@ -1,0 +1,32 @@
+(function(){
+  'use strict';
+  const DATA=window.ET27_PROCESOS_U4;
+  if(!DATA)return;
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const M=latex=>`<div class="u4math" data-u4-math="${encodeURIComponent(latex)}"></div>`;
+  function adminEmailInStorage(storage){
+    const target=String(window.CBCLASES_CONFIG?.adminEmail||'').trim().toLowerCase();
+    if(!target)return false;
+    try{for(let i=0;i<storage.length;i++){const k=storage.key(i),v=storage.getItem(k);if(v&&String(v).toLowerCase().includes(target))return true;}}catch(_){}
+    return false;
+  }
+  function isAdmin(){return adminEmailInStorage(localStorage)||adminEmailInStorage(sessionStorage)}
+  function renderMath(){if(!window.katex){setTimeout(renderMath,180);return}document.querySelectorAll('[data-u4-math]').forEach(n=>{if(n.dataset.rendered)return;try{window.katex.render(decodeURIComponent(n.dataset.u4Math),n,{throwOnError:false,displayMode:true});n.dataset.rendered='1'}catch(_){}})}
+  const ETY=[
+    ['Isobárica','iso = igual · baros = peso o presión','Misma presión. Durante toda la transformación P permanece constante.'],
+    ['Isocórica','iso = igual · chora = espacio o volumen','Mismo volumen. Como V no cambia, el trabajo de expansión es cero.'],
+    ['Isotérmica','iso = igual · therme = calor / temperatura','Misma temperatura. Para un gas ideal, si T no cambia entonces ΔU=0.'],
+    ['Adiabática','a = sin · diabatos = atravesar','Sin intercambio de calor entre sistema y entorno: Q=0.'],
+    ['Expansión','ex = hacia afuera · pandere = extender','El volumen aumenta. Con esta convención, el trabajo del gas suele ser negativo.'],
+    ['Compresión','com = junto · premere = apretar','El volumen disminuye. Con esta convención, el trabajo sobre el gas suele ser positivo.']
+  ];
+  function injectStyles(){if(document.getElementById('u4adminstyle'))return;const s=document.createElement('style');s.id='u4adminstyle';s.textContent=`
+  .u4-extra{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}.u4-extra h4{margin:0 0 8px}.u4-ety-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.u4-ety{padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--panel-soft)}.u4-ety summary{cursor:pointer;font-weight:900;text-decoration:underline;text-decoration-color:rgba(15,159,154,.55);text-decoration-thickness:2px;text-underline-offset:4px}.u4-ety small{display:block;color:var(--accent);font-weight:900;margin:7px 0 4px}.u4-ety p{margin:0;color:var(--muted);line-height:1.5}.u4-table-wrap{overflow:auto}.u4-table{width:100%;min-width:760px;border-collapse:collapse}.u4-table th,.u4-table td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}.u4-table th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}.u4-table td small{display:block;color:var(--muted)}.u4-admin{margin-top:14px;border:2px solid color-mix(in srgb,var(--accent) 45%,var(--line));border-radius:18px;overflow:hidden;background:var(--panel-soft)}.u4-admin>summary{cursor:pointer;list-style:none;padding:14px 16px;background:color-mix(in srgb,var(--accent) 10%,var(--panel));font-weight:950}.u4-admin>summary::-webkit-details-marker{display:none}.u4-admin>summary:before{content:'ADMIN';display:inline-block;margin-right:8px;padding:4px 7px;border-radius:999px;background:var(--accent);color:#fff;font-size:9px;letter-spacing:.09em}.u4-admin-body{padding:14px}.u4-step{padding:13px 14px;border:1px solid var(--line);border-radius:14px;background:var(--panel);margin:9px 0}.u4-step h4{margin:0 0 8px;font-size:14px}.u4-step ul{margin:6px 0 8px;padding-left:20px;line-height:1.55}.u4math{padding:9px 10px;margin:8px 0;border:1px dashed color-mix(in srgb,var(--accent) 28%,var(--line));border-radius:11px;overflow:auto;text-align:center}.u4-locked{margin-top:14px;padding:12px 14px;border:1px dashed var(--line);border-radius:13px;background:var(--panel-soft);color:var(--muted)}@media(max-width:760px){.u4-ety-grid{grid-template-columns:1fr}.u4-admin-body{padding:10px}.u4-step{padding:11px}.u4-table{min-width:650px}}
+  `;document.head.appendChild(s)}
+  function enhanceSummary(){const card=document.querySelector('#resumen .topic-card');if(!card||card.dataset.u4enhanced)return;card.dataset.u4enhanced='1';const t=DATA.summary.transformations||[];const ety=ETY.map(([a,b,c])=>`<details class="u4-ety"><summary>${esc(a)}</summary><small>${esc(b)}</small><p>${esc(c)}</p></details>`).join('');const rows=t.map(x=>`<tr><td><b>${esc(x.name)}</b><small>${esc(x.rule)}</small></td><td>${esc(x.constant||'')}</td><td>${esc(x.dU)}</td><td>${esc(x.q)}</td><td>${esc(x.l)}</td></tr>`).join('');card.insertAdjacentHTML('beforeend',`<section class="u4-extra"><h4>Etimologías que ayudan a memorizar</h4><div class="u4-ety-grid">${ety}</div></section><section class="u4-extra"><h4>Cuadro comparativo para memorizar</h4><div class="u4-table-wrap"><table class="u4-table"><thead><tr><th>Transformación</th><th>Constante</th><th>ΔU</th><th>Q</th><th>L</th></tr></thead><tbody>${rows}</tbody></table></div></section>`)}
+  function stepHtml(b){return `<section class="u4-step"><h4>${esc(b.title||'Paso')}</h4>${b.bullets?.length?`<ul>${b.bullets.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}${b.formulas?.map(M).join('')||''}</section>`}
+  function enhanceExercises(){const admin=isAdmin();document.querySelectorAll('#ejercicios .exercise-item').forEach((card,i)=>{const ex=DATA.exercises[i];if(!ex||card.dataset.u4done)return;card.dataset.u4done='1';const old=card.querySelector('.solution-placeholder');if(!old)return;if(!admin){old.className='u4-locked';old.innerHTML='<b>Resolución disponible en modo administrador.</b><div>La consigna queda visible para estudiantes; el desarrollo docente está protegido.</div>';return}const d=document.createElement('details');d.className='u4-admin';d.open=true;d.innerHTML=`<summary>Resolución paso a paso · ${esc(ex.title)}</summary><div class="u4-admin-body">${(ex.solution?.blocks||[]).map(stepHtml).join('')}</div>`;old.replaceWith(d)})}
+  function enhance(){if(!location.search.includes('procesos-operaciones-4'))return;injectStyles();enhanceSummary();enhanceExercises();renderMath()}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(enhance,0));else setTimeout(enhance,0);
+  setTimeout(enhance,300);
+})();
