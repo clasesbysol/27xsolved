@@ -1,5 +1,5 @@
-const CACHE='27xsolved-shell-v1.1.6';
-const CORE=['./','./index.html','./styles-v2.css','./ui-refresh.css','./ui-refresh.js','./academic-plan.css','./academic-catalog.js','./academic-plan.js','./materia.html','./materia.css','./materia.js','./app.js','./config.js','./manifest.webmanifest','./assets/brand/27xsolved-logo.webp','./assets/brand/icon-192.png','./assets/brand/icon-512.png','./assets/brand/favicon-32.png','./physics-content.js','./physics-admin-guide.js','./physics-admin-guide-access-fix.js','./physics-model-evaluations.js','./physics-model-admin-deep.js','./physics-evaluations-ux-fix.js','./physics-cheatsheet.js','./admin-access-fix.js','./assets/chemistry/periodic-table.json'];
+const CACHE='27xsolved-shell-v1.1.7';
+const CORE=['./','./index.html','./styles-v2.css','./ui-refresh.css','./ui-refresh.js','./academic-plan.css','./academic-catalog.js','./academic-plan.js','./materia.html','./materia.css','./materia-v2.css','./materia.js','./app.js','./config.js','./manifest.webmanifest','./assets/brand/27xsolved-logo.webp','./assets/brand/icon-192.png','./assets/brand/icon-512.png','./assets/brand/favicon-32.png','./physics-content.js','./physics-admin-guide.js','./physics-admin-guide-access-fix.js','./physics-model-evaluations.js','./physics-model-admin-deep.js','./physics-evaluations-ux-fix.js','./physics-cheatsheet.js','./admin-access-fix.js','./assets/chemistry/periodic-table.json'];
 
 self.addEventListener('install',event=>event.waitUntil(
   caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting())
@@ -15,7 +15,6 @@ self.addEventListener('fetch',event=>{
   const url=new URL(request.url);
   if(url.origin!==self.location.origin)return;
 
-  // Red primero: conserva lo visitado para el modo offline sin fijar versiones viejas.
   event.respondWith(fetch(request,{cache:'no-store'}).then(response=>{
     if(response.ok)caches.open(CACHE).then(cache=>cache.put(request,response.clone()));
     return response;
