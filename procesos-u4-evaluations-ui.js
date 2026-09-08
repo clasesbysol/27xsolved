@@ -77,10 +77,23 @@
     });
   }
 
+  function relabelSection(section){
+    const title=section.querySelector('.section-title');
+    const small=title?.querySelector('small');
+    const h2=title?.querySelector('h2');
+    const p=title?.querySelector('p');
+    if(small)small.textContent='04 · EVALUACIONES';
+    if(h2)h2.textContent='Evaluaciones';
+    if(p)p.textContent='Evaluaciones reales y modelos equivalentes para practicar.';
+    const nav=document.querySelector('.subject-index a[href="#parciales"]');
+    if(nav)nav.innerHTML='<span>04</span>Evaluaciones';
+  }
+
   function mount(){
     addStyles();
     const section=document.querySelector('#parciales');
     if(!section)return;
+    relabelSection(section);
     const mode=access();
     if(!mode.evaluations&&!mode.admin)return;
     const key=`${mode.admin?'admin':'student'}-${mode.answers?'answers':'locked'}`;
