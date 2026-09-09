@@ -1,5 +1,5 @@
-const CACHE='27xsolved-shell-v1.1.16';
-const CORE=['./','./index.html','./bienvenida.html','./styles-v2.css','./ui-refresh.css','./brand-2026.css','./brand-2026.js','./ui-refresh.js','./academic-plan.css','./academic-catalog.js','./academic-plan.js','./access-control.js','./admin-access-summary.js','./materia.html','./materia.css','./materia-v2.css','./materia.js','./procesos-u4-content-1.js','./procesos-u4-content-2.js','./procesos-u4-content-3.js','./procesos-u4-evaluations.js','./procesos-u4-evaluations-ui.js','./procesos-u4-ui.js','./procesos-u4-clean-render.js','./app.js','./config.js','./manifest.webmanifest','./assets/brand/27xsolved-logo.webp','./assets/brand/icon-192.png','./assets/brand/icon-512.png','./assets/brand/favicon-32.png','./physics-content.js','./physics-admin-guide.js','./physics-admin-guide-access-fix.js','./physics-model-evaluations.js','./physics-model-admin-deep.js','./physics-evaluations-ux-fix.js','./physics-cheatsheet.js','./admin-access-fix.js','./assets/chemistry/periodic-table.json'];
+const CACHE='27xsolved-shell-v1.1.17';
+const CORE=['./','./index.html','./bienvenida.html','./styles-v2.css','./ui-refresh.css','./brand-2026.css','./brand-2026.js','./ui-refresh.js','./academic-plan.css','./academic-catalog.js','./academic-plan.js','./access-control.js','./admin-access-summary.js','./materia.html','./materia.css','./materia-v2.css','./materia.js','./procesos-u4-content-1.js','./procesos-u4-content-2.js','./procesos-u4-content-3.js','./procesos-u4-evaluations.js','./procesos-u4-evaluations-ui.js','./procesos-u4-ui.js','./procesos-u4-clean-render.js','./app.js','./config.js','./manifest.webmanifest','./assets/brand/27xsolved-logo.jpg','./assets/brand/27xsolved-logo-small.jpg','./assets/brand/icon-192.png','./assets/brand/icon-512.png','./assets/brand/favicon-32.png','./physics-content.js','./physics-admin-guide.js','./physics-admin-guide-access-fix.js','./physics-model-evaluations.js','./physics-model-admin-deep.js','./physics-evaluations-ux-fix.js','./physics-cheatsheet.js','./admin-access-fix.js','./assets/chemistry/periodic-table.json'];
 
 self.addEventListener('install',event=>event.waitUntil(
   caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting())
@@ -19,7 +19,7 @@ self.addEventListener('fetch',event=>{
     if(response.ok)caches.open(CACHE).then(cache=>cache.put(request,response.clone()));
     return response;
   }).catch(async()=>{
-    const cached=await caches.match(request,{ignoreSearch:true});
+    const cached=await (await caches.open(CACHE)).match(request,{ignoreSearch:true});
     if(cached)return cached;
     if(request.mode==='navigate')return caches.match('./index.html');
     return Response.error();

@@ -51,7 +51,7 @@
         </g>
         <g stroke="#50666a" stroke-width="2" fill="none" marker-end="url(#arrow)"><path d="M70 300H548"/><path d="M70 300V24"/></g>
         <g fill="#50666a" font-family="Nunito, sans-serif" font-size="14"><text x="500" y="327">V (L)</text><text x="18" y="34">P (kPa)</text></g>
-        <g stroke="#1768ac" stroke-width="4" fill="none"><path d="M160 250L160 50"/><path d="M160 50 C230 118 345 198 510 250"/><path d="M510 250L160 250"/></g>
+        <g stroke="#15579D" stroke-width="4" fill="none"><path d="M160 250L160 50"/><path d="M160 50 C230 118 345 198 510 250"/><path d="M510 250L160 250"/></g>
         <g fill="#183037" font-family="Nunito, sans-serif" font-size="15" font-weight="800"><text x="138" y="274">A</text><text x="138" y="43">B</text><text x="518" y="271">C</text></g>
         <g fill="#6a7d80" font-family="Nunito, sans-serif" font-size="12"><text x="150" y="319">2</text><text x="503" y="319">6</text><text x="48" y="255">2</text><text x="48" y="55">6</text></g>
       </svg>
@@ -158,7 +158,7 @@
     app.className = '';
     app.innerHTML = `<div class="subject-app">
       <header class="subject-topbar">
-        <a class="subject-brand" href="./"><img src="./assets/brand/icon-192.png" alt="27xSOLved"><b>27x<span>SOLved</span></b></a>
+        <a class="subject-brand" href="./"><img src="./assets/brand/27xsolved-logo-small.jpg?v=1.1.17" alt="27xSOLved"><b>27x<span>SOLved</span></b></a>
         <a class="back-plan" href="./?view=subjects">← Plan y materias</a>
         <label class="subject-search">⌕<input id="subjectSearch" type="search" placeholder="Buscar dentro de la materia…"></label>
       </header>

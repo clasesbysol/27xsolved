@@ -225,22 +225,22 @@
     const s=document.createElement('style');
     s.id='physicsModelDeepAdminStyles';
     s.textContent=`
-      .modelDeepAdminSolution{margin:18px 0 0;border:2px solid color-mix(in srgb,var(--accent,#0f9f9a) 58%,#fff);border-radius:22px;overflow:hidden;background:color-mix(in srgb,var(--accent,#0f9f9a) 3%,var(--card,#fff));box-shadow:0 14px 34px rgba(0,0,0,.06)}
-      .modelDeepAdminSolution>summary{cursor:pointer;list-style:none;padding:17px 19px;font-weight:950;background:color-mix(in srgb,var(--accent,#0f9f9a) 12%,var(--card,#fff));display:flex;align-items:center;gap:10px}
+      .modelDeepAdminSolution{margin:18px 0 0;border:2px solid color-mix(in srgb,var(--accent,#15579D) 58%,#fff);border-radius:22px;overflow:hidden;background:color-mix(in srgb,var(--accent,#15579D) 3%,var(--card,#fff));box-shadow:0 14px 34px rgba(0,0,0,.06)}
+      .modelDeepAdminSolution>summary{cursor:pointer;list-style:none;padding:17px 19px;font-weight:950;background:color-mix(in srgb,var(--accent,#15579D) 12%,var(--card,#fff));display:flex;align-items:center;gap:10px}
       .modelDeepAdminSolution>summary::-webkit-details-marker{display:none}
-      .modelDeepAdminSolution>summary:before{content:'ADMIN · GUION DOCENTE';font-size:10px;letter-spacing:.1em;padding:5px 8px;border-radius:999px;background:var(--accent,#0f9f9a);color:#fff}
+      .modelDeepAdminSolution>summary:before{content:'ADMIN · GUION DOCENTE';font-size:10px;letter-spacing:.1em;padding:5px 8px;border-radius:999px;background:var(--accent,#15579D);color:#fff}
       .deepAdminBody{padding:18px;display:grid;gap:14px}
       .deepAdminIntro,.deepAdminNote,.deepAdminSay,.deepAdminError,.deepAdminCheck{padding:14px 16px;border-radius:15px;line-height:1.6}
-      .deepAdminIntro{background:color-mix(in srgb,var(--accent,#0f9f9a) 8%,var(--card,#fff))}
-      .deepAdminStep{padding:16px;border-radius:16px;border:1px solid color-mix(in srgb,var(--accent,#0f9f9a) 18%,var(--line,#dce6e6));background:var(--card,#fff)}
-      .deepAdminStep h4{margin:0 0 8px;color:var(--accent,#0f9f9a);font-size:1rem}
+      .deepAdminIntro{background:color-mix(in srgb,var(--accent,#15579D) 8%,var(--card,#fff))}
+      .deepAdminStep{padding:16px;border-radius:16px;border:1px solid color-mix(in srgb,var(--accent,#15579D) 18%,var(--line,#dce6e6));background:var(--card,#fff)}
+      .deepAdminStep h4{margin:0 0 8px;color:var(--accent,#15579D);font-size:1rem}
       .deepAdminStep p{margin:8px 0}
       .deepAdminData{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin:10px 0}
-      .deepAdminData>div{padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--accent,#0f9f9a) 5%,var(--card,#fff));border:1px solid color-mix(in srgb,var(--accent,#0f9f9a) 13%,transparent)}
+      .deepAdminData>div{padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--accent,#15579D) 5%,var(--card,#fff));border:1px solid color-mix(in srgb,var(--accent,#15579D) 13%,transparent)}
       .deepAdminData span,.deepAdminData b{display:block}.deepAdminData span{font-size:.75rem;opacity:.68}.deepAdminData b{margin-top:3px}
       .deepAdminFormula{overflow:auto;padding:10px 4px;text-align:center}
       .deepAdminNote{background:#fff7e8;border:1px solid #efc06f;color:#6d4b0d}
-      .deepAdminSay{background:color-mix(in srgb,var(--accent,#0f9f9a) 10%,var(--card,#fff));border-left:5px solid var(--accent,#0f9f9a)}
+      .deepAdminSay{background:color-mix(in srgb,var(--accent,#15579D) 10%,var(--card,#fff));border-left:5px solid var(--accent,#15579D)}
       .deepAdminError{background:#fff0ed;border:1px solid #f0b6aa;color:#7b3024}
       .deepAdminCheck{background:#edf9f2;border:1px solid #a8dbc0;color:#245c3d}
       html.physicsDeepAdmin .modelEvaluationCard>.modelAdminSolution{display:none!important}

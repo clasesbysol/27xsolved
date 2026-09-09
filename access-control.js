@@ -106,7 +106,7 @@
       .et27-access-notice{margin:18px 0;padding:14px 16px;border:1px solid var(--border,#d7e5e4);border-radius:14px;background:var(--surface2,#f5f9f8);line-height:1.5}
       .et27-access-notice b{display:block;margin-bottom:4px}
       .et27-student-answer{margin-top:14px;border:1px solid var(--line,#d7e5e4);border-radius:16px;background:var(--panel,#fff);overflow:hidden}
-      .et27-student-answer>summary{cursor:pointer;padding:13px 15px;font-weight:900;background:color-mix(in srgb,var(--accent,#0f9f9a) 8%,transparent)}
+      .et27-student-answer>summary{cursor:pointer;padding:13px 15px;font-weight:900;background:color-mix(in srgb,var(--accent,#15579D) 8%,transparent)}
       .et27-student-answer-body{padding:14px;display:grid;gap:10px}
       .et27-answer-step{padding:12px;border:1px solid var(--line,#d7e5e4);border-radius:12px}
       .et27-answer-step h4{margin:0 0 7px}.et27-answer-step ul{margin:6px 0;padding-left:20px}

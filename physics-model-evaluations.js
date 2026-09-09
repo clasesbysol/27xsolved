@@ -471,16 +471,16 @@
     style.textContent=`
       .modelEvaluations{margin-top:42px;padding-top:8px}
       .modelEvalIntro{margin:0 0 22px}
-      .modelEvalGroup{margin:28px 0 46px;padding:22px;border:1px solid color-mix(in srgb,var(--accent,#0f9f9a) 22%,var(--line,#d9e5e4));border-radius:24px;background:color-mix(in srgb,var(--accent,#0f9f9a) 2%,var(--card,#fff))}
+      .modelEvalGroup{margin:28px 0 46px;padding:22px;border:1px solid color-mix(in srgb,var(--accent,#15579D) 22%,var(--line,#d9e5e4));border-radius:24px;background:color-mix(in srgb,var(--accent,#15579D) 2%,var(--card,#fff))}
       .modelEvalGroupHead{display:grid;gap:5px;margin-bottom:18px}
-      .modelEvalGroupHead small{font-weight:900;letter-spacing:.11em;color:var(--accent,#0f9f9a)}
+      .modelEvalGroupHead small{font-weight:900;letter-spacing:.11em;color:var(--accent,#15579D)}
       .modelEvalGroupHead h3{margin:0;font-size:1.45rem}
       .modelEvalGroupHead p{margin:0;opacity:.78}
       .modelEvalNote{padding:12px 14px;border-radius:14px;background:color-mix(in srgb,#f0a23a 12%,var(--card,#fff));border:1px solid color-mix(in srgb,#f0a23a 28%,transparent);font-size:.92rem;margin:12px 0 18px}
-      .modelStudentAnswer{margin:14px 0 0;padding:13px 15px;border-radius:14px;background:color-mix(in srgb,var(--accent,#0f9f9a) 10%,var(--card,#fff));border:1px solid color-mix(in srgb,var(--accent,#0f9f9a) 24%,transparent);line-height:1.55}
-      .modelStudentAnswer b{display:block;font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent,#0f9f9a);margin-bottom:5px}
+      .modelStudentAnswer{margin:14px 0 0;padding:13px 15px;border-radius:14px;background:color-mix(in srgb,var(--accent,#15579D) 10%,var(--card,#fff));border:1px solid color-mix(in srgb,var(--accent,#15579D) 24%,transparent);line-height:1.55}
+      .modelStudentAnswer b{display:block;font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent,#15579D);margin-bottom:5px}
       .modelEvaluations .exerciseCard{margin-bottom:16px}
-      .modelEvalSourceTag{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:900;padding:5px 9px;border-radius:999px;background:color-mix(in srgb,var(--accent,#0f9f9a) 8%,var(--card,#fff));border:1px solid color-mix(in srgb,var(--accent,#0f9f9a) 20%,transparent);margin-bottom:8px}
+      .modelEvalSourceTag{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:900;padding:5px 9px;border-radius:999px;background:color-mix(in srgb,var(--accent,#15579D) 8%,var(--card,#fff));border:1px solid color-mix(in srgb,var(--accent,#15579D) 20%,transparent);margin-bottom:8px}
       @media(max-width:700px){.modelEvalGroup{padding:14px;border-radius:19px}.modelEvalGroupHead h3{font-size:1.25rem}}
     `;
     document.head.appendChild(style);

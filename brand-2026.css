@@ -1,17 +1,24 @@
 /* 27xSOLved · identidad visual basada en el logo sol + química (2026-09). */
 :root{
-  --brand-accent:#12579f;
-  --brand-accent-strong:#174578;
-  --brand-accent-soft:#e8f1fb;
-  --brand-sun:#fdca14;
+  --accent:#15579D;
+  --brand-accent:#15579D;
+  --brand-accent-strong:#15579D;
+  --brand-accent-soft:#CDE1F5;
+  --brand-sun:#FCC717;
   --brand-sun-soft:#fff7d1;
-  --brand-orange:#f38518;
-  --bg:#f6f9fd;
+  --brand-orange:#F38C1B;
+  --bg:#ffffff;
   --surface:#ffffff;
   --surface2:#eef5fb;
   --text:#18324a;
   --muted:#61778d;
-  --border:#d8e5f0;
+  --border:#CDE1F5;
+  --panel:var(--surface);
+  --panel-soft:var(--surface2);
+  --surface-soft:var(--surface2);
+  --line:var(--border);
+  --accent-strong:var(--brand-accent-strong);
+  --sun:var(--brand-sun);
   --shadow:0 12px 34px rgba(18,87,159,.09);
 }
 :root[data-theme="dark"]{
@@ -22,28 +29,30 @@
   --muted:#9db0c1;
   --border:#2a4054;
   --brand-accent-soft:#132d48;
+  --brand-accent-strong:#90B1D3;
   --brand-sun-soft:#382f12;
   --shadow:0 18px 46px rgba(0,0,0,.32);
 }
 
 body::before{
-  background-image:
-    radial-gradient(circle at 18px 18px,rgba(253,202,20,.18) 0 2.5px,transparent 3px),
-    radial-gradient(circle at 18px 18px,transparent 0 7px,rgba(18,87,159,.08) 7.5px 8.5px,transparent 9px)!important;
+  content:none;
 }
 
 .brand img,
 .productBrand img,
 .homeGreeting img,
 .ui-home-hero img{
-  border-radius:50%;
-  object-fit:cover;
+  border-radius:8px;
+  object-fit:contain;
+  flex-shrink:0;
   background:#fff;
 }
 .productBrand img{
   box-shadow:0 0 0 1px color-mix(in srgb,var(--brand-accent) 28%,var(--border)),0 5px 14px rgba(18,87,159,.08);
 }
 .productBrand b span{color:var(--brand-accent)}
+.ui-home-hero{border-top:3px solid var(--brand-sun)}
+.ui-home-hero h1{color:var(--text)}
 .ui-event-delivery{background:var(--brand-orange)}
 .ui-independent-note,
 .independentNote{border-left-color:var(--brand-sun)!important}

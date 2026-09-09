@@ -3,14 +3,10 @@
 (() => {
   'use strict';
 
-  const BRAND = '#0f9f9a';
-  const BRAND_STRONG = '#087e79';
-  const SUN = '#f2b84b';
+  const BRAND = '#15579D';
   const SCHEDULE_KEY = '27xsolved-weekly-schedule-v1';
   const CHECKLIST_KEY = '27xsolved-checklist-v1';
   const USAGE_KEY = '27xsolved-usage-v1';
-  const APP_ACCENT_KEY = 'cbc-accent';
-  const APP_STORED_ACCENT_KEY = '27xsolved-accent';
   const SUBJECTS = [
     { id: 'chemistry', view: 'chemistry', letter: 'Q', name: 'Química General', meta: 'Unidades, teoría y práctica' },
     { id: 'physics', view: 'physics', letter: 'F', name: 'Física Aplicada', meta: 'Teoría, fórmulas y ejercicios' }
@@ -36,14 +32,6 @@
   const appStore = (name, fallback) => readJSON(`27xsolved-${name}`, fallback);
   const uid = () => crypto.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
-  try {
-    localStorage.setItem(APP_ACCENT_KEY, BRAND);
-    localStorage.setItem(APP_STORED_ACCENT_KEY, JSON.stringify(BRAND));
-  } catch (_) {}
-  document.documentElement.style.setProperty('--accent', BRAND);
-  document.documentElement.style.setProperty('--brand-accent', BRAND);
-  document.documentElement.style.setProperty('--brand-accent-strong', BRAND_STRONG);
-  document.documentElement.style.setProperty('--brand-sun', SUN);
 
   function setText(node, value) {
     if (node && node.textContent !== value) node.textContent = value;
@@ -263,7 +251,7 @@
       hero.classList.add('ui-home-hero');
       hero.innerHTML = `
         <div class="ui-hero-copy"><span class="eyebrow">Tu espacio académico</span><h1>Mesa de estudio</h1><p>Organizá la semana y retomá tus materias desde un mismo lugar.</p><div class="ui-hero-actions"><button type="button" class="primary" data-ui-nav="desk">Abrir mesa</button><span>${deskCount ? `${deskCount} recurso${deskCount === 1 ? '' : 's'} a mano` : 'Tu mesa está lista para usar'}</span></div></div>
-        <img src="./assets/brand/27xsolved-logo.webp" alt="Logo de 27xSOLved">`;
+        <img src="./assets/brand/27xsolved-logo.jpg?v=1.1.17" alt="Logo de 27xSOLved">`;
     }
 
     const courseSection = $('section.homeSection', content);
@@ -371,15 +359,13 @@
       intro?.after(grid);
       const info = accountInfo();
       grid.insertAdjacentHTML('beforeend', `
-        <section class="ui-settings-card ui-profile-settings"><div class="ui-settings-heading"><div><h2>Perfil</h2><p>Tu cuenta y el alcance del guardado.</p></div></div><div class="ui-profile-panel"><img src="./assets/brand/icon-192.png" alt="Logo de 27xSOLved"><div><strong>${esc(info.name)}</strong><span>${esc(info.email)}</span><small>${esc(info.status)}</small></div></div></section>
+        <section class="ui-settings-card ui-profile-settings"><div class="ui-settings-heading"><div><h2>Perfil</h2><p>Tu cuenta y el alcance del guardado.</p></div></div><div class="ui-profile-panel"><img src="./assets/brand/27xsolved-logo-small.jpg?v=1.1.17" alt="Logo de 27xSOLved"><div><strong>${esc(info.name)}</strong><span>${esc(info.email)}</span><small>${esc(info.status)}</small></div></div></section>
         <section class="ui-settings-card ui-usage-settings"><div class="ui-settings-heading"><div><h2>Tiempo de uso</h2><p>Actividad de estudio de los últimos siete días.</p></div></div><div class="ui-usage-panel">${usageMarkup()}</div></section>`);
       $$('.settingsCard', content).filter(card => !card.closest('.ui-settings-grid')).forEach(card => grid.append(card));
     }
 
-    const accentField = $$('fieldset', appearance).find(fieldset => /color de acento/i.test(fieldset.textContent || ''));
-    if (accentField) accentField.remove();
     if (!$('.ui-brand-color-note', appearance)) {
-      appearance.insertAdjacentHTML('beforeend', `<div class="ui-brand-color-note"><i></i><span><b>Color de marca</b><small>El turquesa de las moléculas del logo identifica acciones y estados activos.</small></span></div>`);
+      appearance.insertAdjacentHTML('beforeend', `<div class="ui-brand-color-note"><i></i><span><b>Color de marca</b><small>El azul de las moléculas del logo identifica acciones y estados activos.</small></span></div>`);
     }
     setText($('p', appearance), 'Elegí claro, oscuro o sistema. La identidad de 27xSOLved conserva el color del logo.');
     renderUsagePanel(content);
@@ -407,9 +393,6 @@
   }
 
   function patchGlobal() {
-    document.documentElement.style.setProperty('--accent', BRAND);
-    const meta = $('meta[name="theme-color"]');
-    if (meta && document.documentElement.dataset.theme !== 'dark' && meta.getAttribute('content') !== BRAND) meta.setAttribute('content', BRAND);
     $$('[data-favorite]').forEach(button => button.remove());
     patchSidebar();
     patchTopbar();
@@ -503,11 +486,6 @@
       writeJSON(CHECKLIST_KEY, checklistData().filter(item => item.id !== removeTask.dataset.uiCheckDelete));
       renderHomeSecondary();
       return;
-    }
-    const colorChoice = event.target.closest('[data-color]');
-    if (colorChoice) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
     }
   }, true);
 

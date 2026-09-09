@@ -445,20 +445,20 @@
     style.id='adminPhysicsGuideStyles';
     style.textContent=`
       html.adminPhysicsGuide .exerciseCard>.solutionCard{display:none!important}
-      .adminPhysicsSolution{margin:18px 0 0;border:2px solid color-mix(in srgb,var(--accent,#0f9f9a) 52%,#ffffff);border-radius:20px;overflow:hidden;background:color-mix(in srgb,var(--accent,#0f9f9a) 4%,var(--card,#fff));box-shadow:0 10px 30px rgba(0,0,0,.04)}
-      .adminPhysicsSolution>summary{cursor:pointer;list-style:none;padding:16px 18px;font-weight:900;display:flex;gap:10px;align-items:center;background:color-mix(in srgb,var(--accent,#0f9f9a) 10%,var(--card,#fff));border-bottom:1px solid color-mix(in srgb,var(--accent,#0f9f9a) 20%,transparent)}
+      .adminPhysicsSolution{margin:18px 0 0;border:2px solid color-mix(in srgb,var(--accent,#15579D) 52%,#ffffff);border-radius:20px;overflow:hidden;background:color-mix(in srgb,var(--accent,#15579D) 4%,var(--card,#fff));box-shadow:0 10px 30px rgba(0,0,0,.04)}
+      .adminPhysicsSolution>summary{cursor:pointer;list-style:none;padding:16px 18px;font-weight:900;display:flex;gap:10px;align-items:center;background:color-mix(in srgb,var(--accent,#15579D) 10%,var(--card,#fff));border-bottom:1px solid color-mix(in srgb,var(--accent,#15579D) 20%,transparent)}
       .adminPhysicsSolution>summary::-webkit-details-marker{display:none}
-      .adminPhysicsSolution>summary:before{content:'ADMIN';font-size:10px;letter-spacing:.12em;padding:4px 7px;border-radius:999px;background:var(--accent,#0f9f9a);color:white}
+      .adminPhysicsSolution>summary:before{content:'ADMIN';font-size:10px;letter-spacing:.12em;padding:4px 7px;border-radius:999px;background:var(--accent,#15579D);color:white}
       .adminGuideBody{padding:18px;display:grid;gap:14px}
       .adminIntro,.adminNote,.adminCheck,.adminSay{padding:14px 16px;border-radius:14px;line-height:1.55}
-      .adminIntro{background:color-mix(in srgb,var(--accent,#0f9f9a) 8%,transparent)}
+      .adminIntro{background:color-mix(in srgb,var(--accent,#15579D) 8%,transparent)}
       .adminNote{background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.28)}
       .adminCheck{background:rgba(34,197,94,.09);border:1px solid rgba(34,197,94,.22)}
       .adminSay{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.20)}
       .adminStep{padding:15px 16px;border:1px solid var(--line,#dceaea);border-radius:16px;background:var(--card,#fff)}
       .adminStep h4{margin:0 0 10px;font-size:15px}
       .adminStep p{margin:8px 0;line-height:1.6}
-      .adminFormula{margin:10px 0;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--accent,#0f9f9a) 5%,var(--bg,#fff));overflow-x:auto;text-align:center}
+      .adminFormula{margin:10px 0;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--accent,#15579D) 5%,var(--bg,#fff));overflow-x:auto;text-align:center}
       .adminFormula .katex-display{margin:.25em 0;overflow-x:auto;overflow-y:hidden}
       .adminData{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin:10px 0}
       .adminData>div{padding:10px 12px;border-radius:12px;border:1px solid var(--line,#dceaea);display:grid;gap:3px}

@@ -168,15 +168,15 @@
     s.id='eval11UxStyles';
     s.textContent=`
       .eval11Profiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:18px 0 6px}
-      .eval11Profile{margin:0;padding:14px;border-radius:18px;background:color-mix(in srgb,var(--accent,#0f9f9a) 4%,var(--card,#fff));border:1px solid color-mix(in srgb,var(--accent,#0f9f9a) 22%,transparent)}
+      .eval11Profile{margin:0;padding:14px;border-radius:18px;background:color-mix(in srgb,var(--accent,#15579D) 4%,var(--card,#fff));border:1px solid color-mix(in srgb,var(--accent,#15579D) 22%,transparent)}
       .eval11Profile svg{display:block;width:100%;height:auto;color:var(--text,#1f3035)}
       .eval11Profile svg text{fill:currentColor;font:700 12px Nunito,system-ui,sans-serif}
-      .eval11Profile svg .eval11Letter{font-size:22px;font-weight:900;fill:var(--accent,#0f9f9a)}
+      .eval11Profile svg .eval11Letter{font-size:22px;font-weight:900;fill:var(--accent,#15579D)}
       .eval11Profile figcaption{display:grid;gap:3px;margin-top:8px;font-size:.88rem;line-height:1.35}
-      .eval11Profile figcaption b{color:var(--accent,#0f9f9a)}
+      .eval11Profile figcaption b{color:var(--accent,#15579D)}
       .eval11Profile figcaption span{opacity:.76}
       .eval11Finals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:4px}
-      .eval11Finals span{display:block;padding:9px 10px;border-radius:11px;background:color-mix(in srgb,var(--accent,#0f9f9a) 6%,var(--card,#fff));text-align:center;font-weight:800}
+      .eval11Finals span{display:block;padding:9px 10px;border-radius:11px;background:color-mix(in srgb,var(--accent,#15579D) 6%,var(--card,#fff));text-align:center;font-weight:800}
       .eval11DeepBody .deepAdminStep{scroll-margin-top:90px}
       @media(max-width:760px){.eval11Profiles,.eval11Finals{grid-template-columns:1fr}.eval11Profile{padding:10px}}
     `;
