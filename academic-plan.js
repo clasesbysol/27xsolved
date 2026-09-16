@@ -13,7 +13,7 @@
   }
 
   function card(subject) {
-    const ready = subject.status === 'Disponible' || /cargada/i.test(subject.status || '');
+    const ready = subject.status === 'Disponible' || /cargad[oa]/i.test(subject.status || '');
     return `<a class="academic-subject-card ${ready ? 'is-ready' : 'is-skeleton'}" href="${esc(subject.href)}">
       <span class="academic-subject-mark">${esc(subject.letter)}</span>
       <span class="academic-subject-copy">
@@ -46,12 +46,12 @@
 
   function markup() {
     const years = catalog().years || [];
-    return `<section class="academic-plan-shell" data-academic-plan data-plan-version="1.1.7">
+    return `<section class="academic-plan-shell" data-academic-plan data-plan-version="1.1.19">
       <nav class="academic-year-jump" aria-label="Ir a un año">
         ${years.map(year => `<a href="#anio-${year.year}">${year.year}.º</a>`).join('')}
       </nav>
       <div class="academic-plan-years">${years.map(yearMarkup).join('')}</div>
-      <aside class="academic-plan-note"><b>Esqueleto académico actualizado</b><p>Cada materia nueva abre con Resumen, Mapa mental, Ejercicios, Parciales y hoja de fórmulas. Versión 1.1.7.</p></aside>
+      <aside class="academic-plan-note"><b>Esqueleto académico actualizado</b><p>Cada materia se organiza según su contenido: resúmenes, práctica, evaluaciones y recursos de estudio. Versión 1.1.19.</p></aside>
     </section>`;
   }
 
@@ -79,7 +79,7 @@
     if (!intro) return;
 
     setText($('h1', intro), 'Plan y materias');
-    setText($('.eyebrow', intro), '4.º · 5.º · 6.º año');
+    setText($('.eyebrow', intro), '1.º · 4.º · 5.º · 6.º año');
     setText($('p', intro), 'Entrá por año y después por materia. Los TP y laboratorios quedan separados para encontrarlos rápido.');
 
     const nativeSubjects = $('.subjects', content);
@@ -132,5 +132,5 @@
 })();
 
 function planPage() {
-  return `<section class="pageIntro"><span class="eyebrow">4.º · 5.º · 6.º año</span><h1>Plan y materias</h1><p>Entrá por año y después por materia. Los TP y laboratorios quedan separados para encontrarlos rápido.</p></section>${window.ET27AcademicPlanMarkup ? window.ET27AcademicPlanMarkup() : ''}`;
+  return `<section class="pageIntro"><span class="eyebrow">1.º · 4.º · 5.º · 6.º año</span><h1>Plan y materias</h1><p>Entrá por año y después por materia. Los TP y laboratorios quedan separados para encontrarlos rápido.</p></section>${window.ET27AcademicPlanMarkup ? window.ET27AcademicPlanMarkup() : ''}`;
 }
