@@ -13,13 +13,16 @@
   }
 
   function card(subject) {
-    const ready = subject.status === 'Disponible' || /cargad[oa]/i.test(subject.status || '');
-    return `<a class="academic-subject-card ${ready ? 'is-ready' : 'is-skeleton'}" href="${esc(subject.href)}">
+    const math1 = subject.id === 'matematica-1';
+    const href = math1 ? './matematica-1-inicio.html' : subject.href;
+    const status = math1 ? 'Exámenes 1 y 2 cargados' : (subject.status || 'Esqueleto listo');
+    const ready = math1 || subject.status === 'Disponible' || /cargad[oa]/i.test(subject.status || '');
+    return `<a class="academic-subject-card ${ready ? 'is-ready' : 'is-skeleton'}" href="${esc(href)}">
       <span class="academic-subject-mark">${esc(subject.letter)}</span>
       <span class="academic-subject-copy">
         <small>${esc(subject.kind)}</small>
         <strong>${esc(subject.name)}</strong>
-        <em>${esc(subject.status || 'Esqueleto listo')}</em>
+        <em>${esc(status)}</em>
       </span>
       <b aria-hidden="true">›</b>
     </a>`;
@@ -46,12 +49,12 @@
 
   function markup() {
     const years = catalog().years || [];
-    return `<section class="academic-plan-shell" data-academic-plan data-plan-version="1.1.19">
+    return `<section class="academic-plan-shell" data-academic-plan data-plan-version="1.1.21">
       <nav class="academic-year-jump" aria-label="Ir a un año">
         ${years.map(year => `<a href="#anio-${year.year}">${year.year}.º</a>`).join('')}
       </nav>
       <div class="academic-plan-years">${years.map(yearMarkup).join('')}</div>
-      <aside class="academic-plan-note"><b>Esqueleto académico actualizado</b><p>Cada materia se organiza según su contenido: resúmenes, práctica, evaluaciones y recursos de estudio. Versión 1.1.19.</p></aside>
+      <aside class="academic-plan-note"><b>Esqueleto académico actualizado</b><p>Cada materia se organiza según su contenido: resúmenes, práctica, evaluaciones y recursos de estudio. Versión 1.1.21.</p></aside>
     </section>`;
   }
 
