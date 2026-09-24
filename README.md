@@ -15,7 +15,8 @@
 - Índice lateral con las 13 unidades.
 - Paleta turquesa sólida, sin degradados, con selector de color personalizado.
 - Panel **Accesos** visible únicamente al administrador.
-- Gestión por mail: agregar alumno, elegir unidad máxima y suspender/reactivar.
+- Gestión por mail: buscar alumno → año → materia → nivel (sin acceso, solo teórica, teórica + evaluaciones o materia completa), duración y suspender/reactivar. Lógica en `admin-access.js`; la aplicación de permisos en cada página está en `access-control.js`.
+- Química: el nivel "teórica" habilita los capítulos cargados al momento de guardar. Si se agregan capítulos nuevos, volver a guardar el acceso del alumno.
 - Preparado para Supabase Auth + Google y seguridad RLS.
 - Sin sincronización de progreso, favoritos o resaltados para alumnos: sólo persisten localmente preferencias visuales y la sesión de acceso.
 

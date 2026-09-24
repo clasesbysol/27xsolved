@@ -1,5 +1,6 @@
 // 27xSOLved · acceso unificado por materia.
-// Modelo: materia completa + respuestas + evaluaciones.
+// Niveles por materia: none · theory (solo teórica) · theory_eval (teórica + evaluaciones) · full (completa).
+// Ver admin-access.js para la convención de filas en access_grants.
 (function(){
   'use strict';
 
@@ -9,7 +10,14 @@
     'fisica-aplicada-4':'physics_applied'
   };
   const REVERSE={chemistry:'quimica-general-4',physics_applied:'fisica-aplicada-4'};
+  const PAGE_SUBJECTS={
+    'matematica-1-inicio.html':'matematica-1',
+    'matematica-1.html':'matematica-1',
+    'matematica-1-examen-1.html':'matematica-1'
+  };
   let state={authenticated:false,admin:false,active:false,email:'',profile:null,grants:[],error:null};
+  let loaded=false;
+  const pageFile=href=>{try{return new URL(href,location.href).pathname.split('/').pop()}catch(_){return''}};
 
   function canonicalSubject(id){return ALIASES[id]||id||''}
   function catalogSubjectId(subject){return REVERSE[subject]||subject||''}
@@ -66,21 +74,18 @@
     const subject=canonicalSubject(id);
     return state.grants.filter(g=>g.subject===subject);
   }
-  function hasSubject(id){
-    if(state.admin)return true;
-    if(!state.active)return false;
-    return subjectGrants(id).some(g=>g.grant_type==='unit'&&g.grant_key==='*');
+  function level(id){
+    if(state.admin)return'full';
+    if(!state.active)return'none';
+    const rows=subjectGrants(id);
+    if(!rows.length)return'none';
+    if(rows.some(g=>g.grant_type==='unit'&&g.grant_key==='*'))return'full';
+    return rows.some(g=>g.grant_type==='evaluation')?'theory_eval':'theory';
   }
-  function hasAnswers(id){
-    if(state.admin)return true;
-    if(!state.active)return false;
-    return subjectGrants(id).some(g=>g.grant_type==='resource'&&g.grant_key==='answers');
-  }
-  function hasEvaluations(id){
-    if(state.admin)return true;
-    if(!state.active)return false;
-    return subjectGrants(id).some(g=>g.grant_type==='evaluation'&&g.grant_key==='*');
-  }
+  const hasSubject=id=>level(id)!=='none';
+  const hasPractice=id=>level(id)==='full';
+  const hasAnswers=id=>level(id)==='full';
+  const hasEvaluations=id=>level(id)==='full'||level(id)==='theory_eval';
 
   function subjectFromHref(href){
     try{
@@ -90,6 +95,7 @@
       const view=url.searchParams.get('view');
       if(view==='chemistry')return'quimica-general-4';
       if(view==='physics')return'fisica-aplicada-4';
+      return PAGE_SUBJECTS[pageFile(url.href)]||'';
     }catch(_){ }
     return'';
   }
@@ -161,8 +167,34 @@
     }
   }
 
+  function toggleSection(selector,allowed){
+    document.querySelectorAll(selector).forEach(node=>{if(node.hidden!==!allowed)node.hidden=!allowed});
+    const id=selector.startsWith('#')?selector:'';
+    if(id)document.querySelectorAll(`a[href="${id}"]`).forEach(a=>{if(a.hidden!==!allowed)a.hidden=!allowed});
+  }
+
+  function lockWholePage(subjectId){
+    if(document.body.dataset.et27Locked==='1')return;
+    const subject=catalogSubjects().find(s=>s.id===subjectId);
+    const name=subject?.name||'esta materia';
+    const message=state.authenticated
+      ?`Tu cuenta no tiene acceso activo a ${name}. El administrador puede habilitártela desde el Panel de control.`
+      :`Para abrir ${name}, ingresá con tu cuenta de Google desde el inicio y usá una cuenta con acceso habilitado.`;
+    document.body.dataset.et27Locked='1';
+    document.body.innerHTML=`<main class="et27-locked-page"><section class="et27-locked-card"><small>27xSOLved · acceso</small><h1>${escapeHtml(name)}</h1><p>${escapeHtml(message)}</p><a href="./?view=subjects">← Volver a materias</a></section></main>`;
+  }
+
+  // Páginas propias de Matemática de 1.º: teoría = todo salvo práctica, desafío y modelos de examen.
+  function patchMathPage(subjectId){
+    if(!hasSubject(subjectId))return lockWholePage(subjectId);
+    toggleSection('#practica',hasPractice(subjectId));
+    toggleSection('#desafio',hasPractice(subjectId));
+    toggleSection('#modelos',hasEvaluations(subjectId));
+  }
+
   function patchGenericSections(subjectId){
     if(!hasSubject(subjectId))return lockGenericPage(subjectId);
+    toggleSection('#ejercicios',hasPractice(subjectId));
     const evalAllowed=hasEvaluations(subjectId);
     const evalSection=document.querySelector('#parciales');
     if(evalSection)evalSection.hidden=!evalAllowed;
@@ -209,9 +241,12 @@
 
   function applyDomPermissions(){
     addStyles();
+    if(!loaded)return; // no bloquear nada hasta saber quién es el usuario
     patchAcademicPlan();
     const genericId=new URLSearchParams(location.search).get('subject')||'';
     if(genericId&&document.getElementById('subjectApp'))patchGenericSections(genericId);
+    const pageSubject=PAGE_SUBJECTS[pageFile(location.href)];
+    if(pageSubject)patchMathPage(pageSubject);
     patchPhysics();
   }
 
@@ -259,6 +294,8 @@
   }
 
   const ready=load().finally(()=>{
+    loaded=true;
+    applyDomPermissions();
     document.dispatchEvent(new CustomEvent('et27-access-ready',{detail:{authenticated:state.authenticated,admin:state.admin,active:state.active}}));
   });
 
@@ -267,7 +304,9 @@
     get state(){return state},
     canonicalSubject,
     catalogSubjectId,
+    level,
     hasSubject,
+    hasPractice,
     hasAnswers,
     hasEvaluations,
     refresh:load
