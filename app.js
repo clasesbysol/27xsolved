@@ -58,7 +58,7 @@ async function loadOwn(){
 }
 function currentAccess(){if(isAdmin())return true;if(!profile||!profile.active)return false;const now=Date.now(),s=new Date(profile.access_starts_at).getTime(),e=profile.access_expires_at?new Date(profile.access_expires_at).getTime():Infinity;return now>=s&&now<=e}
 function grantsFor(u,subject='chemistry'){return myGrants.filter(g=>g.subject===subject&&Number(g.unit_no)===u)}
-function chemistryPractice(){return isAdmin()||(currentAccess()&&myGrants.some(g=>g.subject==='chemistry'&&g.grant_type==='unit'&&g.grant_key==='*'))}
+function chemistryPractice(){return isAdmin()||(currentAccess()&&myGrants.some(g=>g.subject==='chemistry'&&g.grant_type==='unit'&&g.grant_key==='*')&&!myGrants.some(g=>g.subject==='chemistry'&&g.grant_type==='resource'&&g.grant_key==='theory'))}
 function canUnit(u){return u===1||isAdmin()||(currentAccess()&&grantsFor(u).length>0)}
 function canSection(u,s){if(typeof hiddenSection==='function'&&hiddenSection(s))return false;if(u===1||isAdmin())return true;if(!currentAccess())return false;const gs=grantsFor(u);return gs.some(g=>g.grant_type==='unit'&&g.grant_key==='*')||gs.some(g=>g.grant_type===s.type&&g.grant_key===s.key)}
 async function google(){if(!sb)return;const {error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:`${location.origin}${location.pathname}`}});if(error){msg=error.message;render()}}

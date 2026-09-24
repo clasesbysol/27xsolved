@@ -2,11 +2,14 @@
 // Flujo: email → año → materia → nivel (sin acceso / teórica / teórica + evaluaciones / completa).
 // Usa las tablas existentes access_profiles y access_grants; no requiere cambios en Supabase.
 //
-// Convención en access_grants (unit_no 1 salvo que se indique):
-//   completa            → unit/* (Química: unidades 1–13) + resource/answers + evaluation/*
-//   teórica             → guide/theory (+ Física: resource/theory, resource/methods;
-//                                       + Química: chapter/<key> de cada capítulo cargado)
-//   teórica + evaluac.  → lo anterior + evaluation/* (+ Química: secciones evaluation/partial)
+// Convención en access_grants (unit_no 1 salvo que se indique). Sólo usa tipos que la base acepta
+// desde siempre (unit, resource, evaluation):
+//   completa            → unit/* + resource/answers + evaluation/*
+//   teórica             → resource/theory  (Física: + resource/methods; Química: + unit/* de 1–13,
+//                         porque la base sólo entrega capítulos con unit/*; las respuestas siguen
+//                         protegidas por resource/answers y la app oculta los ejercicios)
+//   teórica + evaluac.  → lo anterior + evaluation/*
+// Regla de lectura: resource/theory marca teórica; si no está y hay unit/* es completa.
 (function(){
   'use strict';
 
@@ -18,8 +21,6 @@
     {id:'theory_eval',label:'Teórica + evaluaciones',short:'Teórica + eval.'},
     {id:'full',label:'Materia completa',short:'Completa'}
   ];
-  const THEORY_TYPES_EXCLUDED=['evaluation','partial','practice','guide'];
-  const EVAL_TYPES=['evaluation','partial'];
 
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const dbSubject=id=>ALIASES[id]||id;
@@ -41,7 +42,6 @@
     duration:'1m',customDate:'',
     users:[],grants:[],listLoaded:false,listError:'',
     busy:false,loadingEmail:false,msg:'',msgType:'info',
-    chemSections:null
   };
 
   // ---------- Supabase REST ----------
@@ -77,7 +77,8 @@
   // ---------- Niveles <-> permisos ----------
   function levelFromRows(rows){
     if(!rows.length)return 'none';
-    if(rows.some(g=>g.grant_type==='unit'&&g.grant_key==='*'))return 'full';
+    const theory=rows.some(g=>g.grant_type==='resource'&&g.grant_key==='theory');
+    if(!theory&&rows.some(g=>g.grant_type==='unit'&&g.grant_key==='*'))return 'full';
     return rows.some(g=>g.grant_type==='evaluation')?'theory_eval':'theory';
   }
   function levelsFromGrants(grants){
@@ -85,32 +86,20 @@
     allSubjects().forEach(s=>{out[s.db]=levelFromRows(grants.filter(g=>g.subject===s.db))});
     return out;
   }
-  async function chemistrySections(){
-    if(st.chemSections)return st.chemSections;
-    const rows=await api('course_sections?select=unit_no,section_type,section_key&subject=eq.chemistry');
-    st.chemSections=Array.isArray(rows)?rows:[];
-    return st.chemSections;
-  }
-  async function rowsFor(db,level){
+  function rowsFor(db,level){
     const out=[];
     const add=(unit_no,grant_type,grant_key)=>out.push({subject:db,unit_no,grant_type,grant_key});
     if(level==='none')return out;
+    const units=db==='chemistry'?[...Array(13)].map((_,i)=>i+1):[1];
     if(level==='full'){
-      (db==='chemistry'?[...Array(13)].map((_,i)=>i+1):[1]).forEach(u=>add(u,'unit','*'));
+      units.forEach(u=>add(u,'unit','*'));
       add(1,'resource','answers');add(1,'evaluation','*');
       return out;
     }
-    add(1,'guide','theory');
+    add(1,'resource','theory');
     if(level==='theory_eval')add(1,'evaluation','*');
-    if(db==='physics_applied'){add(1,'resource','theory');add(1,'resource','methods')}
-    if(db==='chemistry'){
-      const sections=await chemistrySections();
-      sections.forEach(s=>{
-        const n=Number(s.unit_no);
-        if(!THEORY_TYPES_EXCLUDED.includes(s.section_type))add(n,s.section_type,s.section_key);
-        else if(level==='theory_eval'&&EVAL_TYPES.includes(s.section_type))add(n,s.section_type,s.section_key);
-      });
-    }
+    if(db==='physics_applied')add(1,'resource','methods');
+    if(db==='chemistry')units.forEach(u=>add(u,'unit','*'));
     return out;
   }
   const key=g=>`${g.subject}|${Number(g.unit_no)}|${g.grant_type}|${g.grant_key}`;
@@ -157,7 +146,7 @@
   async function loadEmail(email){
     email=String(email||'').trim().toLowerCase();
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){setMsg('Escribí un email válido.','error');return}
-    st.email=email;st.loadingEmail=true;st.msg='';draw();
+    st.email=email;st.loadingEmail=true;st.msg='';st.openYear=null;st.openSubject=null;draw();
     try{
       const [profiles,grants]=await Promise.all([
         api(`access_profiles?select=email,active,role,access_starts_at,access_expires_at&email=eq.${enc(email)}`),
@@ -165,6 +154,39 @@
       ]);
       st.profile=(profiles||[])[0]||null;
       st.levels=levelsFromGrants(grants||[]);
+      st.original={...st.levels};
+      st.loadedEmail=email;
+      st.duration=st.profile?'keep':'1m';st.customDate='';
+      if(!st.profile)setMsg('Alumno nuevo: elegí materias y guardá.','info',true);
+    }catch(e){setMsg(`No pude cargar ese alumno: ${e.message}`,'error',true)}
+    st.loadingEmail=false;draw();
+  }
+  async function save(){
+    const email=st.loadedEmail;
+    if(!email||st.busy)return;
+    const changed=allSubjects().filter(s=>(st.levels[s.db]||'none')!==(st.original[s.db]||'none'));
+    const durationChanged=!(st.profile&&st.duration==='keep');
+    if(!changed.length&&!durationChanged){setMsg('No hay cambios para guardar.','info');return}
+    st.busy=true;setMsg('Guardando…','info');
+    try{
+      const starts=st.duration==='keep'&&st.profile?.access_starts_at?st.profile.access_starts_at:new Date().toISOString();
+      const expires=expiryFor(st.profile);
+      await api('access_profiles?on_conflict=email',{
+        method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},
+        body:JSON.stringify({email,active:true,access_starts_at:starts,access_expires_at:expires})
+      });
+      if(changed.length){
+        const dbs=changed.map(s=>s.db);
+        const wanted=[...new Map(changed.flatMap(s=>rowsFor(s.db,st.levels[s.db]||'none')).map(r=>[key(r),{email,...r}])).values()];
+        const current=await api(`access_grants?select=subject,unit_no,grant_type,grant_key&email=eq.${enc(email)}&subject=${enc(inList(dbs))}`)||[];
+        const currentKeys=new Set(current.map(key)),wantedKeys=new Set(wanted.map(key));
+        const toInsert=wanted.filter(r=>!currentKeys.has(key(r)));
+        const toDelete=current.filter(r=>!wantedKeys.has(key(r)));
+        if(toInsert.length)await api('access_grants',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify(toInsert)});
+        await Promise.all(toDelete.map(r=>api(`access_grants?email=eq.${enc(email)}&subject=eq.${enc(r.subject)}&unit_no=eq.${Number(r.unit_no)}&grant_type=eq.${enc(r.grant_type)}&grant_key=eq.${enc(r.grant_key)}`,{method:'DELETE',headers:{Prefer:'return=minimal'}})));
+        const saved=await api(`access_grants?select=subject,unit_no,grant_type,grant_key&email=eq.${enc(email)}&subject=${enc(inList(dbs))}`)||[];
+        if(wanted.map(key).sort().join()!==saved.map(key).sort().join())throw new Error('Los permisos guardados no coinciden con lo elegido. Volvé a guardar.');
+      }
       st.original={...st.levels};
       st.loadedEmail=email;
       st.duration=st.profile?'keep':'1m';st.customDate='';

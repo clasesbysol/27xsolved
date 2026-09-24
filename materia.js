@@ -158,7 +158,7 @@
     app.className = '';
     app.innerHTML = `<div class="subject-app">
       <header class="subject-topbar">
-        <a class="subject-brand" href="./"><img src="./assets/brand/27xsolved-logo-small.jpg?v=1.1.24" alt="27xSOLved"><b>27x<span>SOLved</span></b></a>
+        <a class="subject-brand" href="./"><img src="./assets/brand/27xsolved-logo-small.jpg?v=1.1.25" alt="27xSOLved"><b>27x<span>SOLved</span></b></a>
         <a class="back-plan" href="./?view=subjects">← Plan y materias</a>
         <label class="subject-search">⌕<input id="subjectSearch" type="search" placeholder="Buscar dentro de la materia…"></label>
       </header>

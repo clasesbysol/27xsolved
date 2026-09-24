@@ -1,6 +1,6 @@
 // 27xSOLved · acceso unificado por materia.
 // Niveles por materia: none · theory (solo teórica) · theory_eval (teórica + evaluaciones) · full (completa).
-// Ver admin-access.js para la convención de filas en access_grants.
+// Ver admin-access.js para la convención de filas en access_grants (resource/theory = nivel teórico).
 (function(){
   'use strict';
 
@@ -79,7 +79,8 @@
     if(!state.active)return'none';
     const rows=subjectGrants(id);
     if(!rows.length)return'none';
-    if(rows.some(g=>g.grant_type==='unit'&&g.grant_key==='*'))return'full';
+    const theory=rows.some(g=>g.grant_type==='resource'&&g.grant_key==='theory');
+    if(!theory&&rows.some(g=>g.grant_type==='unit'&&g.grant_key==='*'))return'full';
     return rows.some(g=>g.grant_type==='evaluation')?'theory_eval':'theory';
   }
   const hasSubject=id=>level(id)!=='none';
