@@ -251,7 +251,7 @@
       hero.classList.add('ui-home-hero');
       hero.innerHTML = `
         <div class="ui-hero-copy"><span class="eyebrow">Tu espacio académico</span><h1>Mesa de estudio</h1><p>Organizá la semana y retomá tus materias desde un mismo lugar.</p><div class="ui-hero-actions"><button type="button" class="primary" data-ui-nav="desk">Abrir mesa</button><span>${deskCount ? `${deskCount} recurso${deskCount === 1 ? '' : 's'} a mano` : 'Tu mesa está lista para usar'}</span></div></div>
-        <img src="./assets/brand/27xsolved-logo.jpg?v=1.1.26" alt="Logo de 27xSOLved">`;
+        <img src="./assets/brand/27xsolved-logo.jpg?v=1.1.27" alt="Logo de 27xSOLved">`;
     }
 
     const courseSection = $('section.homeSection', content);
@@ -359,7 +359,7 @@
       intro?.after(grid);
       const info = accountInfo();
       grid.insertAdjacentHTML('beforeend', `
-        <section class="ui-settings-card ui-profile-settings"><div class="ui-settings-heading"><div><h2>Perfil</h2><p>Tu cuenta y el alcance del guardado.</p></div></div><div class="ui-profile-panel"><img src="./assets/brand/27xsolved-logo-small.jpg?v=1.1.26" alt="Logo de 27xSOLved"><div><strong>${esc(info.name)}</strong><span>${esc(info.email)}</span><small>${esc(info.status)}</small></div></div></section>
+        <section class="ui-settings-card ui-profile-settings"><div class="ui-settings-heading"><div><h2>Perfil</h2><p>Tu cuenta y el alcance del guardado.</p></div></div><div class="ui-profile-panel"><img src="./assets/brand/27xsolved-logo-small.jpg?v=1.1.27" alt="Logo de 27xSOLved"><div><strong>${esc(info.name)}</strong><span>${esc(info.email)}</span><small>${esc(info.status)}</small></div></div></section>
         <section class="ui-settings-card ui-usage-settings"><div class="ui-settings-heading"><div><h2>Tiempo de uso</h2><p>Actividad de estudio de los últimos siete días.</p></div></div><div class="ui-usage-panel">${usageMarkup()}</div></section>`);
       $$('.settingsCard', content).filter(card => !card.closest('.ui-settings-grid')).forEach(card => grid.append(card));
     }

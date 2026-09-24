@@ -13,8 +13,23 @@
   const PAGE_SUBJECTS={
     'matematica-1-inicio.html':'matematica-1',
     'matematica-1.html':'matematica-1',
-    'matematica-1-examen-1.html':'matematica-1'
+    'matematica-1-examen-1.html':'matematica-1',
+    'quimica-general.html':'quimica-general-4',
+    'fisica-aplicada.html':'fisica-aplicada-4',
+    'fisica-formulas-a4.html':'fisica-aplicada-4'
   };
+  // Invitados (sin cuenta): ven sólo una muestra de UNA materia por año, cortada a ~PREVIEW_WORDS palabras.
+  // Para cambiar la materia de muestra de un año, reemplazá el id (ver academic-catalog.js).
+  const GUEST_PREVIEW={
+    1:'matematica-1',
+    4:'procesos-operaciones-4',
+    5:'matematica-5',
+    6:'quimica-analitica-cuantitativa-6'
+  };
+  const PREVIEW_WORDS=500;
+  const PREVIEW_ROOTS='.subject-main, .math-main, main.hub';
+  let pageReady=document.readyState==='complete';
+  window.addEventListener('load',()=>{pageReady=true;setTimeout(()=>schedule?.(),50)},{once:true});
   let state={authenticated:false,admin:false,active:false,email:'',profile:null,grants:[],error:null};
   let loaded=false;
   const pageFile=href=>{try{return new URL(href,location.href).pathname.split('/').pop()}catch(_){return''}};
@@ -129,6 +144,9 @@
       .et27-locked-inline{display:grid;place-items:center;padding:40px 0}
       .et27-locked-inline .et27-locked-card{background:var(--surface,#fff);color:inherit;border-color:var(--border,#d7e5e4)}
       html.et27-pending body{visibility:hidden}
+      .academic-subject-card.et27-guest-locked{opacity:.62}
+      .et27-preview-cta{width:auto;margin:28px 0;box-shadow:none;background:var(--surface,#fff);color:inherit}
+      .et27-preview-cta h2{margin:6px 0 8px}
     `;
     document.head.appendChild(style);
   }
@@ -140,9 +158,47 @@
     const name=subject?.name||'esta materia';
     const message=state.authenticated
       ?`Tu cuenta no tiene acceso a ${name}. Si creés que es un error, pedile al administrador que te la habilite.`
-      :`Para abrir ${name}, ingresá con tu cuenta de Google desde el inicio.`;
-    return `<section class="et27-locked-card" data-et27-lock="${escapeHtml(subjectId)}"><div class="et27-locked-icon" aria-hidden="true">🔒</div><small>27xSOLved · acceso</small><h1>${escapeHtml(name)}</h1><p>${escapeHtml(message)}</p><div class="et27-locked-actions"><a class="primary" href="./">Volver al inicio</a><a href="./?view=subjects">Ver mis materias</a></div></section>`;
+      :`${name} es contenido para alumnos con cuenta. Ingresá con Google para pedir acceso, o mirá las muestras gratis en Plan y materias.`;
+    const actions=state.authenticated
+      ?`<a class="primary" href="./">Volver al inicio</a><a href="./?view=subjects">Ver mis materias</a>`
+      :`<a class="primary" href="./" data-et27-login>Ingresar con Google</a><a href="./?view=subjects">Ver muestras gratis</a>`;
+    return `<section class="et27-locked-card" data-et27-lock="${escapeHtml(subjectId)}"><div class="et27-locked-icon" aria-hidden="true">🔒</div><small>27xSOLved · acceso</small><h1>${escapeHtml(name)}</h1><p>${escapeHtml(message)}</p><div class="et27-locked-actions">${actions}</div></section>`;
   }
+
+  // ---------- Muestra para invitados ----------
+  const isGuest=()=>!state.authenticated;
+  const previewSubjects=()=>Object.values(GUEST_PREVIEW);
+  const isPreview=id=>isGuest()&&previewSubjects().includes(id);
+
+  function previewCta(subjectId){
+    const name=catalogSubjects().find(s=>s.id===subjectId)?.name||'esta materia';
+    return `<section class="et27-preview-cta et27-locked-card" data-et27-preview-cta><div class="et27-locked-icon" aria-hidden="true">✨</div><small>Muestra gratis</small><h2>Hasta acá llega la muestra de ${escapeHtml(name)}</h2><p>El resto del contenido (teoría completa, ejercicios resueltos y modelos de evaluación) está disponible para alumnos con cuenta habilitada.</p><div class="et27-locked-actions"><a class="primary" href="./" data-et27-login>Ingresar con Google</a><a href="./?view=subjects">Volver a materias</a></div></section>`;
+  }
+
+  // Deja sólo las primeras ~PREVIEW_WORDS palabras del contenido y quita el resto del DOM.
+  function previewCut(subjectId){
+    const root=document.querySelector(PREVIEW_ROOTS);
+    if(!root)return false;
+    const existing=root.querySelector(':scope > [data-et27-preview-cta]');
+    if(existing){while(existing.nextSibling)existing.nextSibling.remove();return true}
+    if(!pageReady)return false; // esperar a que la página termine de armarse
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.parentElement?.closest('.katex-mathml,script,style,noscript,annotation')?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT});
+    let count=0,cutNode=null;
+    while(walker.nextNode()){
+      count+=(walker.currentNode.nodeValue.match(/[\p{L}\p{N}]+/gu)||[]).length;
+      if(count>=PREVIEW_WORDS){cutNode=walker.currentNode;break}
+    }
+    if(cutNode){
+      let node=cutNode.parentElement.closest('p,li,h1,h2,h3,h4,h5,tr,figure,pre,blockquote,summary,.math-row,.math-step')||cutNode.parentElement;
+      if(node.tagName==='SUMMARY')node=node.parentElement;
+      while(node&&node!==root){while(node.nextSibling)node.nextSibling.remove();node=node.parentNode}
+    }
+    root.insertAdjacentHTML('beforeend',previewCta(subjectId));
+    document.querySelectorAll('#formulaFab,#formulaRail,#formulaSheet,.formula-sheet').forEach(n=>n.remove());
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{const id=a.getAttribute('href').slice(1);if(id&&!document.getElementById(id))a.hidden=true});
+    return true;
+  }
+  let previewDone=false;
 
   function lockGenericPage(subjectId){
     const app=document.getElementById('subjectApp');
@@ -152,8 +208,21 @@
     app.innerHTML=`<main class="et27-locked-page">${lockedCard(subjectId)}</main>`;
   }
 
+  function labelGuestPlan(){
+    document.querySelectorAll('.academic-subject-card').forEach(card=>{
+      const subjectId=subjectFromHref(card.getAttribute('href')||'');
+      const meta=catalogSubjects().find(s=>s.id===subjectId);
+      if(!meta)return;
+      const label=previewSubjects().includes(subjectId)?'✨ Muestra gratis':'🔒 Requiere cuenta';
+      const em=card.querySelector('.academic-subject-copy em');
+      if(em&&em.textContent!==label)em.textContent=label;
+      card.classList.toggle('et27-guest-locked',!previewSubjects().includes(subjectId));
+    });
+  }
+
   function patchAcademicPlan(){
-    if(!state.authenticated||state.admin)return;
+    if(!state.authenticated)return labelGuestPlan();
+    if(state.admin)return;
     const cards=[...document.querySelectorAll('.academic-subject-card')];
     let visible=0;
     cards.forEach(card=>{
@@ -198,7 +267,7 @@
     return'';
   }
   function lockAppContent(){
-    if(!state.authenticated||state.admin)return;
+    if(state.admin)return;
     const subjectId=currentAppSubject();
     if(!subjectId||hasSubject(subjectId))return;
     const content=document.querySelector('#app .main .content');
@@ -207,16 +276,24 @@
     document.querySelector('.periodicFab')?.remove();
   }
 
-  // Páginas propias de Matemática de 1.º: teoría = todo salvo práctica, desafío y modelos de examen.
+  // Páginas estáticas propias (Matemática de 1.º, resúmenes de Química y Física).
+  // En Matemática: teoría = todo salvo práctica, desafío y modelos de examen.
   function patchMathPage(subjectId){
-    if(!hasSubject(subjectId))return lockWholePage(subjectId);
+    if(!hasSubject(subjectId)){
+      if(isPreview(subjectId)){previewDone=previewCut(subjectId);return}
+      return lockWholePage(subjectId);
+    }
+    if(subjectId!=='matematica-1')return;
     toggleSection('#practica',hasPractice(subjectId));
     toggleSection('#desafio',hasPractice(subjectId));
     toggleSection('#modelos',hasEvaluations(subjectId));
   }
 
   function patchGenericSections(subjectId){
-    if(!hasSubject(subjectId))return lockGenericPage(subjectId);
+    if(!hasSubject(subjectId)){
+      if(isPreview(subjectId)){previewDone=previewCut(subjectId);return}
+      return lockGenericPage(subjectId);
+    }
     toggleSection('#ejercicios',hasPractice(subjectId));
     const evalAllowed=hasEvaluations(subjectId);
     const evalSection=document.querySelector('#parciales');
@@ -272,6 +349,7 @@
     if(pageSubject)patchMathPage(pageSubject);
     lockAppContent();
     patchPhysics();
+    if(guestPreviewPage&&previewDone)releaseGate();
   }
 
   async function load(){
@@ -305,19 +383,23 @@
     return state;
   }
 
-  const needsGate=Boolean(storedSession())&&(
+  const pageSubjectId=PAGE_SUBJECTS[pageFile(location.href)]||new URLSearchParams(location.search).get('subject')||'';
+  const guestPreviewPage=!storedSession()&&Object.values(GUEST_PREVIEW).includes(pageSubjectId);
+  function releaseGate(){document.documentElement.classList.remove('et27-pending')}
+  const needsGate=(
     Boolean(PAGE_SUBJECTS[pageFile(location.href)])||
     (Boolean(new URLSearchParams(location.search).get('subject'))&&!!document.getElementById('subjectApp'))||
     ['chemistry','physics','unit'].includes(new URLSearchParams(location.search).get('view')||'')
   );
   if(needsGate){
     document.documentElement.classList.add('et27-pending');
-    setTimeout(()=>document.documentElement.classList.remove('et27-pending'),8000);
+    // Red de seguridad: si algo tarda, se corta igual antes de mostrar.
+    setTimeout(()=>{if(guestPreviewPage){pageReady=true;applyDomPermissions()}releaseGate()},10000);
   }
   const ready=load().finally(()=>{
     loaded=true;
-    document.documentElement.classList.remove('et27-pending');
     applyDomPermissions();
+    if(!guestPreviewPage)releaseGate();
     document.dispatchEvent(new CustomEvent('et27-access-ready',{detail:{authenticated:state.authenticated,admin:state.admin,active:state.active}}));
   });
 
@@ -333,6 +415,10 @@
     hasEvaluations,
     refresh:load
   };
+
+  document.addEventListener('click',e=>{
+    if(e.target.closest?.('[data-et27-login]')){try{localStorage.removeItem('cbc-mode')}catch(_){}}
+  },true);
 
   let scheduled=false;
   function schedule(){
