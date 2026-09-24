@@ -120,26 +120,36 @@
       .et27-answer-math{overflow:auto;text-align:center;padding:7px}
       .et27-locked-page{min-height:100vh;display:grid;place-items:center;padding:24px;font-family:Nunito,system-ui,sans-serif;background:#f4f8f8;color:#183037}
       .et27-locked-card{width:min(560px,100%);padding:28px;border:1px solid #d7e5e4;border-radius:20px;background:white;box-shadow:0 12px 34px rgba(0,0,0,.05)}
-      .et27-locked-card h1{margin:6px 0 10px}.et27-locked-card p{line-height:1.55}.et27-locked-card a{display:inline-flex;margin-top:12px;font-weight:900;color:#0f827e;text-decoration:none}
+      .et27-locked-card h1{margin:6px 0 10px}.et27-locked-card p{line-height:1.55}
+      .et27-locked-card,.et27-locked-card *{box-sizing:border-box}.et27-locked-inline{padding-inline:4px}
+      .et27-locked-icon{font-size:40px;line-height:1}
+      .et27-locked-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+      .et27-locked-actions a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:12px;font-weight:900;text-decoration:none;border:1px solid #15579D;color:#15579D;background:transparent}
+      .et27-locked-actions a.primary{background:#15579D;color:#fff}
+      .et27-locked-inline{display:grid;place-items:center;padding:40px 0}
+      .et27-locked-inline .et27-locked-card{background:var(--surface,#fff);color:inherit;border-color:var(--border,#d7e5e4)}
+      html.et27-pending body{visibility:hidden}
     `;
     document.head.appendChild(style);
   }
 
   function escapeHtml(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
-  function lockGenericPage(subjectId){
-    const app=document.getElementById('subjectApp');
-    if(!app)return;
+  function lockedCard(subjectId){
     const subject=catalogSubjects().find(s=>s.id===subjectId);
     const name=subject?.name||'esta materia';
     const message=state.authenticated
-      ?`Tu cuenta no tiene acceso activo a ${name}. El administrador puede habilitarte la materia completa desde el Panel de control.`
-      :`Para abrir ${name}, ingresá con tu cuenta de Google desde el inicio y usá una cuenta con acceso habilitado.`;
-    const html=`<main class="et27-locked-page"><section class="et27-locked-card"><small>27xSOLved · acceso</small><h1>${escapeHtml(name)}</h1><p>${escapeHtml(message)}</p><a href="./?view=subjects">← Volver a materias</a></section></main>`;
-    if(app.dataset.accessLocked==='1'&&app.innerHTML===html)return;
+      ?`Tu cuenta no tiene acceso a ${name}. Si creés que es un error, pedile al administrador que te la habilite.`
+      :`Para abrir ${name}, ingresá con tu cuenta de Google desde el inicio.`;
+    return `<section class="et27-locked-card" data-et27-lock="${escapeHtml(subjectId)}"><div class="et27-locked-icon" aria-hidden="true">🔒</div><small>27xSOLved · acceso</small><h1>${escapeHtml(name)}</h1><p>${escapeHtml(message)}</p><div class="et27-locked-actions"><a class="primary" href="./">Volver al inicio</a><a href="./?view=subjects">Ver mis materias</a></div></section>`;
+  }
+
+  function lockGenericPage(subjectId){
+    const app=document.getElementById('subjectApp');
+    if(!app||app.querySelector(`[data-et27-lock="${CSS.escape(subjectId)}"]`))return;
     app.dataset.accessLocked='1';
     app.className='';
-    app.innerHTML=html;
+    app.innerHTML=`<main class="et27-locked-page">${lockedCard(subjectId)}</main>`;
   }
 
   function patchAcademicPlan(){
@@ -176,13 +186,25 @@
 
   function lockWholePage(subjectId){
     if(document.body.dataset.et27Locked==='1')return;
-    const subject=catalogSubjects().find(s=>s.id===subjectId);
-    const name=subject?.name||'esta materia';
-    const message=state.authenticated
-      ?`Tu cuenta no tiene acceso activo a ${name}. El administrador puede habilitártela desde el Panel de control.`
-      :`Para abrir ${name}, ingresá con tu cuenta de Google desde el inicio y usá una cuenta con acceso habilitado.`;
     document.body.dataset.et27Locked='1';
-    document.body.innerHTML=`<main class="et27-locked-page"><section class="et27-locked-card"><small>27xSOLved · acceso</small><h1>${escapeHtml(name)}</h1><p>${escapeHtml(message)}</p><a href="./?view=subjects">← Volver a materias</a></section></main>`;
+    document.body.innerHTML=`<main class="et27-locked-page">${lockedCard(subjectId)}</main>`;
+  }
+
+  // Química y Física viven dentro de la app principal: se bloquea sólo el contenido, sin redirigir.
+  function currentAppSubject(){
+    const view=document.documentElement.dataset.view||new URLSearchParams(location.search).get('view')||'';
+    if(view==='chemistry'||view==='unit')return'quimica-general-4';
+    if(view==='physics')return'fisica-aplicada-4';
+    return'';
+  }
+  function lockAppContent(){
+    if(!state.authenticated||state.admin)return;
+    const subjectId=currentAppSubject();
+    if(!subjectId||hasSubject(subjectId))return;
+    const content=document.querySelector('#app .main .content');
+    if(!content||content.querySelector(`[data-et27-lock="${subjectId}"]`))return;
+    content.innerHTML=`<div class="et27-locked-inline">${lockedCard(subjectId)}</div>`;
+    document.querySelector('.periodicFab')?.remove();
   }
 
   // Páginas propias de Matemática de 1.º: teoría = todo salvo práctica, desafío y modelos de examen.
@@ -248,14 +270,8 @@
     if(genericId&&document.getElementById('subjectApp'))patchGenericSections(genericId);
     const pageSubject=PAGE_SUBJECTS[pageFile(location.href)];
     if(pageSubject)patchMathPage(pageSubject);
+    lockAppContent();
     patchPhysics();
-  }
-
-  function currentLegacySubject(){
-    const view=new URLSearchParams(location.search).get('view');
-    if(view==='chemistry')return'quimica-general-4';
-    if(view==='physics')return'fisica-aplicada-4';
-    return'';
   }
 
   async function load(){
@@ -285,17 +301,22 @@
       state={authenticated:true,admin:false,active:false,email,profile:null,grants:[],error:error?.message||'No se pudo comprobar el acceso.'};
     }
 
-    const legacy=currentLegacySubject();
-    if(legacy&&!hasSubject(legacy)){
-      const target=new URL('./?view=subjects&access=denied',location.href);
-      if(location.href!==target.href){location.replace(target.href);return state;}
-    }
     applyDomPermissions();
     return state;
   }
 
+  const needsGate=Boolean(storedSession())&&(
+    Boolean(PAGE_SUBJECTS[pageFile(location.href)])||
+    (Boolean(new URLSearchParams(location.search).get('subject'))&&!!document.getElementById('subjectApp'))||
+    ['chemistry','physics','unit'].includes(new URLSearchParams(location.search).get('view')||'')
+  );
+  if(needsGate){
+    document.documentElement.classList.add('et27-pending');
+    setTimeout(()=>document.documentElement.classList.remove('et27-pending'),8000);
+  }
   const ready=load().finally(()=>{
     loaded=true;
+    document.documentElement.classList.remove('et27-pending');
     applyDomPermissions();
     document.dispatchEvent(new CustomEvent('et27-access-ready',{detail:{authenticated:state.authenticated,admin:state.admin,active:state.active}}));
   });
