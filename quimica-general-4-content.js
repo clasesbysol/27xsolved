@@ -341,6 +341,59 @@ ${idea('Método para todos los ejercicios',`<ol class="kitList"><li>Leé qué se
 <div data-qg-guide></div>
 `);
 
+  // ---------- Modelo de evaluación fotografiado (29/09/26) ----------
+  const modelExercises=[];
+  const model=(n,title,statement,solution,answer)=>modelExercises.push({n,title,statement,solution,answer});
+
+  model(1,'Glucosa: masa para elevar la ebullición',
+   'Calcular la cantidad en gr C₆H₁₂O₆ que se necesitan disolver en 100 g de agua para que la temperatura de ebullición aumente 3 °C. 0,52 °C·kg/mol cte ebulloscópica.',
+   assume('Glucosa molecular, sin disociación ni asociación: i = 1. Se aplica el modelo ideal de ascenso ebulloscópico. Se usa Mₘ = 180 g/mol, como en el apunte.')+
+   step('1. Fórmula y símbolos',sym([[R`\Delta T_b`,'aumento de la temperatura de ebullición','K'],[R`K_b`,'constante ebulloscópica del agua','K·kg/mol'],['b','molalidad: moles de soluto / kg de solvente','mol/kg'],['n','cantidad de glucosa','mol'],[R`M_m`,'masa molar de la glucosa','g/mol']])+chain(R`\Delta T_b=iK_b b`,R`b=\frac{\Delta T_b}{iK_b}`))+
+   step('2. Molalidad',chain(R`b=\frac{3}{1\cdot0{,}52}`,R`b=5{,}769\ \mathrm{mol/kg}`))+
+   step('3. Moles de glucosa',chain(R`m_{\mathrm{sv}}=100\ \mathrm{g}=0{,}100\ \mathrm{kg}`,R`n=b\,m_{\mathrm{sv}}`,R`n=5{,}769\cdot0{,}100`,R`n=0{,}5769\ \mathrm{mol}`))+
+   step('4. Masa',chain(R`m_{\mathrm{st}}=nM_m`,R`m_{\mathrm{st}}=0{,}5769\cdot180`,R`m_{\mathrm{st}}\approx103{,}85\ \mathrm{g}`))+
+   note('Control del apunte y alcance del modelo','<p>En la respuesta manuscrita se obtienen aproximadamente 5,77 mol/kg y 0,577 mol; la cifra final es poco clara. El producto calculado con 180 g/mol es <b>103,85 g</b>. La solución calculada es muy concentrada: este es el resultado del modelo ideal pedido, no una predicción experimental exacta.</p>'),
+   'Se necesitan aproximadamente 103,85 g de glucosa (modelo ideal).');
+
+  model(2,'Fructosa: temperatura a partir de la presión osmótica',
+   'Si se disuelven 200 g de fructosa en 450 ml de agua, ¿cuál es la t del sistema si Π = 0,068 ATM? (Fructosa: C₆H₁₂O₆).',
+   note('Lectura y dato faltante','<p>La fotografía se lee como <b>200 g</b>, <b>450 mL de agua</b> y <b>0,068 atm</b>; no se cambia ninguno de esos valores. La fórmula necesita volumen de <b>solución</b>, que no está dado. Para hacer la cuenta ilustrativa se supone V<sub>sc</sub> ≈ 450 mL; con 200 g de soluto esta aproximación no es confiable.</p>')+
+   assume('Fructosa molecular: i = 1; Mₘ ≈ 180 g/mol. R = 0,08206 L·atm/(mol·K).')+
+   step('1. Fórmula y símbolos',sym([[R`\Pi`,'presión osmótica','atm'],['V','volumen de solución','L'],['n','moles de fructosa','mol'],['R','constante de los gases','L·atm/(mol·K)'],['T','temperatura absoluta','K']])+chain(R`\Pi V=inRT`,R`T=\frac{\Pi V}{inR}`))+
+   step('2. Moles y volumen supuesto',chain(R`n=\frac{m_{\mathrm{st}}}{M_m}`,R`n=\frac{200}{180}=1{,}111\ \mathrm{mol}`,R`V_{\mathrm{sc}}\approx450\ \mathrm{mL}=0{,}450\ \mathrm{L}`))+
+   step('3. Resultado formal',chain(R`T=\frac{0{,}068\cdot0{,}450}{1\cdot(200/180)\cdot0{,}08206}`,R`T\approx0{,}336\ \mathrm{K}`,R`t=T-273{,}15`,R`t\approx-272{,}81\ \mathrm{°C}`))+
+   warn('La consigna no describe una solución acuosa líquida posible','<p>El resultado formal es incompatible con agua líquida. Además falta el volumen real de la solución. Por eso <b>no hay una temperatura física válida que pueda informarse con estos datos y este modelo</b>. Revisar masa, presión, unidades y volumen en la consigna original. No reemplazar silenciosamente 200 g por otra masa ni 0,068 atm por otra presión.</p>'),
+   'Sin respuesta física válida con los datos dados. Cuenta formal con Vsc ≈ 0,450 L: T ≈ 0,336 K (−272,81 °C).');
+
+  model(3,'Metanol: fracciones molares por Raoult',
+   'La presión de vapor metanol puro es de 158,76 mmHg. Cuando se disuelve en el compuesto un soluto no electrolito y no volátil, la presión de vapor desciende a 129,76 mmHg. ¿Cuál es Xst y Xsv en el sistema?',
+   assume('Solución ideal; soluto no volátil y no electrolito. Las dos presiones corresponden a la misma temperatura.')+
+   step('1. Fórmula y símbolos',sym([[R`p^0_{\mathrm{sv}}`,'presión del metanol puro','mmHg'],[R`p_{\mathrm{sc}}`,'presión de vapor de la solución','mmHg'],[R`x_{\mathrm{sv}}`,'fracción molar del solvente','adimensional'],[R`x_{\mathrm{st}}`,'fracción molar del soluto','adimensional']])+chain(R`p_{\mathrm{sc}}=x_{\mathrm{sv}}p^0_{\mathrm{sv}}`,R`x_{\mathrm{sv}}=\frac{p_{\mathrm{sc}}}{p^0_{\mathrm{sv}}}`))+
+   step('2. Fracción molar del solvente',chain(R`x_{\mathrm{sv}}=\frac{129{,}76}{158{,}76}`,R`x_{\mathrm{sv}}\approx0{,}8173`))+
+   step('3. Fracción molar del soluto',chain(R`x_{\mathrm{st}}=1-x_{\mathrm{sv}}`,R`x_{\mathrm{st}}\approx1-0{,}8173`,R`x_{\mathrm{st}}\approx0{,}1827`))+
+   step('4. Control por el descenso',chain(R`\Delta p=158{,}76-129{,}76=29{,}00\ \mathrm{mmHg}`,R`x_{\mathrm{st}}=\frac{\Delta p}{p^0_{\mathrm{sv}}}=\frac{29{,}00}{158{,}76}\approx0{,}1827`,R`x_{\mathrm{st}}+x_{\mathrm{sv}}=1`))+
+   idea('“Desciende a” no es “desciende en”','<p>129,76 mmHg es la <b>presión final</b>, no el descenso. El descenso es 29,00 mmHg.</p>'),
+   'Xst ≈ 0,1827 · Xsv ≈ 0,8173.');
+
+  model(4,'Ácido benzoico en benceno: masa molar aparente',
+   'Al disolver 0,98 g de C₆H₅COOH en 80,90 g de benceno, la sc resultante congela a 4,47 °C. Calcular la Mst. Kc = 5,12 °C·kg/mol y Tc = 5,5 °C.',
+   note('Lectura utilizada','<p>Se lee 0,98 g de soluto, 80,90 g de benceno y 4,47 °C. El símbolo de grado junto al 7 puede confundirse con un 8; se interpreta como <b>4,47 °C</b>. Tc = 5,5 °C corresponde al <b>solvente puro</b>. Mst se interpreta como masa molar del soluto.</p>')+
+   assume('Para calcular una masa molar por crioscopía se supone inicialmente i = 1. Luego se contrasta esa suposición con el compuesto indicado.')+
+   step('1. Fórmula y símbolos',sym([[R`T_f^0`,'temperatura de congelación del benceno puro','°C'],[R`T_f`,'temperatura de congelación de la solución','°C'],[R`K_f`,'constante crioscópica (Kc en el apunte)','K·kg/mol'],['b','molalidad','mol/kg'],[R`M_m`,'masa molar del soluto','g/mol']])+chain(R`\Delta T_f=T_f^0-T_f`,R`\Delta T_f=iK_fb`))+
+   step('2. Descenso y molalidad',chain(R`\Delta T_f=5{,}5-4{,}47=1{,}03\ \mathrm{K}`,R`b=\frac{1{,}03}{1\cdot5{,}12}`,R`b=0{,}20117\ \mathrm{mol/kg}`))+
+   step('3. Moles de soluto',chain(R`m_{\mathrm{sv}}=80{,}90\ \mathrm{g}=0{,}08090\ \mathrm{kg}`,R`n=b\,m_{\mathrm{sv}}`,R`n=0{,}20117\cdot0{,}08090`,R`n\approx0{,}01627\ \mathrm{mol}`))+
+   step('4. Masa molar aparente',chain(R`M_{m,\mathrm{aparente}}=\frac{m_{\mathrm{st}}}{n}`,R`M_{m,\mathrm{aparente}}=\frac{0{,}98}{0{,}01627}`,R`M_{m,\mathrm{aparente}}\approx60{,}2\ \mathrm{g/mol}`))+
+   step('5. Control con la fórmula molecular',chain(R`\mathrm{C_6H_5COOH}=\mathrm{C_7H_6O_2}`,R`M_m=7(12{,}01)+6(1{,}008)+2(16{,}00)`,R`M_m\approx122{,}12\ \mathrm{g/mol}`))+
+   warn('Los datos no coinciden con el ácido benzoico molecular','<p>La cuenta con i = 1 da una <b>masa molar aparente de 60,2 g/mol</b>, pero la fórmula C₇H₆O₂ corresponde a aproximadamente <b>122,12 g/mol</b>. No afirmar que el ácido benzoico tiene masa molar 60,2. Con los mismos datos y 122,12 g/mol se requeriría i ≈ 2,03. La asociación del ácido benzoico en benceno reduce el número de partículas y no explica ese valor mayor que 1. Hay que revisar la consigna original.</p>')+
+   note('Control adicional con i = 1',chain(R`\Delta T_f=5{,}12\cdot\frac{0{,}98/122{,}12}{0{,}08090}\approx0{,}508\ \mathrm{K}`,R`T_f\approx5{,}5-0{,}508=4{,}99\ \mathrm{°C}`)),
+   'Masa molar aparente ≈ 60,2 g/mol (i = 1); no coincide con C₇H₆O₂, cuya masa molar es ≈ 122,12 g/mol.');
+
+  add('modelo','Modelo de evaluación: cuatro problemas','MODELO DE EVALUACIÓN · 29/09/26',`
+<p>Cuatro consignas del modelo fotografiado: ascenso ebulloscópico, presión osmótica, ley de Raoult y descenso crioscópico. Se conserva la numeración del original y se explican las lecturas y los datos inconsistentes.</p>
+<p>Intentá resolver cada punto antes de abrir su desarrollo. En los puntos 2 y 4, además de calcular, hay que revisar si el resultado es compatible con el sistema descrito.</p>
+<div data-qg-modelo></div>
+`);
+
   // ---------- 8. Tarjetas ----------
   add('repaso','Tarjetas de repaso','PARA MEMORIZAR · 08',`
 <p>Respondé antes de dar vuelta. Si dudás, volvé a la sección correspondiente.</p>
@@ -398,7 +451,7 @@ ${example('Relación entre cantidad, concentración y volumen',
       {id:'soluciones',n:1,title:'Soluciones',pending:true},
       {id:'estequiometria',n:2,title:'Estequiometría',pending:true},
       {id:'formulacion',n:3,title:'Formulación',pending:true},
-      {id:'coligativas',n:4,title:'Propiedades coligativas',lead:'Cómo un soluto cambia la presión de vapor, las temperaturas de congelación y ebullición y genera presión osmótica: teoría, fórmulas paso a paso y la guía completa resuelta.',sections,exercises}
+      {id:'coligativas',n:4,title:'Propiedades coligativas',lead:'Cómo un soluto cambia la presión de vapor, las temperaturas de congelación y ebullición y genera presión osmótica: teoría, fórmulas paso a paso, guía resuelta y modelo de evaluación.',sections,exercises,modelExercises}
     ]
   };
 })();
