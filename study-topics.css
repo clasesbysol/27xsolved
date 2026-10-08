@@ -272,3 +272,14 @@
 .qiLabList{display:grid;gap:4px;padding-left:20px}
 .qiLabLink{text-align:left;font-weight:800;padding:2px 0}
 @media(max-width:620px){.qiElData{grid-template-columns:1fr 1fr}.qiElTile{grid-template-rows:auto auto auto}.qiElTile b{grid-row:1/4}.qiElTile small{display:block;grid-column:2}}
+/* Física · fórmulas explicadas dentro de las resoluciones */
+.fxBox{margin:12px 0 14px;border:1px solid color-mix(in srgb,var(--accent) 35%,var(--border));border-radius:14px;background:var(--surface);overflow:hidden}
+.fxTitle{display:block;padding:9px 14px;background:color-mix(in srgb,var(--accent) 9%,var(--surface));font-size:14.5px}
+.fxPart{padding:8px 14px;border-top:1px solid var(--border)}
+.fxPart>span{display:block;font-size:10px;font-weight:900;letter-spacing:.11em;text-transform:uppercase;color:var(--accent);margin-bottom:2px}
+.fxPart p{margin:4px 0}
+.fxPart .eqChain{margin:6px 0;background:var(--surface2)}
+.fxMain{background:color-mix(in srgb,var(--accent) 5%,var(--surface))}
+.fxMain .katex{font-size:1.18em}
+.fxAlt{background:color-mix(in srgb,var(--brand-sun,#FCC717) 10%,var(--surface))}
+.fxAlt>span{color:color-mix(in srgb,#b07b00 85%,var(--text))}

@@ -430,108 +430,223 @@ ${warn('Confusiones típicas',`<p><b>Baria (ba) no es bar.</b> <b>Kilogramo fuer
   // ---------- 17 y 18. Ejercicios (resoluciones en app.js según permisos) ----------
   const exercises=[];
   const exercise=(n,title,statement,solution,answer)=>exercises.push({n,title,statement,solution,answer});
-  const continuity=sym([['Q','caudal volumétrico','m³/s'],['S','área de la sección','m²'],['d','diámetro interior','m'],['v','velocidad media','m/s']])+chain(R`Q=S\,v`,R`S=\frac{\pi d^2}{4}`,R`Q_1=Q_2`,R`\frac{\pi d_1^2}{4}v_1=\frac{\pi d_2^2}{4}v_2`,R`v_2=v_1\left(\frac{d_1}{d_2}\right)^2`);
   const plan=(pide,fen,ley)=>`<div class="kitBox kitNote"><b>Antes de calcular</b><p><b>Piden:</b> ${pide}<br><b>Fenómeno:</b> ${fen}<br><b>Ley y por qué:</b> ${ley}</p></div>`;
   const control=t=>`<div class="kitBox kitIdea"><b>✓ Control</b><p>${t}</p></div>`;
+
+  // ---------- Fórmulas explicadas: de dónde salen, fórmula principal, despeje y otras formas ----------
+  // fx(título, origen (html), fórmula principal (latex), despeje (items de chain) , otra forma (html))
+  const fx=(title,origin,main,solve,alt)=>`<div class="fxBox"><b class="fxTitle">📐 ${title}</b>
+    <div class="fxPart"><span>De dónde sale</span>${origin}</div>
+    <div class="fxPart fxMain"><span>Fórmula principal</span>${M(main)}</div>
+    ${solve&&solve.length?`<div class="fxPart"><span>Despeje</span>${chain(...solve)}</div>`:''}
+    ${alt?`<div class="fxPart fxAlt"><span>Otra forma de calcularlo</span>${alt}</div>`:''}</div>`;
+
+  const FX={
+    area:(desp)=>fx('Área de la sección (círculo)',
+      '<p>El caño se corta “de frente” y la sección es un círculo: su área es π·r². Como en los problemas casi siempre dan el <b>diámetro</b>, se reemplaza r = d/2.</p>',
+      R`S=\pi r^2`,
+      desp?[[R`S=\pi\left(\frac d2\right)^2`,'r = d/2'],[R`S=\frac{\pi d^2}{4}`,'forma con diámetro']]:null,
+      `<p>Las dos dan lo mismo: ${m(R`S=\pi r^2`)} si tenés el radio, ${m(R`S=\frac{\pi d^2}{4}`)} si tenés el diámetro. El error típico es usar ${m(R`\pi d^2`)} sin dividir por 4.</p>`),
+    caudal:(desp)=>fx('Caudal',
+      '<p><b>Definición:</b> caudal es el volumen que pasa por una sección en cada unidad de tiempo, '+m(R`Q=\frac{V}{t}`)+'. Si el fluido avanza con velocidad v, en un tiempo t recorre una distancia x = v·t; el volumen que pasó es un cilindro de base S y largo x: '+m(R`V=S\,x=S\,v\,t`)+'. Dividiendo por t queda la fórmula principal.</p>',
+      R`Q=S\,v`,
+      desp||[[R`V=Q\,t`,'de Q = V/t'],[R`v=\frac{Q}{S}`,'si piden velocidad']],
+      `<p>Se puede ir directo al volumen sin calcular Q: ${m(R`V=S\,v\,t`)}.</p>`),
+    cont:()=>fx('Continuidad (conservación del caudal)',
+      '<p>Si el líquido no se comprime y no hay fugas ni ramificaciones, <b>todo lo que entra por una sección sale por la otra</b>: el caudal es el mismo en todo el caño. Escribiendo Q = S·v en cada sección:</p>',
+      R`Q_1=Q_2\ \Rightarrow\ S_1\,v_1=S_2\,v_2`,
+      [[R`v_2=v_1\,\frac{S_1}{S_2}`,'despejo v₂'],[R`v_2=v_1\,\frac{\pi d_1^2/4}{\pi d_2^2/4}`,'reemplazo S = πd²/4'],[R`v_2=v_1\left(\frac{d_1}{d_2}\right)^2`,'se cancelan π y 4']],
+      `<p>Si preferís no usar el atajo, calculá ${m('S_1')} y ${m('S_2')} por separado y usá ${m(R`v_2=\frac{S_1v_1}{S_2}`)}: da lo mismo. Con el atajo, como es un cociente, <b>no hace falta pasar las unidades</b> del diámetro.</p>`),
+    newton:()=>fx('Ley de Newton de la viscosidad',
+      '<p>Experimentalmente, para arrastrar una capa de fluido sobre otra hace falta una fuerza mayor cuanto más grande es el <b>área de contacto A</b> y cuanto mayor es la <b>diferencia de velocidad Δv</b>, y menor cuanto más <b>separadas</b> están (Δx). La constante de proporcionalidad es la viscosidad η.</p>',
+      R`f_R=\eta\,A\,\frac{\Delta v}{\Delta x}`,
+      [[R`\eta=\frac{f_R\,\Delta x}{A\,\Delta v}`,'si piden la viscosidad'],[R`\Delta v=\frac{f_R\,\Delta x}{\eta\,A}`,'si piden la velocidad']]),
+    alat:()=>fx('Área lateral del cilindro (área de contacto)',
+      '<p>El aceite moja la cara lateral del cilindro. Si la “desenrollás” queda un rectángulo: la base es el perímetro de la circunferencia (2πr) y la altura es h.</p>',
+      R`A=2\pi r\,h`,null,
+      `<p>Con diámetro: ${m(R`A=\pi d\,h`)}. Ojo: <b>no</b> es πr² (eso es la tapa, por donde no hay roce en este modelo).</p>`),
+    vtang:()=>fx('Velocidad del borde del cilindro',
+      '<p>En una vuelta, un punto del borde recorre una circunferencia completa, 2πr. Si da f vueltas por segundo, recorre f veces esa distancia por segundo (es el “Dato” de la consigna).</p>',
+      R`v=2\pi r\,f`,null,
+      `<p>Con velocidad angular: ${m(R`\omega=2\pi f`)} y ${m(R`v=\omega\,r`)}. Es exactamente lo mismo.</p>`),
+    re:(alt)=>fx('Número de Reynolds',
+      '<p>Compara lo que “empuja” al fluido a desordenarse (su inercia: densidad y velocidad) con lo que lo mantiene ordenado (la viscosidad). Es adimensional: no tiene unidades si todo está en el mismo sistema. Guía: Re &lt; 2100 laminar · 2100–3000 transición · Re &gt; 3000 turbulento.</p>',
+      R`\mathrm{Re}=\frac{\rho\,v\,d}{\eta}`,
+      alt?[[R`v=\frac{\mathrm{Re}\,\eta}{\rho\,d}`,'si piden la velocidad']]:null,
+      `<p>Con viscosidad cinemática ${m(R`\nu=\eta/\rho`)}: ${m(R`\mathrm{Re}=\frac{v\,d}{\nu}`)}. Si te dan el caudal en vez de la velocidad, reemplazás ${m(R`v=\frac{Q}{S}=\frac{4Q}{\pi d^2}`)} y queda ${m(R`\mathrm{Re}=\frac{4\rho Q}{\pi d\,\eta}`)} (es la misma fórmula, no hay que memorizarla).</p>`),
+    pois:()=>fx('Ley de Poiseuille (sólo régimen laminar)',
+      '<p>En régimen laminar el líquido avanza en capas cilíndricas: la del centro va más rápido y la de la pared está quieta (perfil parabólico). Sumando el caudal de todas esas capas, Poiseuille llegó a que el caudal es proporcional a la diferencia de presión y a <b>r⁴</b>, e inversamente proporcional a la viscosidad y al largo.</p>',
+      R`Q=\frac{\pi\,r^4\,\Delta p}{8\,\eta\,l}`,
+      [[R`\Delta p=\frac{8\,\eta\,l\,Q}{\pi\,r^4}`,'si piden la presión'],[R`\eta=\frac{\pi r^4\Delta p}{8\,Q\,l}`,'si piden la viscosidad']],
+      `<p>Si tenés la velocidad media en vez del caudal, reemplazás ${m(R`Q=\pi r^2 v`)} y se simplifica r²:</p>${chain([R`\Delta p=\frac{8\,\eta\,l\,v}{r^2}`],[R`\Delta p=\frac{32\,\eta\,l\,v}{d^2}`,'con d = 2r'])}<p>Es la misma ley, sin pasar por Q.</p>`),
+    pot:()=>fx('Potencia de circulación',
+      '<p>Potencia es fuerza × velocidad (trabajo por segundo). La fuerza que empuja al líquido es la diferencia de presión por la sección, F = Δp·S. Entonces Pot = Δp·S·v, y como S·v = Q:</p>',
+      R`\mathrm{Pot}=\Delta p\;Q`,null,
+      `<p>Sin calcular el caudal: ${m(R`\mathrm{Pot}=\Delta p\,S\,v`)}. En SI (Pa · m³/s) el resultado sale en <b>W</b>.</p>`),
+    fanningF:()=>fx('Factor de fricción de Fanning',
+      '<p>No se deduce: es una <b>fórmula experimental</b> (correlación) que da la guía para tubos lisos en régimen turbulento. Sólo hay que reemplazar Reynolds. f no tiene unidades (no es la frecuencia).</p>',
+      R`f=0{,}0014+\frac{0{,}125}{\mathrm{Re}^{0{,}32}}`,null),
+    fanning:()=>fx('Caída de presión en régimen turbulento (Fanning)',
+      '<p>Sale de la ecuación general de pérdida de carga en tubos (Darcy–Weisbach): la presión que se pierde es proporcional al largo, a la “energía de movimiento” ρv²/2 e inversa al diámetro. Escrita con el factor de Fanning:</p>',
+      R`\Delta p=\frac{2\,f\,\rho\,v^2\,l}{d}`,
+      null,
+      `<p>Forma del apunte: reemplazando ${m(R`v=\frac{Q}{\pi r^2}`)} y ${m('d=2r')} queda</p>${M(R`\Delta p=\frac{f\,Q^2\,\rho\,l}{\pi^2\,r^5}`)}<p>Las dos formas son la misma ecuación: la del apunte (con Q y r⁵) y la de arriba (con v y d), que suele ser más cómoda porque la velocidad ya está calculada. Abajo se resuelve con las dos para comprobarlo.</p>`),
+    stokes:()=>fx('Ley de Stokes (fuerza viscosa sobre una esfera)',
+      '<p>Una esfera chica que se mueve lento dentro de un fluido viscoso recibe una fuerza de rozamiento proporcional a la viscosidad, a su radio y a su velocidad. Vale si el movimiento es muy lento (Re de la esfera ≪ 1).</p>',
+      R`R=6\pi\,\eta\,r\,v`,
+      [[R`v=\frac{R}{6\pi\eta r}`,'si piden la velocidad'],[R`\eta=\frac{R}{6\pi r v}`,'si piden la viscosidad']]),
+    limite:(desp)=>fx('Velocidad límite (equilibrio peso = empuje + Stokes)',
+      '<p>Cuando la esfera cae a velocidad <b>constante</b>, la aceleración es cero y las fuerzas se compensan: el peso hacia abajo; el empuje (Arquímedes) y el rozamiento de Stokes hacia arriba.</p>'+chain([R`P=E+R`],[R`\rho_C\,V\,g=\rho_L\,V\,g+6\pi\eta r v`,'P = m·g = ρ_C·V·g · E = ρ_L·V·g'],[R`(\rho_C-\rho_L)\,\tfrac43\pi r^3 g=6\pi\eta r v`,'V de la esfera = 4/3·π·r³']),
+      R`v_{\mathrm{lím}}=\frac{2\,r^2\,g\,(\rho_C-\rho_L)}{9\,\eta}`,
+      desp||[[R`\eta=\frac{2\,r^2\,g\,(\rho_C-\rho_L)}{9\,v_{\mathrm{lím}}}`,'si piden la viscosidad (se intercambian η y v)']],
+      `<p>Si no te acordás de la fórmula final, podés plantear siempre <b>P = E + R</b> con números y despejar: da lo mismo. Al simplificar, π se cancela y 4/3 ÷ 6 = 2/9.</p>`),
+    nu:()=>fx('Viscosidad cinemática',
+      '<p>Es la viscosidad dinámica “por unidad de densidad”: indica qué tan fácil se frena el movimiento de un fluido teniendo en cuenta cuánta masa tiene.</p>',
+      R`\nu=\frac{\eta}{\rho}`,[[R`\eta=\nu\,\rho`,'si piden la dinámica']],
+      `<p>Unidades: si η en poise y ρ en g/cm³, ν sale en <b>stokes</b> (St = cm²/s).</p>`),
+    mru:()=>fx('Movimiento uniforme',
+      '<p>A velocidad límite la esfera (o el líquido) se mueve con velocidad constante: es un movimiento rectilíneo uniforme.</p>',
+      R`v=\frac{x}{t}`,[[R`t=\frac{x}{v}`,'si piden el tiempo'],[R`x=v\,t`,'si piden la distancia']]),
+    volEsf:()=>fx('Volumen de la esfera',
+      '<p>Fórmula geométrica de la esfera.</p>',
+      R`V=\frac43\,\pi\,r^3`,[[R`r=\sqrt[3]{\frac{3V}{4\pi}}`,'si piden el radio']]),
+    cociente:()=>`<div class="kitBox kitIdea"><b>🧩 Método del cociente</b><p>Cuando un problema compara dos situaciones y faltan datos (no dan η, l, etc.), se escribe la misma fórmula para el caso 2 y para el caso 1 y se <b>divide</b> una por otra: todo lo que es igual en los dos casos se cancela y quedan sólo las relaciones (“3 veces mayor”, “4 veces más viscoso”).</p></div>`
+  };
 
   // Guía original: «Actividad n.º 8 — Circulación de fluidos» (numeración impresa 5.1–5.11).
   exercise('5.1','Volumen transportado','En una sección circular, de diámetro 1 pulgada, la velocidad media es 5 m/seg. ¿Qué volumen de fluido circula en 10 seg?',
     plan('un volumen en un tiempo.','un fluido pasa por una sección: caudal.','Q = S·v y luego V = Q·t; v es la velocidad media.')+
-    step('1. Unidades (SI)',chain(R`d=1\ \mathrm{pulg}=0{,}0254\ \mathrm{m}`,R`v=5\ \mathrm{m/s}`,R`t=10\ \mathrm{s}`))+
-    step('2. Sección',chain(R`S=\frac{\pi d^2}{4}=\frac{\pi(0{,}0254)^2}{4}`,R`S=5{,}0671\cdot10^{-4}\ \mathrm{m^2}`))+
-    step('3. Caudal',chain(R`Q=S\,v=5{,}0671\cdot10^{-4}\cdot5`,R`Q=2{,}5335\cdot10^{-3}\ \mathrm{m^3/s}`))+
-    step('4. Volumen',chain(R`V=Q\,t=2{,}5335\cdot10^{-3}\cdot10`,R`V=0{,}025335\ \mathrm{m^3}`,[R`V\approx25{,}34\ \mathrm{L}`,'× 1000']))+
+    step('1. Unidades (SI)',chain([R`d=1\ \mathrm{pulg}=2{,}54\ \mathrm{cm}=0{,}0254\ \mathrm{m}`,'1 pulg = 2,54 cm'],R`v=5\ \mathrm{m/s}`,R`t=10\ \mathrm{s}`))+
+    step('2. Sección',FX.area(true)+chain(R`S=\frac{\pi d^2}{4}=\frac{\pi(0{,}0254\ \mathrm{m})^2}{4}`,R`S=5{,}0671\cdot10^{-4}\ \mathrm{m^2}`))+
+    step('3. Caudal',FX.caudal()+chain(R`Q=S\,v=5{,}0671\cdot10^{-4}\ \mathrm{m^2}\cdot5\ \mathrm{m/s}`,R`Q=2{,}5335\cdot10^{-3}\ \mathrm{m^3/s}`))+
+    step('4. Volumen',chain([R`V=Q\,t`,'despeje de Q = V/t'],R`V=2{,}5335\cdot10^{-3}\ \mathrm{m^3/s}\cdot10\ \mathrm{s}`,R`V=0{,}025335\ \mathrm{m^3}`,[R`V\approx25{,}34\ \mathrm{L}`,'1 m³ = 1000 L']))+
+    step('Otra forma: todo junto',chain(R`V=S\,v\,t=5{,}0671\cdot10^{-4}\cdot5\cdot10=0{,}025335\ \mathrm{m^3}`))+
     control('No se multiplica el diámetro por la velocidad: hace falta el área. La guía redondea a 0,025 m³.'),
     'V ≈ 0,0253 m³ ≈ 25,34 L (guía: 0,025 m³)');
+
   exercise('5.2','Cambio de sección y volumen','Por un tubo de diámetro de una pulgada, circula una corriente de fluido, con una velocidad media de 10 cm/seg. a)¿Cuál es la velocidad en la otra sección de diámetro de 1,5 pulgadas. b)¿Cuál es el volumen de fluido que circula en media hora?',
     plan('una velocidad nueva y un volumen.','mismo líquido, flujo estacionario, sin pérdidas: continuidad.','S₁v₁ = S₂v₂ y V = Q·t.')+
-    step('a. Continuidad',continuity+'<p>Las pulgadas se cancelan en el cociente d₁/d₂: no hace falta convertir.</p>'+chain(R`v_2=10\left(\frac{1}{1{,}5}\right)^2`,R`v_2=10\cdot0{,}444`,R`v_2\approx4{,}44\ \mathrm{cm/s}`))+
-    fix('Error frecuente (y del apunte)','<p>El valor <b>6,67 cm/s</b> sale de usar d₁/d₂ <b>sin elevar al cuadrado</b>. Es incorrecto.</p>')+
-    step('b. Volumen en media hora',`<p>Uso una sección y <b>su</b> velocidad. Elijo la primera:</p>`+chain(R`d_1=2{,}54\ \mathrm{cm}`,R`Q=\frac{\pi(2{,}54)^2}{4}\cdot10=50{,}6707\ \mathrm{cm^3/s}`,R`t=\tfrac12\ \mathrm{h}=1800\ \mathrm{s}`,R`V=Q\,t=50{,}6707\cdot1800`,R`V\approx91\,207\ \mathrm{cm^3}\approx91{,}2\ \mathrm{L}`))+
-    control('El tubo más ancho lleva menor velocidad, pero transporta el mismo volumen por segundo. Con la sección 2 y v₂ da lo mismo.'),
+    step('a. Velocidad en la sección ancha',FX.cont()+'<p>Las pulgadas se cancelan en el cociente d₁/d₂: no hace falta convertir.</p>'+chain(R`v_2=10\ \mathrm{cm/s}\cdot\left(\frac{1}{1{,}5}\right)^2`,R`v_2=10\cdot0{,}444`,R`v_2\approx4{,}44\ \mathrm{cm/s}`))+
+    step('a. Otra forma: con las dos áreas',chain([R`S_1=\frac{\pi(2{,}54)^2}{4}=5{,}067\ \mathrm{cm^2}`,'d₁ = 1 pulg = 2,54 cm'],[R`S_2=\frac{\pi(3{,}81)^2}{4}=11{,}401\ \mathrm{cm^2}`,'d₂ = 1,5 pulg = 3,81 cm'],R`v_2=\frac{S_1\,v_1}{S_2}=\frac{5{,}067\cdot10}{11{,}401}\approx4{,}44\ \mathrm{cm/s}`))+
+    fix('Error frecuente (y del apunte)','<p>El valor <b>6,67 cm/s</b> sale de usar d₁/d₂ <b>sin elevar al cuadrado</b>. Es incorrecto: la velocidad depende del área, y el área del diámetro al cuadrado.</p>')+
+    step('b. Volumen en media hora',FX.caudal()+`<p>Uso una sección y <b>su</b> velocidad. Elijo la primera:</p>`+chain(R`Q=S_1\,v_1=5{,}067\ \mathrm{cm^2}\cdot10\ \mathrm{cm/s}=50{,}67\ \mathrm{cm^3/s}`,R`t=\tfrac12\ \mathrm{h}=1800\ \mathrm{s}`,[R`V=Q\,t=50{,}67\cdot1800`,'despeje de Q = V/t'],R`V\approx91\,207\ \mathrm{cm^3}\approx91{,}2\ \mathrm{L}`,[R`\text{con }S_2,v_2:\ 11{,}401\cdot4{,}444=50{,}67\ \mathrm{cm^3/s}`,'mismo caudal: confirma la continuidad']))+
+    control('El tubo más ancho lleva menor velocidad, pero transporta el mismo volumen por segundo.'),
     'v₂ ≈ 4,44 cm/s · V ≈ 91 200 cm³ ≈ 91,2 L');
+
   exercise('5.3','Diámetro reducido a la mitad','En una tubería el caudal es constante. ¿Cuánto varía la velocidad si se reduce su diámetro a la mitad? JUSTIFICAR',
-    plan('cómo cambia v.','caudal constante: continuidad.','v₂ = v₁(d₁/d₂)².')+continuity+chain(R`d_2=\frac{d_1}{2}`,R`v_2=v_1\left(\frac{d_1}{d_1/2}\right)^2`,R`v_2=2^2\,v_1`,R`v_2=4\,v_1`)+
+    plan('cómo cambia v.','caudal constante: continuidad.','v₂ = v₁(d₁/d₂)².')+
+    step('1. Fórmula',FX.cont())+
+    step('2. Reemplazo d₂ = d₁/2',chain(R`v_2=v_1\left(\frac{d_1}{d_1/2}\right)^2`,[R`v_2=v_1\cdot2^2`,'d₁ ÷ (d₁/2) = 2'],R`v_2=4\,v_1`))+
+    step('Otra forma: mirando el área',chain([R`S_2=\frac{\pi(d_1/2)^2}{4}=\frac14\cdot\frac{\pi d_1^2}{4}=\frac{S_1}{4}`,'el área queda en 1/4'],[R`v_2=\frac{S_1v_1}{S_2}=\frac{S_1v_1}{S_1/4}=4v_1`]))+
     '<p><b>Justificación:</b> el área depende del cuadrado del diámetro; si d se reduce a la mitad, el área queda en 1/4 y, para que S·v sea igual, la velocidad se cuadruplica.</p>'+
     step('Comparación',chain([R`d_2=\frac{d_1}{3}\ \Rightarrow\ v_2=9\,v_1`],[R`d_2=\frac{d_1}{4}\ \Rightarrow\ v_2=16\,v_1`,'ejemplo del manuscrito'],[R`d_2=2\,d_1\ \Rightarrow\ v_2=\frac{v_1}{4}`])),
     'La velocidad se cuadruplica (v₂ = 4v₁).');
+
   exercise('5.4','Fuerza viscosa entre cilindros','El cilindro exterior de la figura es fijo, mientras que el cilindro interior gira a razón de 0,5 vueltas/seg. El radio del cilindro interior es de 10 cm. Se coloca entre ambos cilindros un aceite de viscosidad η = 10 poise. ¿Cuál será la fuerza viscosa de Newton? Dato: 2.π.frec.r',
     '<p><b>Datos de la figura:</b> altura del cilindro 20 cm; separación entre cilindros 2 mm.</p>'+figure(svgViscometer,'Vista superior y superficie lateral desplegada.')+
-    plan('la fuerza de rozamiento viscoso.','capas de aceite deslizando entre una pared que gira y otra fija.','Newton: f<sub>R</sub> = ηA·Δv/Δx. Modelo del apunte: capa delgada, gradiente uniforme, sólo superficie lateral (sin bases).')+
-    sym([['f','frecuencia de giro','vueltas/s'],['r','radio del cilindro interior','cm'],['h','altura','cm'],['e','separación (Δx)','cm'],[R`\eta`,'viscosidad','P'],['A','superficie lateral','cm²']])+
-    step('1. Unidades (CGS)',chain(R`e=2\ \mathrm{mm}=0{,}2\ \mathrm{cm}`,R`r=10\ \mathrm{cm},\quad h=20\ \mathrm{cm},\quad\eta=10\ \mathrm{P}`))+
-    step('2. Área de contacto',chain(R`A=2\pi r\,h=2\pi\cdot10\cdot20`,R`A=400\pi\approx1256{,}6\ \mathrm{cm^2}`))+
-    step('3. Velocidad tangencial',`<p>Cada vuelta recorre una circunferencia: circunferencia × vueltas por segundo (es el “Dato” de la consigna).</p>`+chain(R`v=2\pi r\,f=2\pi\cdot10\cdot0{,}5`,R`v=10\pi\approx31{,}42\ \mathrm{cm/s}`,[R`\Delta v=v-0=v`,'la pared exterior está quieta']))+
-    step('4. Ley de Newton',chain(R`f_R=\eta\,A\,\frac{\Delta v}{e}`,R`f_R=10\cdot400\pi\cdot\frac{10\pi}{0{,}2}`,R`f_R=200\,000\,\pi^2\ \mathrm{dyn}`,R`f_R\approx1\,973\,921\ \mathrm{dyn}`,[R`f_R\approx19{,}74\ \mathrm{N}`,'1 dyn = 10⁻⁵ N'],[R`f_R\approx\frac{19{,}74}{9{,}80665}\approx2{,}01\ \mathrm{kgf}`,'kgf es fuerza, no masa']))+
-    fix('Correcciones de la cuenta manuscrita','<p>Con los intermedios escritos (A = 1256 cm² y v = 31,4 cm/s) la multiplicación da <b>1 971 920 dyn</b>; el manuscrito escribe 1 972 920 dyn: es una <b>errata aritmética</b> de 1000 dyn. Usando π sin redondear se obtiene 1 973 921 dyn: esa diferencia es de <b>redondeo</b>. Además, el desarrollo dibujado escribe A = 2πr sin h; el área lateral es <b>A = 2πr·h</b>, como se usa en la cuenta.</p>')+
-    control('La altura da el área; la separación da el gradiente. No se intercambian.'),
+    plan('la fuerza de rozamiento viscoso.','capas de aceite deslizando entre una pared que gira y otra fija.','Newton: f<sub>R</sub> = ηA·Δv/Δx. Modelo: capa delgada, sólo superficie lateral (sin bases).')+
+    step('1. Unidades (CGS)',chain([R`e=\Delta x=2\ \mathrm{mm}=0{,}2\ \mathrm{cm}`,'separación = espesor del aceite'],R`r=10\ \mathrm{cm},\quad h=20\ \mathrm{cm},\quad\eta=10\ \mathrm{P},\quad f=0{,}5\ \mathrm{vueltas/s}`)+'<p>Trabajo en CGS (cm, g, s) porque η está en poise: la fuerza saldrá en <b>dinas</b>.</p>')+
+    step('2. Área de contacto',FX.alat()+chain(R`A=2\pi\cdot10\ \mathrm{cm}\cdot20\ \mathrm{cm}`,R`A=400\pi\approx1256{,}6\ \mathrm{cm^2}`))+
+    step('3. Velocidad del cilindro que gira',FX.vtang()+chain(R`v=2\pi\cdot10\ \mathrm{cm}\cdot0{,}5\ \mathrm{s^{-1}}`,R`v=10\pi\approx31{,}42\ \mathrm{cm/s}`,[R`\Delta v=v-0=31{,}42\ \mathrm{cm/s}`,'la pared exterior está quieta']))+
+    step('4. Fuerza viscosa',FX.newton()+chain(R`f_R=10\ \mathrm{P}\cdot1256{,}6\ \mathrm{cm^2}\cdot\frac{31{,}42\ \mathrm{cm/s}}{0{,}2\ \mathrm{cm}}`,R`f_R\approx1\,973\,921\ \mathrm{dyn}`,[R`f_R\approx19{,}74\ \mathrm{N}`,'1 dyn = 10⁻⁵ N'],[R`f_R\approx\frac{19{,}74}{9{,}80665}\approx2{,}01\ \mathrm{kgf}`,'1 kgf = 9,80665 N']))+
+    fix('Correcciones de la cuenta manuscrita','<p>Con los intermedios escritos (A = 1256 cm² y v = 31,4 cm/s) la multiplicación da <b>1 971 920 dyn</b>; el manuscrito escribe 1 972 920 dyn: es una <b>errata aritmética</b>. Usando π sin redondear se obtiene 1 973 921 dyn (diferencia de redondeo). Además, el desarrollo dibujado escribe A = 2πr sin h; el área lateral es <b>A = 2πr·h</b>.</p>')+
+    control('La altura da el área; la separación da el gradiente (Δx). No se intercambian.'),
     'f<sub>R</sub> ≈ 1,97·10⁶ dyn ≈ 19,74 N ≈ 2 kgf');
+
   exercise('5.5','Caudal máximo laminar de aire','Por un tubo circula aire, cuya viscosidad es 1,8·10⁻² cpoise. Se necesita que el aire fluya con un régimen laminar. Si el diámetro del tubo es 1 cm. ¿Cuál es el caudal máximo que se puede lograr? (δaire = 1,2 g/litro)',
-    plan('el caudal máximo laminar.','régimen de circulación: Reynolds.','Re = 4ρQ/(πdη) con Re<sub>crít</sub> = 2100 como frontera de cálculo.')+
-    step('1. Unidades (CGS)',chain([R`\eta=0{,}018\ \mathrm{cP}=0{,}00018\ \mathrm{P}`,'1 cP = 0,01 P'],[R`\rho=1{,}2\ \mathrm{g/L}=0{,}0012\ \mathrm{g/cm^3}`,'1 L = 1000 cm³'],R`d=1\ \mathrm{cm}`))+
-    step('2. Despeje',chain(R`Q_{\max}=\frac{\mathrm{Re}_{\mathrm{crít}}\,\pi d\,\eta}{4\rho}`))+
-    step('3. Reemplazo',chain(R`Q_{\max}=\frac{2100\cdot\pi\cdot1\cdot0{,}00018}{4\cdot0{,}0012}`,R`Q_{\max}\approx247{,}4\ \mathrm{cm^3/s}`))+
-    step('Otra forma (por la velocidad)',chain(R`v_{\max}=\frac{\mathrm{Re}_{\mathrm{crít}}\,\eta}{\rho\,d}=\frac{2100\cdot0{,}00018}{0{,}0012\cdot1}=315\ \mathrm{cm/s}`,R`Q_{\max}=\frac{\pi d^2}{4}v_{\max}\approx247{,}4\ \mathrm{cm^3/s}`))+
-    control('Para quedar por debajo de Re = 2100, el caudal debe ser menor que ese valor. La temperatura y la presión fijan las propiedades del aire; no se vuelven a multiplicar.'),
+    plan('el caudal máximo laminar.','régimen de circulación: Reynolds.','el máximo laminar es cuando Re llega a 2100; con eso saco la velocidad máxima y después el caudal.')+
+    step('1. Unidades (CGS)',chain([R`\eta=0{,}018\ \mathrm{cP}=0{,}00018\ \mathrm{P}`,'1 cP = 0,01 P'],[R`\rho=1{,}2\ \mathrm{g/L}=0{,}0012\ \mathrm{g/cm^3}`,'1 L = 1000 cm³'],R`d=1\ \mathrm{cm},\qquad\mathrm{Re}_{\max}=2100`))+
+    step('2. Velocidad máxima (despejo de Reynolds)',FX.re(true)+chain(R`v_{\max}=\frac{2100\cdot0{,}00018\ \mathrm{P}}{0{,}0012\ \mathrm{g/cm^3}\cdot1\ \mathrm{cm}}`,R`v_{\max}=315\ \mathrm{cm/s}`))+
+    step('3. Caudal máximo',FX.caudal([[R`Q_{\max}=S\,v_{\max}`]])+chain(R`S=\frac{\pi(1\ \mathrm{cm})^2}{4}=0{,}7854\ \mathrm{cm^2}`,R`Q_{\max}=0{,}7854\cdot315`,R`Q_{\max}\approx247{,}4\ \mathrm{cm^3/s}`))+
+    step('Otra forma: Reynolds escrito con caudal',chain(R`\mathrm{Re}=\frac{4\rho Q}{\pi d\eta}\ \Rightarrow\ Q_{\max}=\frac{\mathrm{Re}\,\pi d\,\eta}{4\rho}`,R`Q_{\max}=\frac{2100\cdot\pi\cdot1\cdot0{,}00018}{4\cdot0{,}0012}\approx247{,}4\ \mathrm{cm^3/s}`)+'<p>Sale lo mismo: es la misma fórmula de Reynolds con v = 4Q/(πd²) reemplazada.</p>')+
+    control('Para quedar laminar, el caudal tiene que ser menor que ese valor.'),
     'Q<sub>máx</sub> ≈ 247,4 cm³/s');
+
   exercise('5.6','Régimen, presión y potencia','Un líquido de η = 30 poise circula por un conducto recto de sección circular, de diámetro 1 pulg. con una velocidad media de 7,875 pulg/seg. La densidad del líquido es 76,16 Lb/pie³. a) Indicar si el régimen es laminar o turbulento. b) Si el conducto tiene una longitud de 15 cm, hallar la diferencia de presión en Pa. c) Calcular la potencia mínima de circulación en MKS.',
-    note('Dato de viscosidad','<p>La consigna transcripta dice <b>30 poise</b>, pero el apunte y las respuestas de la guía (Re = 206; 44,6 Pa; 0,0045 W) corresponden a <b>30 cP</b>. Se resuelve con 30 cP; al final está el caso con 30 P literal. La velocidad figura como 7,874 pulg/s en el apunte (= 20 cm/s); la diferencia con 7,875 no cambia los resultados redondeados.</p>')+
+    note('Dato de viscosidad','<p>La consigna transcripta dice <b>30 poise</b>, pero el apunte y las respuestas de la guía (Re = 206; 44,6 Pa; 0,0045 W) corresponden a <b>30 cP</b>. Se resuelve con 30 cP; al final está el caso con 30 P literal.</p>')+
     plan('régimen, Δp en Pa y potencia en W.','líquido viscoso por un tubo.','primero Reynolds; si es laminar, Poiseuille; potencia Pot = Δp·Q.')+
-    step('1. Todo al SI',chain([R`\eta=30\ \mathrm{cP}=0{,}03\ \mathrm{Pa\cdot s}`],[R`d=0{,}0254\ \mathrm{m},\quad r=0{,}0127\ \mathrm{m},\quad l=0{,}15\ \mathrm{m}`],[R`v=7{,}874\cdot0{,}0254\approx0{,}2\ \mathrm{m/s}`],[R`\rho=76{,}16\cdot\frac{0{,}45359237}{(0{,}3048)^3}`,'lb → kg, pie³ → m³'],R`\rho\approx1219{,}97\ \mathrm{kg/m^3}`))+
-    step('a. Régimen',chain(R`\mathrm{Re}=\frac{\rho\,v\,d}{\eta}=\frac{1219{,}97\cdot0{,}2\cdot0{,}0254}{0{,}03}`,R`\mathrm{Re}\approx206{,}6\ <\ 2100`)+'<p><b>Laminar</b> → Poiseuille.</p>')+
-    step('b. Caída de presión',chain(R`Q=\frac{\pi d^2}{4}v=1{,}0134\cdot10^{-4}\ \mathrm{m^3/s}`,R`\Delta p=\frac{8\eta lQ}{\pi r^4}=\frac{8\cdot0{,}03\cdot0{,}15\cdot1{,}0134\cdot10^{-4}}{\pi(0{,}0127)^4}`,R`\Delta p\approx44{,}64\ \mathrm{Pa}`))+
-    step('c. Potencia',chain(R`\mathrm{Pot}=\Delta p\,Q=44{,}64\cdot1{,}0134\cdot10^{-4}`,R`\mathrm{Pot}\approx4{,}52\cdot10^{-3}\ \mathrm{W}`))+
+    step('1. Todo al SI (piden Pa y MKS)',chain([R`\eta=30\ \mathrm{cP}=0{,}03\ \mathrm{Pa\cdot s}`,'1 cP = 10⁻³ Pa·s'],[R`d=0{,}0254\ \mathrm{m},\quad r=0{,}0127\ \mathrm{m},\quad l=0{,}15\ \mathrm{m}`],[R`v=7{,}874\ \mathrm{pulg/s}\cdot0{,}0254\approx0{,}2\ \mathrm{m/s}`],[R`\rho=76{,}16\cdot\frac{0{,}4536\ \mathrm{kg}}{(0{,}3048\ \mathrm{m})^3}`,'1 lb = 0,4536 kg · 1 pie = 0,3048 m'],R`\rho\approx1219{,}97\ \mathrm{kg/m^3}`))+
+    step('a. Régimen',FX.re()+chain(R`\mathrm{Re}=\frac{1219{,}97\cdot0{,}2\cdot0{,}0254}{0{,}03}`,R`\mathrm{Re}\approx206{,}6\ <\ 2100`)+'<p><b>Laminar</b> → se usa Poiseuille.</p>')+
+    step('b. Caída de presión',FX.pois()+
+      '<p><b>Camino 1 (con caudal, como el apunte):</b></p>'+chain([R`Q=\frac{\pi d^2}{4}\,v=5{,}0671\cdot10^{-4}\cdot0{,}2=1{,}0134\cdot10^{-4}\ \mathrm{m^3/s}`,'Q = S·v'],R`\Delta p=\frac{8\cdot0{,}03\cdot0{,}15\cdot1{,}0134\cdot10^{-4}}{\pi(0{,}0127)^4}`,R`\Delta p\approx44{,}64\ \mathrm{Pa}`)+
+      '<p><b>Camino 2 (con velocidad, sin calcular Q):</b></p>'+chain(R`\Delta p=\frac{32\,\eta\,l\,v}{d^2}=\frac{32\cdot0{,}03\cdot0{,}15\cdot0{,}2}{(0{,}0254)^2}`,R`\Delta p\approx44{,}64\ \mathrm{Pa}`))+
+    step('c. Potencia',FX.pot()+chain(R`\mathrm{Pot}=44{,}64\ \mathrm{Pa}\cdot1{,}0134\cdot10^{-4}\ \mathrm{m^3/s}`,R`\mathrm{Pot}\approx4{,}52\cdot10^{-3}\ \mathrm{W}`))+
     deep('Si se tomara literalmente η = 30 poise',chain(R`\eta=3\ \mathrm{Pa\cdot s}`,R`\mathrm{Re}\approx2{,}07\ (\text{laminar})`,R`\Delta p=\frac{32\eta lv}{d^2}\approx4464\ \mathrm{Pa}`,R`\mathrm{Pot}\approx0{,}452\ \mathrm{W}`)+'<p>Esos valores no coinciden con la guía; por eso se interpreta cP.</p>'),
     'Re ≈ 207 (laminar) · Δp ≈ 44,6 Pa · Pot ≈ 0,0045 W (guía: Re = 206)');
+
   exercise('5.7','Cambio de viscosidad y velocidad','Resolver el problema 6, si la viscosidad es 1 poise y la velocidad es 15,748 pulg/seg (Los demás datos tomarlos con los mismos valores)',
     note('Dato de viscosidad','<p>Igual que en 5.6: el apunte y las respuestas de la guía (Re = 12 345; 17,32 Pa; 3,5·10⁻³ W) corresponden a <b>1 cP</b>. Al final está el caso con 1 P literal.</p>')+
     plan('régimen, Δp y potencia.','mismo tubo y líquido, menos viscosidad y más velocidad.','Reynolds; si es turbulento, Fanning (no Poiseuille).')+
-    step('1. Nuevos datos',chain(R`\eta=1\ \mathrm{cP}=0{,}001\ \mathrm{Pa\cdot s}`,R`v=15{,}748\cdot0{,}0254\approx0{,}4\ \mathrm{m/s}`))+
-    step('a. Régimen',chain(R`\mathrm{Re}=\frac{1219{,}97\cdot0{,}4\cdot0{,}0254}{0{,}001}`,R`\mathrm{Re}\approx12\,395\ >\ 3000`)+'<p><b>Turbulento</b> según la guía → Fanning.</p>')+
-    step('b. Caudal y factor f',chain(R`Q=\frac{\pi d^2}{4}v=2{,}0268\cdot10^{-4}\ \mathrm{m^3/s}`,R`f=0{,}0014+\frac{0{,}125}{\mathrm{Re}^{0{,}32}}`,R`f=0{,}0014+\frac{0{,}125}{(12\,395)^{0{,}32}}`,R`f\approx0{,}007525`))+
-    step('c. Caída de presión',chain(R`\Delta p=\frac{f\,Q^2\,\rho\,l}{\pi^2r^5}`,R`\Delta p=\frac{0{,}007525\cdot(2{,}0268\cdot10^{-4})^2\cdot1219{,}97\cdot0{,}15}{\pi^2(0{,}0127)^5}`,R`\Delta p\approx17{,}35\ \mathrm{Pa}`))+
-    step('d. Potencia',chain(R`\mathrm{Pot}=17{,}35\cdot2{,}0268\cdot10^{-4}`,R`\mathrm{Pot}\approx3{,}52\cdot10^{-3}\ \mathrm{W}`))+
-    note('Diferencia con la guía','<p>La guía escribe Re = 12 345; 17,32 Pa y 3,5·10⁻³ W. Con conversiones más precisas sale una diferencia pequeña; la clasificación no cambia. No se reemplaza el factor de Fanning por uno de Darcy.</p>')+
+    step('1. Nuevos datos (SI)',chain([R`\eta=1\ \mathrm{cP}=0{,}001\ \mathrm{Pa\cdot s}`],[R`v=15{,}748\cdot0{,}0254\approx0{,}4\ \mathrm{m/s}`],[R`\rho=1219{,}97\ \mathrm{kg/m^3},\ d=0{,}0254\ \mathrm{m},\ l=0{,}15\ \mathrm{m}`,'iguales al 5.6']))+
+    step('a. Régimen',FX.re()+chain(R`\mathrm{Re}=\frac{1219{,}97\cdot0{,}4\cdot0{,}0254}{0{,}001}`,R`\mathrm{Re}\approx12\,395\ >\ 3000`)+'<p><b>Turbulento</b> → Poiseuille <b>no</b> sirve; se usa Fanning.</p>')+
+    step('b. Factor de Fanning',FX.fanningF()+chain(R`\mathrm{Re}^{0{,}32}=(12\,395)^{0{,}32}\approx20{,}41`,R`f=0{,}0014+\frac{0{,}125}{20{,}41}`,R`f\approx0{,}007525`))+
+    step('c. Caída de presión',FX.fanning()+
+      '<p><b>Camino 1 (con velocidad y diámetro):</b></p>'+chain(R`\Delta p=\frac{2\cdot0{,}007525\cdot1219{,}97\cdot(0{,}4)^2\cdot0{,}15}{0{,}0254}`,R`\Delta p\approx17{,}35\ \mathrm{Pa}`)+
+      '<p><b>Camino 2 (con caudal y radio, como el apunte):</b></p>'+chain([R`Q=\frac{\pi d^2}{4}v=5{,}0671\cdot10^{-4}\cdot0{,}4=2{,}0268\cdot10^{-4}\ \mathrm{m^3/s}`,'Q = S·v'],R`\Delta p=\frac{0{,}007525\cdot(2{,}0268\cdot10^{-4})^2\cdot1219{,}97\cdot0{,}15}{\pi^2(0{,}0127)^5}`,R`\Delta p\approx17{,}35\ \mathrm{Pa}`))+
+    step('d. Potencia',FX.pot()+chain(R`\mathrm{Pot}=17{,}35\ \mathrm{Pa}\cdot2{,}0268\cdot10^{-4}\ \mathrm{m^3/s}`,R`\mathrm{Pot}\approx3{,}52\cdot10^{-3}\ \mathrm{W}`))+
+    note('Diferencia con la guía','<p>La guía escribe Re = 12 345; 17,32 Pa y 3,5·10⁻³ W. Con conversiones más precisas sale una diferencia pequeña; la clasificación no cambia.</p>')+
     deep('Si se tomara literalmente η = 1 poise',chain(R`\eta=0{,}1\ \mathrm{Pa\cdot s}`,R`\mathrm{Re}\approx124\ (\text{laminar})`,R`\Delta p=\frac{32\eta lv}{d^2}\approx297{,}6\ \mathrm{Pa}`,R`\mathrm{Pot}\approx0{,}0603\ \mathrm{W}`)+'<p>No coincide con la guía; por eso se interpreta cP.</p>'),
     'Re ≈ 12 395 (turbulento) · f ≈ 0,00752 · Δp ≈ 17,35 Pa · Pot ≈ 3,52·10⁻³ W');
+
   exercise('5.8','Comparación de caudales laminares','Si el caudal de un líquido de viscosidad que circula por un tubo debido a una diferencia de presión de 2 atm, es de 3,05 pulg³/seg. ¿Qué caudal circulará por otro cuyo radio es 3 veces mayor, si recorre el mismo trayecto, siendo el líquido 4 veces más viscoso y la diferencia de presión es 1 atm? Suponer que el régimen es laminar',
-    '<p><b>Lectura del esquema:</b> dos conductos <b>independientes</b> de igual longitud. Tubo 1: r, η, Δp = 2 atm, Q₁ = 3,05 pulg³/s. Tubo 2: 3r, 4η, Δp = 1 atm, Q₂ = ?. No son tramos de un mismo caño: se comparan con el <b>cociente de Poiseuille</b>, no con continuidad.</p>'+
-    step('1. Cociente (se cancelan π, 8 y l)',chain(R`Q=\frac{\pi r^4\Delta p}{8\eta l}`,R`\frac{Q_2}{Q_1}=\left(\frac{r_2}{r_1}\right)^4\frac{\Delta p_2}{\Delta p_1}\,\frac{\eta_1}{\eta_2}\,\frac{l_1}{l_2}`,R`\frac{Q_2}{Q_1}=3^4\cdot\frac12\cdot\frac14\cdot1=\frac{81}{8}=10{,}125`))+
-    step('2. Caudal',chain([R`Q_1=3{,}05\cdot(2{,}54)^3\approx49{,}98\ \mathrm{cm^3/s}`,'pulg³ → cm³: el factor al cubo'],R`Q_2=10{,}125\cdot49{,}98`,R`Q_2\approx506{,}05\ \mathrm{cm^3/s}`,[R`Q_2\approx30{,}88\ \mathrm{pulg^3/s}`,'en las unidades de la consigna']))+
+    '<p><b>Lectura del esquema:</b> dos conductos <b>independientes</b> de igual longitud. Tubo 1: r, η, Δp = 2 atm, Q₁ = 3,05 pulg³/s. Tubo 2: 3r, 4η, Δp = 1 atm, Q₂ = ?. No son tramos de un mismo caño: se comparan con Poiseuille, no con continuidad.</p>'+
+    step('1. Fórmula (laminar)',FX.pois())+
+    FX.cociente()+
+    step('2. Cociente: caso 2 dividido caso 1',chain([R`\frac{Q_2}{Q_1}=\frac{\dfrac{\pi r_2^4\,\Delta p_2}{8\,\eta_2\,l}}{\dfrac{\pi r_1^4\,\Delta p_1}{8\,\eta_1\,l}}`,'misma l: se cancelan π, 8 y l'],R`\frac{Q_2}{Q_1}=\left(\frac{r_2}{r_1}\right)^4\cdot\frac{\Delta p_2}{\Delta p_1}\cdot\frac{\eta_1}{\eta_2}`,[R`\frac{Q_2}{Q_1}=3^4\cdot\frac{1}{2}\cdot\frac{1}{4}`,'r₂ = 3r₁ · Δp₂ = Δp₁/2 · η₂ = 4η₁'],R`\frac{Q_2}{Q_1}=\frac{81}{8}=10{,}125`))+
+    step('3. Caudal',chain([R`Q_2=10{,}125\cdot3{,}05\ \mathrm{pulg^3/s}\approx30{,}88\ \mathrm{pulg^3/s}`,'en las unidades de la consigna'],[R`Q_1=3{,}05\cdot(2{,}54)^3\approx49{,}98\ \mathrm{cm^3/s}`,'1 pulg³ = 2,54³ cm³'],R`Q_2=10{,}125\cdot49{,}98\approx506\ \mathrm{cm^3/s}`))+
+    step('Otra forma: reemplazar “a mano”',`<p>Escribo Q₂ con los valores del tubo 2 expresados con los del tubo 1:</p>`+chain(R`Q_2=\frac{\pi(3r)^4\,(\Delta p/2)}{8\,(4\eta)\,l}=\frac{81}{2\cdot4}\cdot\frac{\pi r^4\Delta p}{8\eta l}=\frac{81}{8}\,Q_1`))+
     note('Redondeo del manuscrito','<p>El manuscrito redondea Q₁ a 50 cm³/s y obtiene 506,25 cm³/s: la diferencia es sólo de redondeo.</p>')+
     control('El radio a la cuarta (×81) explica por qué el caudal aumenta aunque el líquido sea más viscoso y la presión menor.'),
     'Q₂ ≈ 506 cm³/s (≈ 30,9 pulg³/s)');
+
   exercise('5.9','Viscosidad de la glicerina','Una esfera de bronce de 0,24 cm de diámetro, se deja caer en una probeta llena de glicerina. Cuando la velocidad de caída es uniforme, la esfera desciende 35 cm en 16 segundos. a) Calcular la viscosidad de la glicerina. b) Calcular la viscosidad cinemática de la glicerina. Datos: (δglicerina = 1,26 g/cm³; δbronce = 17,08 slug/pie³)',
     plan('η y ν de la glicerina.','esfera a velocidad uniforme: velocidad límite.','equilibrio P = E + R con Stokes, despejando η; luego ν = η/ρ.')+
-    step('1. Datos (CGS)',chain(R`r=\frac{0{,}24}{2}=0{,}12\ \mathrm{cm}`,[R`v_{\mathrm{lím}}=\frac{35}{16}=2{,}1875\ \mathrm{cm/s}`,'movimiento uniforme'],[R`\rho_C=17{,}08\cdot\frac{14{,}59390}{(0{,}3048)^3}\cdot\frac{1}{1000}`,'slug/pie³ → kg/m³ → g/cm³'],R`\rho_C\approx8{,}8027\ \mathrm{g/cm^3}`,R`g=980\ \mathrm{cm/s^2}`))+
-    step('a. Viscosidad dinámica',chain(R`\eta=\frac{2r^2g(\rho_C-\rho_L)}{9\,v_{\mathrm{lím}}}`,R`\eta=\frac{2(0{,}12)^2\cdot980\cdot(8{,}8027-1{,}26)}{9\cdot2{,}1875}`,R`\eta\approx10{,}81\ \mathrm{P}`,[R`\eta\approx1{,}081\ \mathrm{Pa\cdot s}`,'1 P = 0,1 Pa·s']))+
-    step('b. Viscosidad cinemática',chain(R`\nu=\frac{\eta}{\rho_L}=\frac{10{,}81}{1{,}26}`,R`\nu\approx8{,}58\ \mathrm{St}`,[R`\nu\approx8{,}58\cdot10^{-4}\ \mathrm{m^2/s}`,'1 St = 10⁻⁴ m²/s'])+'<p>La guía obtiene 8,57 St usando η ya redondeada a 10,8 P.</p>')+
-    control('Reynolds de la esfera: Re = ρ<sub>L</sub>·v·(2r)/η ≈ 1,26·2,19·0,24/10,8 ≈ 0,061 ≪ 1. Compatible con Stokes; también hace falta que las paredes de la probeta no influyan.'),
+    step('1. Datos (CGS)',chain([R`r=\frac{0{,}24}{2}=0{,}12\ \mathrm{cm}`,'piden radio, dan diámetro'],[R`\rho_C=17{,}08\cdot\frac{14{,}594\ \mathrm{kg}}{(0{,}3048\ \mathrm{m})^3}\approx8803\ \mathrm{kg/m^3}=8{,}803\ \mathrm{g/cm^3}`,'1 slug = 14,594 kg'],R`\rho_L=1{,}26\ \mathrm{g/cm^3},\qquad g=980\ \mathrm{cm/s^2}`))+
+    step('2. Velocidad límite',FX.mru()+chain(R`v_{\mathrm{lím}}=\frac{35\ \mathrm{cm}}{16\ \mathrm{s}}=2{,}1875\ \mathrm{cm/s}`))+
+    step('a. Viscosidad dinámica',FX.limite()+chain(R`\eta=\frac{2\,(0{,}12)^2\cdot980\cdot(8{,}803-1{,}26)}{9\cdot2{,}1875}`,R`\eta=\frac{212{,}9}{19{,}69}`,R`\eta\approx10{,}81\ \mathrm{P}`,[R`\eta\approx1{,}081\ \mathrm{Pa\cdot s}`,'1 P = 0,1 Pa·s']))+
+    step('a. Otra forma: plantear P = E + R con números',chain([R`V=\tfrac43\pi(0{,}12)^3=7{,}238\cdot10^{-3}\ \mathrm{cm^3}`],[R`P-E=(8{,}803-1{,}26)\cdot7{,}238\cdot10^{-3}\cdot980=53{,}50\ \mathrm{dyn}`,'peso menos empuje'],[R`R=6\pi\eta r v\ \Rightarrow\ \eta=\frac{53{,}50}{6\pi\cdot0{,}12\cdot2{,}1875}\approx10{,}81\ \mathrm{P}`,'R = P − E']))+
+    step('b. Viscosidad cinemática',FX.nu()+chain(R`\nu=\frac{10{,}81\ \mathrm{P}}{1{,}26\ \mathrm{g/cm^3}}`,R`\nu\approx8{,}58\ \mathrm{St}`,[R`\nu\approx8{,}58\cdot10^{-4}\ \mathrm{m^2/s}`,'1 St = 10⁻⁴ m²/s'])+'<p>La guía obtiene 8,57 St usando η ya redondeada a 10,8 P.</p>')+
+    control('Reynolds de la esfera: Re = ρ<sub>L</sub>·v·(2r)/η ≈ 1,26·2,19·0,24/10,8 ≈ 0,061 ≪ 1. Compatible con Stokes.'),
     'η ≈ 10,8 P (1,08 Pa·s) · ν ≈ 8,58 St');
+
   exercise('5.10','Tiempo de caída con otro radio','Una esfera tarda 20 segundos en recorrer con velocidad límite, una distancia entre dos marcas en un líquido de viscosidad η. ¿Cuánto tiempo tardará otra esfera de radio tres veces mayor, si recorre igual distancia en el mismo líquido?',
     note('Supuesto','<p>La respuesta de la guía supone que las dos esferas tienen la <b>misma densidad</b> (mismo material). Si no, faltaría ese dato.</p>')+
-    step('1. Cómo depende v del radio',chain(R`v_{\mathrm{lím}}=\frac{2g(\rho_C-\rho_L)}{9\eta}\,r^2`,R`\frac{v_2}{v_1}=\left(\frac{r_2}{r_1}\right)^2=3^2=9`))+
-    step('2. Misma distancia: v y t son inversos',chain(R`v_1\,t_1=v_2\,t_2`,R`t_2=t_1\,\frac{v_1}{v_2}=\frac{20}{9}`,R`t_2\approx2{,}22\ \mathrm{s}`))+
-    control('No se divide por 3: la velocidad límite depende del <b>cuadrado</b> del radio. Si la esfera grande deja de cumplir Stokes, la predicción no vale.'),
+    step('1. Fórmulas que se usan',FX.limite(null)+FX.mru())+
+    FX.cociente()+
+    step('2. Cociente de velocidades',chain([R`\frac{v_2}{v_1}=\frac{\dfrac{2r_2^2g(\rho_C-\rho_L)}{9\eta}}{\dfrac{2r_1^2g(\rho_C-\rho_L)}{9\eta}}=\left(\frac{r_2}{r_1}\right)^2`,'se cancela todo menos el radio'],R`\frac{v_2}{v_1}=3^2=9`))+
+    step('3. Tiempo (misma distancia x)',chain([R`x=v_1\,t_1=v_2\,t_2`,'x = v·t en los dos casos'],R`t_2=t_1\,\frac{v_1}{v_2}=\frac{20\ \mathrm{s}}{9}`,R`t_2\approx2{,}22\ \mathrm{s}`))+
+    step('Otra forma: con letras',chain([R`v_1=\frac{x}{20}`],[R`v_2=9\,v_1=\frac{9x}{20}`],[R`t_2=\frac{x}{v_2}=\frac{x}{9x/20}=\frac{20}{9}\ \mathrm{s}`,'la distancia se cancela']))+
+    control('No se divide por 3: la velocidad límite depende del <b>cuadrado</b> del radio.'),
     't₂ ≈ 2,2 s');
+
   exercise('5.11','Comparación de fuerzas viscosas','La fuerza viscosa para una esfera de 8 cm³ de volumen es de 200 dinas, si cae en un líquido de viscosidad, teniendo velocidad límite = 3 cm/seg. ¿Cuál será la velocidad de otra esfera que cae en el mismo líquido, si su volumen es 1 cm³ y la fuerza viscosa de 600 dinas.',
-    plan('la velocidad de la segunda esfera.','fuerza viscosa sobre esferas en el mismo líquido.','Stokes R = 6πrηv para las dos, con el mismo η. Se usan las fuerzas dadas: no hace falta suponer igual densidad.')+
-    step('1. Relación de radios (desde los volúmenes)',chain(R`V=\frac43\pi r^3`,R`\frac{r_2}{r_1}=\left(\frac{V_2}{V_1}\right)^{1/3}=\left(\frac18\right)^{1/3}=\frac12`))+
-    step('2. Cociente de Stokes',chain(R`\frac{R_2}{R_1}=\frac{r_2\,v_2}{r_1\,v_1}`,R`v_2=v_1\,\frac{R_2}{R_1}\,\frac{r_1}{r_2}`,R`v_2=3\cdot\frac{600}{200}\cdot2`,R`v_2=18\ \mathrm{cm/s}`))+
-    note('Límite físico del ejemplo','<p>Volumen 8 veces menor → radio 2 veces menor: la fuerza viscosa depende del radio, no directamente del volumen. Los datos no informan la densidad del líquido, así que no se puede comprobar el Reynolds de las esferas; y si fueran del mismo material, estas fuerzas a velocidad límite no serían compatibles. El resultado es la solución del modelo, no una verificación experimental.</p>'),
+    plan('la velocidad de la segunda esfera.','fuerza viscosa sobre esferas en el mismo líquido.','Stokes R = 6πηrv para las dos, con el mismo η.')+
+    step('1. Fórmulas que se usan',FX.stokes()+FX.volEsf())+
+    step('2. Camino 1: calcular η con la primera esfera',chain([R`r_1=\sqrt[3]{\frac{3\cdot8}{4\pi}}=1{,}2407\ \mathrm{cm}`,'radio desde el volumen'],[R`\eta=\frac{R_1}{6\pi r_1v_1}=\frac{200}{6\pi\cdot1{,}2407\cdot3}\approx2{,}851\ \mathrm{P}`,'despeje de Stokes'],[R`r_2=\sqrt[3]{\frac{3\cdot1}{4\pi}}=0{,}6204\ \mathrm{cm}`],[R`v_2=\frac{R_2}{6\pi\eta r_2}=\frac{600}{6\pi\cdot2{,}851\cdot0{,}6204}`,'mismo líquido: mismo η'],R`v_2\approx18\ \mathrm{cm/s}`))+
+    step('3. Camino 2: método del cociente',FX.cociente()+chain([R`\frac{r_2}{r_1}=\left(\frac{V_2}{V_1}\right)^{1/3}=\left(\frac18\right)^{1/3}=\frac12`,'V ∝ r³'],[R`\frac{R_2}{R_1}=\frac{6\pi\eta r_2v_2}{6\pi\eta r_1v_1}=\frac{r_2\,v_2}{r_1\,v_1}`,'se cancelan 6, π y η'],R`v_2=v_1\cdot\frac{R_2}{R_1}\cdot\frac{r_1}{r_2}=3\cdot\frac{600}{200}\cdot2`,R`v_2=18\ \mathrm{cm/s}`))+
+    note('Límite físico del ejemplo','<p>Volumen 8 veces menor → radio 2 veces menor: la fuerza viscosa depende del radio, no directamente del volumen. Los datos no informan la densidad, así que no se puede comprobar el Reynolds de las esferas.</p>'),
     'v₂ = 18 cm/s');
 
   // Práctica adicional de conservación del caudal.
   exercise('C1','Reducción de diámetro','Por un tubo cilíndrico de 6 cm de diámetro circula agua con velocidad media de 2 m/s. El tubo se estrecha hasta un diámetro de 3 cm. Pregunta: ¿Cuál es la velocidad del agua en la parte angosta?',
-    step('1. Planteo',continuity+'<p>Agua incompresible, flujo estacionario y sin pérdidas de caudal.</p>')+step('2. Reemplazo',chain(R`v_2=2\left(\frac{6}{3}\right)^2`,R`v_2=8\ \mathrm{m/s}`)+fix('Corrección de unidad','<p>El manuscrito escribe m/s². Una <b>velocidad</b> se mide en <b>m/s</b>; m/s² es aceleración.</p>')),'8 m/s');
+    step('1. Fórmula',FX.cont()+'<p>Agua incompresible, flujo estacionario y sin pérdidas de caudal.</p>')+
+    step('2. Reemplazo',chain(R`v_2=2\ \mathrm{m/s}\cdot\left(\frac{6\ \mathrm{cm}}{3\ \mathrm{cm}}\right)^2=2\cdot4`,R`v_2=8\ \mathrm{m/s}`)+fix('Corrección de unidad','<p>El manuscrito escribe m/s². Una <b>velocidad</b> se mide en <b>m/s</b>; m/s² es aceleración.</p>'))+
+    step('Otra forma: con las áreas',chain(R`S_1=\frac{\pi(6)^2}{4}=28{,}27\ \mathrm{cm^2},\quad S_2=\frac{\pi(3)^2}{4}=7{,}07\ \mathrm{cm^2}`,R`v_2=\frac{S_1v_1}{S_2}=\frac{28{,}27\cdot2}{7{,}07}=8\ \mathrm{m/s}`)),'8 m/s');
   exercise('C2','Dos secciones consecutivas','Un tubo horizontal transporta agua desde una sección de diámetro 8 cm donde la velocidad es 1,5 m/s, hasta una sección de diámetro 4 cm. Preguntas: 1. ¿Qué velocidad alcanza el agua en la sección angosta? 2. ¿Cuál es el caudal volumétrico en m³/s?',
-    step('1. Velocidad',continuity+chain(R`v_2=1{,}5\left(\frac{8}{4}\right)^2=6\ \mathrm{m/s}`))+step('2. Caudal en SI',chain(R`d_1=8\ \mathrm{cm}=0{,}08\ \mathrm{m}`,R`Q=\frac{\pi d_1^2}{4}v_1`,R`Q=\frac{\pi(0{,}08)^2}{4}\cdot1{,}5`,R`Q=0{,}007540\ \mathrm{m^3/s}`)),'6 m/s; 0,007540 m³/s');
+    step('1. Velocidad',FX.cont()+chain(R`v_2=1{,}5\left(\frac{8}{4}\right)^2=1{,}5\cdot4=6\ \mathrm{m/s}`))+
+    step('2. Caudal en SI',FX.caudal([[R`Q=\frac{\pi d^2}{4}\,v`,'con S = πd²/4']])+chain(R`d_1=8\ \mathrm{cm}=0{,}08\ \mathrm{m}`,R`Q=\frac{\pi(0{,}08)^2}{4}\cdot1{,}5`,R`Q=0{,}007540\ \mathrm{m^3/s}`,[R`\text{con la sección 2: }\frac{\pi(0{,}04)^2}{4}\cdot6=0{,}007540\ \mathrm{m^3/s}`,'mismo caudal'])),'6 m/s; 0,007540 m³/s');
   exercise('C3','Derivación en dos ramas','Un caño de 10 cm de diámetro transporta agua con velocidad 1,2 m/s. A cierta distancia se bifurca en dos ramas: - Rama A: diámetro 6 cm. - Rama B: diámetro 4 cm. Pregunta: ¿Cuál es la velocidad en cada rama, suponiendo que ambas transportan agua con el mismo caudal volumétrico?',
-    step('1. Reparto del caudal',sym([['Q_0','caudal del caño principal','m³/s'],['Q_A,Q_B','caudales en las ramas','m³/s']])+chain(R`Q_0=Q_A+Q_B`,R`Q_A=Q_B=\frac{Q_0}{2}`,R`Q_0=\frac{\pi(0{,}10)^2}{4}\cdot1{,}2=0{,}009425\ \mathrm{m^3/s}`))+step('2. Velocidad en cada rama',chain(R`v_i=\frac{Q_i}{A_i}`,R`v_A=\frac{1{,}2}{2}\left(\frac{10}{6}\right)^2=1{,}667\ \mathrm{m/s}`,R`v_B=\frac{1{,}2}{2}\left(\frac{10}{4}\right)^2=3{,}75\ \mathrm{m/s}`)+'<p>Igual caudal no implica igual velocidad: la rama más angosta requiere mayor velocidad.</p>'),'Rama A: 1,667 m/s; rama B: 3,75 m/s');
+    step('1. Reparto del caudal','<p>Con una bifurcación, la continuidad dice que <b>lo que entra se reparte</b> entre las ramas: el caudal del caño principal es la suma de los caudales de las ramas.</p>'+chain([R`Q_0=Q_A+Q_B`,'continuidad con ramificación'],[R`Q_A=Q_B=\frac{Q_0}{2}`,'la consigna dice que son iguales']))+
+    step('2. Caudal del caño principal',FX.caudal([[R`Q_0=S_0\,v_0`]])+chain(R`Q_0=\frac{\pi(0{,}10)^2}{4}\cdot1{,}2=0{,}009425\ \mathrm{m^3/s}`,R`Q_A=Q_B=0{,}0047124\ \mathrm{m^3/s}`))+
+    step('3. Velocidad en cada rama',chain([R`v=\frac{Q}{S}`,'despeje de Q = S·v'],R`v_A=\frac{0{,}0047124}{\pi(0{,}06)^2/4}=\frac{0{,}0047124}{0{,}0028274}=1{,}667\ \mathrm{m/s}`,R`v_B=\frac{0{,}0047124}{\pi(0{,}04)^2/4}=\frac{0{,}0047124}{0{,}0012566}=3{,}75\ \mathrm{m/s}`))+
+    step('Otra forma: atajo con diámetros',chain([R`v_i=\frac{v_0}{2}\left(\frac{d_0}{d_i}\right)^2`,'S₀v₀/2 = Sᵢvᵢ y se cancelan π/4'],R`v_A=0{,}6\left(\frac{10}{6}\right)^2=1{,}667\ \mathrm{m/s}`,R`v_B=0{,}6\left(\frac{10}{4}\right)^2=3{,}75\ \mathrm{m/s}`)+'<p>Igual caudal no implica igual velocidad: la rama más angosta requiere mayor velocidad.</p>'),'Rama A: 1,667 m/s; rama B: 3,75 m/s');
   exercise('C4','Tubería en pendiente','Un tubo de 12 cm de diámetro transporta agua con velocidad 2 m/s. Más adelante se conecta con un tubo de 6 cm de diámetro, inclinado hacia abajo. Preguntas: 1. ¿Qué velocidad lleva el agua en el tramo angosto? 2. ¿Cuánto tiempo tarda en recorrer 15 m de ese tramo?',
-    step('1. Continuidad',continuity+chain(R`v_2=2\left(\frac{12}{6}\right)^2=8\ \mathrm{m/s}`)+'<p>La inclinación modifica las condiciones de presión; con el caudal dado, la velocidad media se fija por la sección.</p>')+step('2. Tiempo',sym([['L','longitud recorrida por el tramo','m'],['t','tiempo de recorrido','s']])+chain(R`t=\frac{L}{v_2}`,R`t=\frac{15}{8}=1{,}875\ \mathrm{s}`)+'<p>Se usa la velocidad media constante del tramo, como aproximación de este ejercicio.</p>'),'8 m/s; 1,875 s');
+    step('1. Continuidad',FX.cont()+chain(R`v_2=2\left(\frac{12}{6}\right)^2=2\cdot4=8\ \mathrm{m/s}`)+'<p>La inclinación cambia las presiones, pero no el caudal: la velocidad media la fija la sección.</p>')+
+    step('2. Tiempo',FX.mru()+chain(R`t=\frac{15\ \mathrm{m}}{8\ \mathrm{m/s}}=1{,}875\ \mathrm{s}`)),'8 m/s; 1,875 s');
   exercise('C5','Sistema de riego','Un sistema de riego utiliza un tubo principal de 20 cm de diámetro, por donde fluye agua con velocidad 0,8 m/s. El tubo alimenta simultáneamente 4 ramales idénticos de diámetro 5 cm cada uno. Preguntas: 1. ¿Cuál es la velocidad del agua en cada ramal? 2. ¿Cuál es el caudal total del sistema en litros por segundo?',
-    step('1. Reparto uniforme','<p>Suponemos ramales con las mismas condiciones hidráulicas: cada uno recibe un cuarto del caudal.</p>'+chain(R`Q_0=4Q_r`,R`S_0v_0=4S_rv_r`,R`v_r=\frac{v_0}{4}\left(\frac{d_0}{d_r}\right)^2`,R`v_r=\frac{0{,}8}{4}\left(\frac{20}{5}\right)^2=3{,}2\ \mathrm{m/s}`))+step('2. Caudal total',chain(R`Q_0=\frac{\pi d_0^2}{4}v_0`,R`Q_0=\frac{\pi(0{,}20)^2}{4}\cdot0{,}8=0{,}025133\ \mathrm{m^3/s}`,R`1\ \mathrm{m^3}=1000\ \mathrm{L}`,R`Q_0=25{,}13\ \mathrm{L/s}`)),'3,2 m/s en cada ramal; 25,13 L/s en total');
+    step('1. Caudal total',FX.caudal([[R`Q_0=\frac{\pi d_0^2}{4}\,v_0`]])+chain(R`Q_0=\frac{\pi(0{,}20)^2}{4}\cdot0{,}8=0{,}025133\ \mathrm{m^3/s}`,[R`Q_0=25{,}13\ \mathrm{L/s}`,'1 m³ = 1000 L']))+
+    step('2. Velocidad en cada ramal','<p>Continuidad con ramificación: lo que entra se reparte en 4 ramales iguales.</p>'+chain([R`Q_0=4\,Q_r\ \Rightarrow\ Q_r=\frac{0{,}025133}{4}=0{,}0062832\ \mathrm{m^3/s}`],[R`v_r=\frac{Q_r}{S_r}=\frac{0{,}0062832}{\pi(0{,}05)^2/4}=\frac{0{,}0062832}{0{,}0019635}`,'despeje de Q = S·v'],R`v_r=3{,}2\ \mathrm{m/s}`))+
+    step('Otra forma: atajo',chain([R`v_r=\frac{v_0}{4}\left(\frac{d_0}{d_r}\right)^2=\frac{0{,}8}{4}\left(\frac{20}{5}\right)^2=0{,}2\cdot16=3{,}2\ \mathrm{m/s}`,'S₀v₀ = 4·S_r·v_r'])),'3,2 m/s en cada ramal; 25,13 L/s en total');
 
   add('guia','Guía resuelta · Actividad n.º 8','GUÍA ORIGINAL · 17',`
 <p>Los once ejercicios de la guía de <b>Circulación de fluidos</b>, con la numeración impresa. Cada resolución sigue el mismo orden: <b>qué piden → fenómeno → datos → unidades → ley → despeje → reemplazo → resultado → control</b>. Si un resultado difiere de la guía, se explica en el ejercicio.</p>
