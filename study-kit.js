@@ -80,6 +80,18 @@
       const xsv=nsv/(nsv+nst),p=xsv*p0;
       return `<b>x<sub>sv</sub> = ${fmt(xsv,4)}</b> · x<sub>st</sub> = ${fmt(1-xsv,4)}<br><b>p<sub>sc</sub> = ${fmt(p,3)}</b> · Δp = ${fmt(p0-p,3)} (misma unidad que p⁰)`;
     },
+    // Química Inorgánica: volumen de solución reactiva para consumir un sólido.
+    reagent(root){
+      const ms=num(root,'ms'),Ms=num(root,'Ms'),r=num(root,'r'),Mr=num(root,'Mr'),pct=num(root,'pct'),d=num(root,'d'),extra=num(root,'extra')||0;
+      const ns=ms/Ms,nr=ns*r,mr=nr*Mr,msol=mr*100/pct,V=msol/d;
+      return `n(sólido) = ${fmt(ns,5)} mol → n(reactivo) = ${fmt(nr,5)} mol<br>masa de reactivo puro = ${fmt(mr,4)} g · masa de solución = ${fmt(msol,4)} g<br><b>V ≈ ${fmt(V,3)} mL</b>${extra?` · con el cierre hidráulico: <b>${fmt(V+extra,3)} mL</b>`:''}`;
+    },
+    // Química Inorgánica: volumen de gas producido (gas ideal).
+    gasvol(root){
+      const m=num(root,'m'),M=num(root,'M'),r=num(root,'r'),t=num(root,'t'),P=num(root,'P');
+      const n=m/M*r,T=t+273.15,V=n*0.08206*T/P;
+      return `n(gas) = ${fmt(n,5)} mol · T = ${fmt(T,2)} K<br><b>V ≈ ${fmt(V,4)} L</b> (≈ ${fmt(V*1000,1)} mL)<br><small>En CNPT (0 °C, 1 atm) serían ${fmt(n*22.4,4)} L.</small>`;
+    },
     osmotic(root){
       const i=num(root,'i'),C=num(root,'C'),t=num(root,'t');
       const T=t+273.15,P=i*C*0.08206*T;

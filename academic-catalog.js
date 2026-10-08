@@ -12,12 +12,12 @@ window.ET27_ACADEMIC_CATALOG = {
       year: 4,
       subjects: [
         { id: 'quimica-general-4', name: 'Química General', kind: 'Materia', status: 'Disponible', letter: 'QG', href: './?view=chemistry', existing: true },
-        { id: 'quimica-inorganica-4', name: 'Química Inorgánica', kind: 'Materia', status: 'Esqueleto listo', letter: 'QI', href: './materia.html?subject=quimica-inorganica-4' },
+        { id: 'quimica-inorganica-4', name: 'Química Inorgánica', kind: 'Materia', status: 'Disponible', letter: 'QI', href: './?view=inorganic&tab=teoria', existing: true },
         { id: 'procesos-operaciones-4', name: 'Procesos y Operaciones Químicas', kind: 'Materia', status: 'Unidad 4 cargada', letter: 'PO', href: './materia.html?subject=procesos-operaciones-4' },
         { id: 'fisica-aplicada-4', name: 'Física Aplicada', kind: 'Materia', status: 'Disponible', letter: 'FA', href: './?view=physics', existing: true },
         { id: 'matematica-4', name: 'Matemática de 4.º', kind: 'Materia', status: 'Esqueleto listo', letter: 'M4', href: './materia.html?subject=matematica-4' },
         { id: 'tp-quimica-general-4', name: 'TP / Laboratorio de Química General', kind: 'TP / Laboratorio', status: 'Esqueleto listo', letter: 'TP', href: './materia.html?subject=tp-quimica-general-4' },
-        { id: 'tp-quimica-inorganica-4', name: 'TP / Laboratorio de Química Inorgánica', kind: 'TP / Laboratorio', status: 'Esqueleto listo', letter: 'TP', href: './materia.html?subject=tp-quimica-inorganica-4' },
+        { id: 'tp-quimica-inorganica-4', name: 'TP / Laboratorio de Química Inorgánica', kind: 'TP / Laboratorio', status: 'TP 4 y TP 5 cargados', letter: 'TP', href: './?view=inorganic&tab=tp' },
         { id: 'tp-procesos-operaciones-4', name: 'TP / Laboratorio de Procesos y Operaciones Químicas', kind: 'TP / Laboratorio', status: 'Esqueleto listo', letter: 'TP', href: './materia.html?subject=tp-procesos-operaciones-4' }
       ]
     },
