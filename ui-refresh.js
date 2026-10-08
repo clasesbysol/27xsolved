@@ -9,7 +9,7 @@
   const USAGE_KEY = '27xsolved-usage-v1';
   const SUBJECTS = [
     { id: 'chemistry', view: 'chemistry', letter: 'Q', name: 'Química General', meta: '4.º año · Propiedades coligativas' },
-    { id: 'physics', view: 'physics', letter: 'F', name: 'Física Aplicada', meta: 'Tensión superficial · Hidrodinámica' }
+    { id: 'physics', view: 'physics', letter: 'F', name: 'Física Aplicada', meta: 'Tensión superficial · Circulación de fluidos' }
   ];
   const DAYS = [[1, 'Lunes'], [2, 'Martes'], [3, 'Miércoles'], [4, 'Jueves'], [5, 'Viernes']];
 

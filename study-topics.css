@@ -160,3 +160,5 @@
 .kitSection article>.kitEqRow,.kitBox>.kitEqRow,.deepReadBody>.kitEqRow{margin:14px 0;padding:8px 14px;border-radius:12px;background:var(--surface2)}
 .topicHero h1{overflow-wrap:break-word;hyphens:auto}
 @media(max-width:620px){.topicHero h1{font-size:clamp(30px,9.4vw,46px)!important;line-height:1.05}}
+
+.guideLink{margin:10px 0;padding:9px 13px;border-radius:10px;background:color-mix(in srgb,var(--brand-sun,#FCC717) 16%,var(--surface));font-size:14px}

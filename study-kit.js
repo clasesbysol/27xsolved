@@ -50,8 +50,13 @@
     reynolds(root){
       const rho=num(root,'rho'),v=num(root,'v'),d=num(root,'d'),eta=num(root,'eta');
       const re=rho*v*d/eta;
-      const reg=re<2300?['Laminar','lam']:re<=4000?['Transición','tra']:['Turbulento','tur'];
-      return `<b>Re ≈ ${fmt(re,0)}</b> <span class="regime ${reg[1]}">${reg[0]}</span><br><small>Referencia del apunte: 2100 · Clasificación habitual en tubos: &lt; 2300 laminar, 2300–4000 transición, &gt; 4000 turbulento (valores orientativos).</small>`;
+      const reg=re<2100?['Laminar','lam']:re<=3000?['Transición','tra']:['Turbulento','tur'];
+      return `<b>Re ≈ ${fmt(re,0)}</b> <span class="regime ${reg[1]}">${reg[0]}</span><br><small>Criterio de la guía: &lt; 2100 laminar · 2100–3000 transición · &gt; 3000 turbulento (valores aproximados).</small>`;
+    },
+    fanning(root){
+      const re=num(root,'re');
+      const f=0.0014+0.125*Math.pow(re,-0.32);
+      return `<b>f ≈ ${fmt(f,5)}</b><br><small>${re<=3000?'Con Re ≤ 3000 la guía no usa Fanning: el régimen no es turbulento.':'Re<sup>0,32</sup> ≈ '+fmt(Math.pow(re,0.32),3)+' → f = 0,0014 + 0,125 / '+fmt(Math.pow(re,0.32),3)}</small>`;
     },
     poiseuille(root){
       const k=num(root,'k');
