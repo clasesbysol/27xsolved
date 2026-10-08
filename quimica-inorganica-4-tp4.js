@@ -7,7 +7,7 @@
   const {rx,rxs,f,vira,swatch,ensayo,pic,punch,svg}=Q;
   const R=String.raw;
   const s=[];const add=(key,label,kicker,html)=>s.push({key:`qi-tp4-${key}`,label,kicker,html});
-  const ver=(id,label)=>`<p class="guideLink">📘 Teoría: <button type="button" class="textButton" data-result-go="qi:${id}">${label} →</button></p>`;
+  const ver=(id,label)=>`<p class="guideLink">📘 Material teórico: <button type="button" class="textButton" data-result-go="qi:${id}">${label} →</button></p>`;
 
   add('intro','Antes de entrar al laboratorio','TP 4 · 00',`
 <p>Este TP recorre los protagonistas más “simples” de la química inorgánica: el <b>hidrógeno</b>, el <b>oxígeno</b>, el <b>agua</b> y los metales más reactivos de la tabla, los de los <b>grupos 1 y 2</b>. Se hace en dos clases:</p>

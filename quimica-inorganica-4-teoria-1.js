@@ -308,8 +308,8 @@ ${cards([
 `);
 
   window.ET27_QI4.units.push(
-    {id:'herramientas',part:'teoria',n:1,title:'Caja de herramientas',lead:'Todo lo que hace falta antes de entrar al laboratorio: leer una reacción, números de oxidación, el método del ion-electrón y los cálculos con soluciones y gases.',sections:s1},
-    {id:'hidrogeno-oxigeno',part:'teoria',n:2,title:'Hidrógeno, oxígeno y agua',lead:'Cómo se obtienen y se reconocen el H₂ y el O₂, qué son los hidruros, la doble vida del agua oxigenada y lo que el agua le hace a los iones metálicos.',sections:s2},
-    {id:'grupos-1-2',part:'teoria',n:3,title:'Metales de los grupos 1 y 2',lead:'Alcalinos y alcalinotérreos: por qué son tan reactivos, cómo reaccionan con oxígeno, agua y ácidos, y de dónde salen los colores a la llama.',sections:s3}
+    {id:'herramientas',part:'tp',kind:'apoyo',n:1,title:'Caja de herramientas',lead:'Todo lo que hace falta antes de entrar al laboratorio: leer una reacción, números de oxidación, el método del ion-electrón y los cálculos con soluciones y gases.',sections:s1},
+    {id:'hidrogeno-oxigeno',part:'tp',kind:'apoyo',n:2,title:'Hidrógeno, oxígeno y agua',lead:'Cómo se obtienen y se reconocen el H₂ y el O₂, qué son los hidruros, la doble vida del agua oxigenada y lo que el agua le hace a los iones metálicos.',sections:s2},
+    {id:'grupos-1-2',part:'tp',kind:'apoyo',n:3,title:'Metales de los grupos 1 y 2',lead:'Alcalinos y alcalinotérreos: por qué son tan reactivos, cómo reaccionan con oxígeno, agua y ácidos, y de dónde salen los colores a la llama.',sections:s3}
   );
 })();

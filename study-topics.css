@@ -283,3 +283,5 @@
 .fxMain .katex{font-size:1.18em}
 .fxAlt{background:color-mix(in srgb,var(--brand-sun,#FCC717) 10%,var(--surface))}
 .fxAlt>span{color:color-mix(in srgb,#b07b00 85%,var(--text))}
+.qiLonePair{fill:color-mix(in srgb,#e08a2e 25%,var(--surface));stroke:#e08a2e;stroke-width:1.5}
+.qiDash{stroke-dasharray:5 4}

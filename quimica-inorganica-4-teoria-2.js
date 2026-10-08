@@ -369,8 +369,8 @@ ${cards([
 `);
 
   window.ET27_QI4.units.push(
-    {id:'bloque-p',part:'teoria',n:4,title:'Térreos, carbonoides y nitrogenoides',lead:'Los grupos 13, 14 y 15: tendencias, el efecto del par inerte, la relación diagonal boro–silicio, boratos, silicatos y los metales anfóteros Al, Sn y Pb.',sections:s4},
-    {id:'carbono',part:'teoria',n:5,title:'El carbono y sus compuestos',lead:'Alótropos, adsorción, poder reductor, el dióxido de carbono de punta a punta y cómo se distinguen carbonatos de bicarbonatos.',sections:s5},
-    {id:'nitrogeno',part:'teoria',n:6,title:'El nitrógeno y sus compuestos',lead:'De −3 a +5: obtención de N₂, el amoníaco (base, reductor y ligando) y el ácido nítrico como oxidante según su concentración.',sections:s6}
+    {id:'bloque-p',part:'tp',kind:'apoyo',n:4,title:'Térreos, carbonoides y nitrogenoides',lead:'Los grupos 13, 14 y 15: tendencias, el efecto del par inerte, la relación diagonal boro–silicio, boratos, silicatos y los metales anfóteros Al, Sn y Pb.',sections:s4},
+    {id:'carbono',part:'tp',kind:'apoyo',n:5,title:'El carbono y sus compuestos',lead:'Alótropos, adsorción, poder reductor, el dióxido de carbono de punta a punta y cómo se distinguen carbonatos de bicarbonatos.',sections:s5},
+    {id:'nitrogeno',part:'tp',kind:'apoyo',n:6,title:'El nitrógeno y sus compuestos',lead:'De −3 a +5: obtención de N₂, el amoníaco (base, reductor y ligando) y el ácido nítrico como oxidante según su concentración.',sections:s6}
   );
 })();

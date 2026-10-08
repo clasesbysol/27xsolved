@@ -166,7 +166,7 @@ ${rxs(['N2(g) + 3 H2(g) <=[Fe, 450 °C, 200 atm]=> 2 NH3(g)','Haber'],['N2(g) + 
    quim:`<ul class="kitList"><li>Óxido B₂O₃ sólido y <b>ácido</b> (como el SiO₂).</li><li>Ácido bórico muy débil.</li><li>Hidruros gaseosos e inflamables (boranos), como los silanos.</li></ul>${rxs(['B(OH)3(ac) + H2O(l) <=> [B(OH)4]^-(ac) + H^+(ac)','ácido de Lewis'],['Na2B4O7(ac) + 2 HCl(ac) + 5 H2O(l) -> 2 NaCl(ac) + 4 H3BO3(ac)','el bórax neutraliza ácidos'])}`,
    comp:[['Na₂B₄O₇','bórax: neutraliza ácidos, perlas coloreadas, slime'],['H₃BO₃','ácido bórico: antiséptico suave'],['B₂O₃','óxido; con SiO₂ forma el vidrio borosilicato']],
    labHtml:'<p>No tiene ensayo propio en las guías, pero lo usás todo el tiempo: el <b>vidrio pírex</b> de los tubos que van al fuego es vidrio <b>borosilicato</b> (SiO₂ + B₂O₃), que resiste los cambios bruscos de temperatura.</p>',
-   labs:[lab('bloque-p','qi-pb-boro','Teoría: boratos y bórax'),lab('bloque-p','qi-pb-diagonal','Teoría: relación diagonal B–Si')]});
+   labs:[lab('bloque-p','qi-pb-boro','Material teórico del TP 5: boratos y bórax'),lab('bloque-p','qi-pb-diagonal','Material teórico del TP 5: relación diagonal B–Si')]});
 
   ficha({sym:'Al',name:'Aluminio',Z:13,M:'26,98',fam:'mp',gp:'13 · 3',cfg:'[Ne] 3s² 3p¹',en:'1,61',ox:'+3',nat:'bauxita, arcillas, feldespatos',kicker:'BLOQUE p',
    punch:'El metal más abundante de la corteza y el anfótero estrella: se disuelve en ácidos y en bases.',
@@ -185,7 +185,7 @@ ${rxs(['N2(g) + 3 H2(g) <=[Fe, 450 °C, 200 atm]=> 2 NH3(g)','Haber'],['N2(g) + 
    obt:rx('SiO2(s) + 2 C(s) =[horno eléctrico]=> Si(l) + 2 CO(g)','otra vez el carbono como reductor'),
    comp:[['SiO₂','sílice: arena, cuarzo, vidrio'],['Silicatos','neso-, soro-, ciclo-, ino- y tectosilicatos'],['Na₂SiO₃','metasilicato: “vidrio líquido”, jardín químico']],
    labHtml:'<p>No hay ensayo propio en las guías: está en la teoría del TP 5 (sílice, silicatos y vidrio líquido).</p>',
-   labs:[lab('bloque-p','qi-pb-silicio','Teoría: sílice y silicatos')]});
+   labs:[lab('bloque-p','qi-pb-silicio','Material teórico del TP 5: sílice y silicatos')]});
 
   ficha({sym:'Sn',name:'Estaño',Z:50,M:'118,7',fam:'mp',gp:'14 · 5',cfg:'[Kr] 4d¹⁰ 5s² 5p²',en:'1,96',ox:'+2 · +4',nat:'casiterita (SnO₂); Bolivia es gran productor',kicker:'BLOQUE p',
    punch:'Metal anfótero de los carbonoides: reacciona con ácidos y con bases liberando H₂.',
@@ -194,7 +194,7 @@ ${rxs(['N2(g) + 3 H2(g) <=[Fe, 450 °C, 200 atm]=> 2 NH3(g)','Haber'],['N2(g) + 
    quim:rxs(['Sn(s) + 2 HCl(ac) -> SnCl2(ac) + H2(g)'],['Sn(s) + 2 NaOH(ac) -> Na2SnO2(ac) + H2(g)','estannito'],['Sn(OH)2(s) + 2 NaOH(ac) -> Na2[Sn(OH)4](ac)','anfótero'])+'<p>Con HNO₃ concentrado no da nitrato sino óxido, SnO₂. El Sn²⁺ es un buen <b>reductor</b> (tiende a pasar a Sn⁴⁺).</p>',
    comp:[['SnCl₂','cloruro estannoso: reductor'],['SnO₂','casiterita'],['Bronce','aleación Cu–Sn']],
    labHtml:'<p>No tiene ensayo en las guías: aparece en la teoría de anfoterismo del TP 5.</p>',
-   labs:[lab('bloque-p','qi-pb-al-sn-pb','Teoría: Al, Sn y Pb anfóteros')]});
+   labs:[lab('bloque-p','qi-pb-al-sn-pb','Material teórico del TP 5: Al, Sn y Pb anfóteros')]});
 
   ficha({sym:'Pb',name:'Plomo',Z:82,M:'207,2',fam:'mp',gp:'14 · 6',cfg:'[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p²',en:'2,33',ox:'+2 (el estable) · +4 (oxidante)',nat:'galena (PbS)',kicker:'BLOQUE p',
    punch:'El ejemplo clásico del par inerte: prefiere +2, y el Pb(IV) es oxidante.',

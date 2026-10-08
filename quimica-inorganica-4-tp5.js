@@ -7,7 +7,7 @@
   const {rx,rxs,f,vira,swatch,ensayo,pic,punch,svg}=Q;
   const R=String.raw;
   const s=[];const add=(key,label,kicker,html)=>s.push({key:`qi-tp5-${key}`,label,kicker,html});
-  const ver=(id,label)=>`<p class="guideLink">📘 Teoría: <button type="button" class="textButton" data-result-go="qi:${id}">${label} →</button></p>`;
+  const ver=(id,label)=>`<p class="guideLink">📘 Material teórico: <button type="button" class="textButton" data-result-go="qi:${id}">${label} →</button></p>`;
 
   add('intro','Antes de entrar al laboratorio','TP 5 · 00',`
 <p>En este TP se trabajan los dos no metales estrella de los grupos 14 y 15: el <b>carbono</b> (y su dióxido, carbonatos y bicarbonatos) y el <b>nitrógeno</b> (amoníaco y ácido nítrico).</p>
