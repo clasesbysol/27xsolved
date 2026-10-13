@@ -46,6 +46,75 @@
     return `<svg viewBox="0 0 640 290" role="img" aria-label="Diagrama de especiación: fracción de cada especie en función del pH">${band}${grid}<line x1="50" y1="250" x2="620" y2="250" class="qacAxis"/><line x1="50" y1="25" x2="50" y2="250" class="qacAxis"/>${pk}${curves}${labels}${marks}<text x="335" y="287" text-anchor="middle" class="qacTick">pH</text><text x="14" y="140" transform="rotate(-90 14 140)" text-anchor="middle" class="qacTick">fracción α</text></svg>`;
   }
 
+
+  // ---------- Justificación corta (estilo parcial) ----------
+  const jus=(html,title='Justificación')=>`<div class="kitBox qacJus"><b>📌 ${title}</b>${html}</div>`;
+  // Descripción del sistema: lista de reacciones/expresiones con su rótulo.
+  const desc=(html,title='Descripción del sistema')=>`<div class="kitBox qacDesc"><b>🧾 ${title}</b>${html}</div>`;
+  // Respuesta impresa en la guía y comentario de cotejo.
+  const rta=(txt,ok=true,nota='')=>`<p class="qacRta ${ok?'ok':'warn'}"><b>Rta. de la guía:</b> ${txt}${ok?' ✔ coincide':''}${nota?`<br><small>${nota}</small>`:''}</p>`;
+
+  // ---------- Especiación en escala logarítmica: ninguna especie llega a 0 ----------
+  function specLog(pKas,names,opt={}){
+    const yMin=opt.yMin||-10,X=pH=>50+pH*(570/14),Y=l=>25+(0-l)*(225/(0-yMin));
+    const pts=names.map(()=>[]);
+    for(let i=0;i<=280;i++){const pH=i*0.05;fractions(pKas,pH).forEach((a,j)=>{const l=Math.max(Math.log10(a),yMin);pts[j].push(`${X(pH).toFixed(1)},${Y(l).toFixed(1)}`)})}
+    const ys=[];for(let l=0;l>=yMin;l-=2)ys.push(l);
+    const grid=[0,2,4,6,8,10,12,14].map(p=>`<line x1="${X(p)}" y1="25" x2="${X(p)}" y2="250" class="qacGrid"/><text x="${X(p)}" y="268" text-anchor="middle" class="qacTick">${p}</text>`).join('')+ys.map(l=>`<line x1="50" y1="${Y(l)}" x2="620" y2="${Y(l)}" class="qacGrid"/><text x="44" y="${Y(l)+4}" text-anchor="end" class="qacTick">${l===0?'1':'10'+(l<0?'⁻':'')+String(-l).split('').map(c=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[c]).join('')}</text>`).join('');
+    const pk=pKas.map(p=>`<line x1="${X(p)}" y1="25" x2="${X(p)}" y2="250" class="qacPk"/>`).join('');
+    const lab=(opt.labels||[]).map(([nm,pH,l,j])=>`<text x="${X(pH)}" y="${Y(l)}" text-anchor="middle" class="svgText strong qacF${j%4}">${nm}</text>`).join('');
+    return `<svg viewBox="0 0 640 290" role="img" aria-label="Diagrama de especiación en escala logarítmica: ninguna fracción llega a cero">${grid}<line x1="50" y1="250" x2="620" y2="250" class="qacAxis"/><line x1="50" y1="25" x2="50" y2="250" class="qacAxis"/>${pk}${pts.map((p,j)=>`<polyline points="${p.join(' ')}" class="qacC${j%4}"/>`).join('')}${lab}<text x="335" y="287" text-anchor="middle" class="qacTick">pH</text><text x="12" y="140" transform="rotate(-90 12 140)" text-anchor="middle" class="qacTick">α (escala log)</text></svg>`;
+  }
+
+  // ---------- Dibujos didácticos ----------
+  const dot=(x,y,cls,t)=>`<circle cx="${x}" cy="${y}" r="11" class="${cls}"/><text x="${x}" y="${y+4}" text-anchor="middle" class="qacMol">${t}</text>`;
+  const pair=(x,y)=>`<rect x="${x-16}" y="${y-11}" width="44" height="22" rx="11" class="qacHA"/><text x="${x+6}" y="${y+4}" text-anchor="middle" class="qacMol">HA</text>`;
+  const draw={};
+  draw.choques=`<svg viewBox="0 0 660 270" role="img" aria-label="Choques efectivos: en la solución concentrada los iones chocan más y se recombinan; en la diluida casi no se encuentran">
+    <defs><marker id="qacArrC" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10z" class="svgAccentFill"/></marker></defs>
+    <rect x="15" y="20" width="300" height="200" rx="16" class="svgLiquid strongLiquid"/>
+    ${[[50,50],[110,48],[170,52],[230,46],[60,105],[200,110],[255,100],[80,165],[150,170],[250,175]].map(([x,y])=>pair(x,y)).join('')}
+    ${dot(118,110,'qacHp','H⁺')}${dot(150,112,'qacAm','A⁻')}
+    <path d="M130 136 q10 14 20 0" class="svgArrow" marker-end="url(#qacArrC)"/>
+    <text x="165" y="245" text-anchor="middle" class="svgText strong">Concentrada: α chico</text>
+    <text x="165" y="263" text-anchor="middle" class="svgText qiSmall">muchos choques: se rearma HA</text>
+    <rect x="345" y="20" width="300" height="200" rx="16" class="svgLiquid"/>
+    ${pair(395,60)}${pair(560,170)}
+    ${dot(470,70,'qacHp','H⁺')}${dot(600,60,'qacAm','A⁻')}${dot(400,180,'qacAm','A⁻')}${dot(520,120,'qacHp','H⁺')}
+    <text x="495" y="245" text-anchor="middle" class="svgText strong">Diluida: α grande</text>
+    <text x="495" y="263" text-anchor="middle" class="svgText qiSmall">pocos choques: casi no se rearma</text>
+  </svg>`;
+  draw.buffer=`<svg viewBox="0 0 660 230" role="img" aria-label="Funcionamiento de un buffer: la base del par capta el H+ agregado y el ácido del par neutraliza el OH- agregado">
+    <defs><marker id="qacArrB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10z" class="svgAccentFill"/></marker></defs>
+    <rect x="230" y="55" width="200" height="110" rx="18" class="qacBox"/>
+    <text x="330" y="95" text-anchor="middle" class="qacBig">HA ⇌ A⁻</text><text x="330" y="122" text-anchor="middle" class="svgText qiSmall">las dos formas en cantidad apreciable</text><text x="330" y="145" text-anchor="middle" class="svgText strong">pH ≈ pKa ± 1</text>
+    <rect x="12" y="20" width="170" height="70" rx="14" class="qacBoxAlt"/><text x="97" y="50" text-anchor="middle" class="svgText strong">agrego H⁺</text><text x="97" y="72" text-anchor="middle" class="svgText qiSmall">A⁻ + H⁺ → HA</text>
+    <rect x="478" y="20" width="170" height="70" rx="14" class="qacBoxAlt"/><text x="563" y="50" text-anchor="middle" class="svgText strong">agrego OH⁻</text><text x="563" y="72" text-anchor="middle" class="svgText qiSmall">HA + OH⁻ → A⁻ + H₂O</text>
+    <line x1="184" y1="62" x2="226" y2="90" class="svgArrow" marker-end="url(#qacArrB)"/><line x1="476" y1="62" x2="434" y2="90" class="svgArrow" marker-end="url(#qacArrB)"/>
+    <text x="330" y="200" text-anchor="middle" class="svgText strong">Cambia un poco el cociente [A⁻]/[HA], no el pH</text>
+    <text x="330" y="220" text-anchor="middle" class="svgText qiSmall">pH = pKa + log([A⁻]/[HA]): el log de un cociente cercano a 1 cambia muy poco</text>
+  </svg>`;
+  const beaker=(x,label,sub,solid,ppt)=>`<path d="M${x} 60 V170 H${x+120} V60" class="svgTube"/><rect x="${x+2}" y="90" width="116" height="78" class="svgLiquid"/>${solid?`<rect x="${x+20}" y="150" width="80" height="16" rx="5" class="qacSolid"/>`:''}${ppt?[...Array(9)].map((_,i)=>`<circle cx="${x+15+i*11}" cy="${105+((i*17)%45)}" r="4" class="qacSolid"/>`).join(''):''}<text x="${x+60}" y="195" text-anchor="middle" class="svgText strong">${label}</text><text x="${x+60}" y="214" text-anchor="middle" class="svgText qiSmall">${sub}</text>`;
+  draw.qkps=`<svg viewBox="0 0 660 230" role="img" aria-label="Comparación del producto iónico Q con Kps: no saturada, saturada y sobresaturada">
+    ${beaker(40,'Q < Kps','no saturada: se disuelve más',false,false)}${beaker(270,'Q = Kps','saturada: equilibrio con el sólido',true,false)}${beaker(500,'Q > Kps','precipita hasta Q = Kps',false,true)}
+    <text x="330" y="30" text-anchor="middle" class="svgText strong">Q usa las concentraciones de AHORA · Kps, las del equilibrio</text>
+  </svg>`;
+  draw.complejo=`<svg viewBox="0 0 660 230" role="img" aria-label="Formación del complejo tetraamincobre(II): el Cu2+ acepta pares de electrones de cuatro moléculas de amoníaco">
+    <defs><marker id="qacArrK" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10z" class="svgAccentFill"/></marker></defs>
+    <circle cx="330" cy="115" r="34" class="qacCu"/><text x="330" y="121" text-anchor="middle" class="qacBig" style="fill:#fff">Cu²⁺</text>
+    ${[[230,50],[430,50],[230,180],[430,180]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="26" class="svgLineFill svgSoft"/><text x="${x}" y="${y+5}" text-anchor="middle" class="svgText strong">:NH₃</text><line x1="${x+(x<330?24:-24)}" y1="${y+(y<115?14:-14)}" x2="${330+(x<330?-30:30)}" y2="${115+(y<115?-16:16)}" class="svgArrow" marker-end="url(#qacArrK)"/>`).join('')}
+    <text x="80" y="100" text-anchor="middle" class="svgText strong">Ligando</text><text x="80" y="120" text-anchor="middle" class="svgText qiSmall">base de Lewis:</text><text x="80" y="138" text-anchor="middle" class="svgText qiSmall">dona un par de e⁻</text>
+    <text x="580" y="100" text-anchor="middle" class="svgText strong">Ion central</text><text x="580" y="120" text-anchor="middle" class="svgText qiSmall">ácido de Lewis:</text><text x="580" y="138" text-anchor="middle" class="svgText qiSmall">acepta pares</text>
+    <text x="330" y="225" text-anchor="middle" class="svgText strong">[Cu(NH₃)₄]²⁺ · número de coordinación 4 · azul intenso</text>
+  </svg>`;
+  draw.fraccionada=`<svg viewBox="0 0 660 205" role="img" aria-label="Precipitación fraccionada: escala de concentración de plata a la que empieza a precipitar cada haluro">
+    <defs><marker id="qacArrF" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10z" class="svgAccentFill"/></marker></defs>
+    <line x1="40" y1="110" x2="620" y2="110" class="svgArrow" marker-end="url(#qacArrF)"/><text x="330" y="158" text-anchor="middle" class="svgText qiSmall">[Ag⁺] en la solución (escala logarítmica)</text>
+    ${[[-16,'10⁻¹⁶'],[-14,'10⁻¹⁴'],[-12,'10⁻¹²'],[-10,'10⁻¹⁰'],[-8,'10⁻⁸'],[-6,'10⁻⁶']].map(([l,t])=>{const x=60+(l+16)*50;return `<line x1="${x}" y1="104" x2="${x}" y2="116" class="svgTick"/><text x="${x}" y="134" text-anchor="middle" class="qacTick">${t}</text>`}).join('')}
+    ${(()=>{const x1=60+(-14.08+16)*50,x2=60+(-7.74+16)*50;return `<rect x="${x1}" y="60" width="${x2-x1}" height="30" rx="8" class="svgVolume"/><text x="${(x1+x2)/2}" y="80" text-anchor="middle" class="svgText strong">precipita sólo AgI</text><line x1="${x1}" y1="50" x2="${x1}" y2="110" class="qacPk"/><text x="${x1}" y="44" text-anchor="middle" class="svgText qiSmall">empieza AgI</text><line x1="${x2}" y1="50" x2="${x2}" y2="110" class="qacPk"/><text x="${x2}" y="44" text-anchor="middle" class="svgText qiSmall">empieza AgCl</text>`})()}
+    <text x="330" y="188" text-anchor="middle" class="svgText qiSmall">I⁻ y Cl⁻ 0,010 M: cuando aparece el AgCl, el I⁻ que queda es 4,6·10⁻⁹ M (separación completa)</text>
+  </svg>`;
+
   // ---------- Mapa de pasajes [H⁺] ⇄ pH ⇄ pOH ⇄ [OH⁻] ----------
   const pasajes=`<svg viewBox="0 0 640 300" role="img" aria-label="Mapa de pasajes entre concentración de H+, pH, pOH y concentración de OH-">
     <defs><marker id="qacArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10z" class="svgAccentFill"/></marker></defs>
@@ -118,6 +187,17 @@
   };
   const opt=(name,list,label='Dato')=>`<label><span>${label}</span><select name="${name}">${list.map(([v,l])=>`<option value="${v}">${l}</option>`).join('')}</select></label>`;
 
-  window.ET27QAC={sup,ver,flow,memo,spec,fractions,pasajes,scale,opt};
+
+  // ---------- Ejercicios resueltos ----------
+  // st(consigna, [incisos]) → HTML de la consigna.
+  const st=(txt,parts)=>`<p>${txt}</p>${parts?`<ol type="a">${parts.map(p=>`<li>${p}</li>`).join('')}</ol>`:''}`;
+  // addEx(unidad, {key,label,intro,group}, [ejercicios]) agrega la sección de ejercicios y sus tarjetas.
+  function addEx(uid,sec,list){
+    const u=(window.ET27_QAC5.units||[]).find(x=>x.id===uid);if(!u)return;
+    u.exercises=(u.exercises||[]).concat(list.map(e=>({...e,group:sec.group})));
+    if(!u.sections.some(x=>x.key===`qac-ej-${sec.group}`))u.sections.push({key:`qac-ej-${sec.group}`,label:sec.label,kicker:sec.kicker||'EJERCICIOS RESUELTOS',exercises:true,html:`${sec.intro||''}<div data-qac-guide="${sec.group}"></div>`});
+  }
+
+  window.ET27QAC={sup,ver,flow,memo,spec,specLog,fractions,pasajes,scale,opt,jus,desc,rta,draw,st,addEx};
   window.ET27_QAC5=window.ET27_QAC5||{subjectName:'Química Analítica Cualitativa',year:5,units:[]};
 })();

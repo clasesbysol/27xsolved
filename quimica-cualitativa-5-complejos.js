@@ -8,12 +8,13 @@
   const {rx,rxs,f,punch,facts,vira,swatch}=Q;
   const {sup,ver,flow,memo}=A;
   const R=String.raw;
-  const s=[];const add=(k,l,kk,h)=>s.push({key:`qac-u3-${k}`,label:l,kicker:kk,html:h});
+  const s=[];const add=(k,l,kk,h)=>s.push({key:`qac-cx-${k}`,label:l,kicker:kk,html:h});
 
   // =====================================================================
   add('complejos','¿Qué es un ion complejo?','COMPLEJOS · 01',`
 <p>Un <b>complejo</b> (o compuesto de coordinación) se forma cuando un ion metálico central se une a varias moléculas o iones que le “prestan” pares de electrones. Es una reacción ácido-base <b>de Lewis</b>:</p>
 ${rx('Ag^+ + 2 :NH3 -> [Ag(NH3)2]^+','ácido de Lewis + base de Lewis → complejo')}
+${figure(window.ET27QAC.draw.complejo,'El ion central acepta pares de electrones de los ligandos: es una reacción ácido-base de Lewis.')}
 ${table(['Parte','Qué es','Ejemplo en [Cu(NH₃)₄]²⁺'],[
  ['Ion central','catión metálico con orbitales vacíos (ácido de Lewis)',f('Cu^2+')],
  ['Ligandos','moléculas o iones con pares libres (bases de Lewis)','4 '+f('NH3')],
@@ -106,6 +107,18 @@ ${punch('La aproximación no es un acto de fe: se verifica. Si no da, se plantea
 `);
 
   // =====================================================================
+  add('limitante','Cuando el ligando es el limitante (metal en exceso)','COMPLEJOS',`
+<p>Si hay <b>menos</b> ligando del que hace falta, el razonamiento se da vuelta: el ligando se consume casi todo, el complejo queda fijado por el ligando y el metal que sobra queda libre.</p>
+${flow([['1. Reacción completa con el ligando como limitante','[MLₙ] ≈ C<sub>L</sub>/n.'],['2. Metal libre = lo que sobra','[M] ≈ C<sub>M</sub> − C<sub>L</sub>/n.'],['3. Ahora lo despreciable es el ligando libre','se despeja de K: '+m(R`[\mathrm{L}]=\sqrt[n]{\frac{[\mathrm{ML_n}]}{K_f\,[\mathrm{M}]}}`)],['4. Verificar','[L] libre ≪ C<sub>L</sub>.']])}
+${example('Ag⁺ 0,10 M con NH₃ 0,020 M','<p>Kf [Ag(NH₃)₂]⁺ = 1,7·10⁷.</p>',
+ step('1. Limita el NH₃',chain(R`[\mathrm{Ag(NH_3)_2^+}]=\frac{0{,}020}{2}=0{,}010\ \mathrm{M}\qquad[\mathrm{Ag^+}]=0{,}10-0{,}010=0{,}090\ \mathrm{M}`))+
+ step('2. Suponemos',sup([['[NH₃] libre ≪ 0,020','Kf grande y el metal está en exceso (Le Châtelier: el exceso de Ag⁺ desplaza hacia el complejo).']]))+
+ step('3. Despeje',chain(R`[\mathrm{NH_3}]=\sqrt{\frac{0{,}010}{1{,}7\times10^{7}\cdot0{,}090}}=8{,}1\times10^{-5}\ \mathrm{M}`))+
+ step('4. Verificamos',ver('<p>8,1·10⁻⁵ es 0,4 % de 0,020 ✔</p>')),
+ '[Ag(NH₃)₂⁺] = 0,010 M · [Ag⁺] = 0,090 M · [NH₃] = 8,1·10⁻⁵ M')}
+`);
+
+  // =====================================================================
   add('usos','Los complejos en la marcha analítica','COMPLEJOS · 06',`
 ${table(['Uso','Ejemplo','Reacción'],[
  ['Disolver un precipitado','AgCl en NH₃ (separa Ag⁺ del Hg₂²⁺ en el grupo I)',rx('AgCl(s) + 2 NH3 -> [Ag(NH3)2]^+ + Cl^-')],
@@ -113,9 +126,67 @@ ${table(['Uso','Ejemplo','Reacción'],[
  ['Reconocer un ion por color','Fe³⁺ rojo sangre con SCN⁻',rx('Fe^3+ + SCN^- <=> [Fe(SCN)]^2+')],
  ['Separar anfóteros','Al(OH)₃ y Zn(OH)₂ se disuelven en exceso de NaOH; Fe(OH)₃ no',rx('Al(OH)3(s) + OH^- -> [Al(OH)4]^-')],
  ['Enmascarar','F⁻ “esconde” al Fe³⁺ como [FeF₆]³⁻ incoloro para reconocer Co²⁺ con SCN⁻ sin interferencia',rx('Fe^3+ + 6 F^- -> [FeF6]^3-')],
+ ['Separar Ag⁺ de Hg₂²⁺ (grupo I)','con NH₃ el AgCl se disuelve y el Hg₂Cl₂ dismuta: queda un residuo negro (Hg + HgNH₂Cl)',rx('Hg2Cl2(s) + 2 NH3 -> Hg(l) + HgNH2Cl(s) + NH4^+ + Cl^-')],
+ ['Identificar Ag⁺ con KI','sobre la solución amoniacal: el AgI (Kps 8,5·10⁻¹⁷) precipita aunque la plata esté complejada',rx('[Ag(NH3)2]^+ + I^- -> AgI(s)↓ + 2 NH3')],
  ['Destruir un complejo','al acidificar, el NH₃ se protona y vuelve a precipitar AgCl (prueba de la plata)',rx('[Ag(NH3)2]^+ + Cl^- + 2 H^+ -> AgCl(s)↓ + 2 NH4^+')]
 ],'compareTable')}
 ${idea('Por qué el ácido destruye los complejos amoniacales','<p>El H⁺ compite con el metal por el par libre del NH₃: lo transforma en NH₄⁺, que ya no tiene par para donar. Al bajar [NH₃] libre, el equilibrio del complejo se desplaza hacia la disociación (Le Châtelier) y el metal queda libre para precipitar. El cálculo con constantes combinadas está en la Unidad 5.</p>')}
+`);
+
+  add('combinar','Equilibrios combinados: sumar reacciones es multiplicar K','COMPLEJOS · COMBINADOS 1',`
+<p>En la realidad del laboratorio los equilibrios no aparecen solos: un precipitado se disuelve en ácido, un complejo se rompe al acidificar, un potencial cambia porque el ion precipita. Esta unidad junta todo lo anterior con una sola herramienta nueva:</p>
+${punch('Si una reacción es la suma de otras, su constante es el PRODUCTO de sus constantes. Si se invierte una reacción, su constante se invierte (1/K).')}
+${table(['Operación con la reacción','Qué le pasa a K'],[['Sumar dos reacciones','K = K₁·K₂'],['Invertir la reacción','K → 1/K'],['Multiplicar la reacción por n','K → Kⁿ'],['Restar una reacción','dividir por su K']])}
+${flow([
+ ['Escribir la reacción GLOBAL que pide el problema','Por ejemplo: AgCl(s) + 2 NH₃ ⇌ [Ag(NH₃)₂]⁺ + Cl⁻.'],
+ ['Descomponerla en equilibrios de tabla','Kps, Ka, Kb, Kf (o Ki), Kw.'],
+ ['Calcular K global','Multiplicando y dividiendo según corresponda.'],
+ ['Interpretar K global','K ≫ 1: la reacción global ocurre (el precipitado se disuelve, el complejo se rompe…). K ≪ 1: no ocurre.'],
+ ['Si piden concentraciones: tabla con la reacción global','Y las suposiciones de siempre (lo que es chico frente a lo grande), justificadas y verificadas.']
+])}
+${table(['Combinación','Ejemplo','K global'],[
+ ['Precipitación + ácido-base','CaCO₃(s) + 2 H⁺ ⇌ Ca²⁺ + H₂CO₃','Kps / (Ka₁·Ka₂)'],
+ ['Precipitación + complejo','AgCl(s) + 2 NH₃ ⇌ [Ag(NH₃)₂]⁺ + Cl⁻','Kps · Kf'],
+ ['Complejo + ácido-base','[Ag(NH₃)₂]⁺ + 2 H⁺ ⇌ Ag⁺ + 2 NH₄⁺','Ki / Ka(NH₄⁺)²'],
+ ['Redox + precipitación','AgCl(s) + e⁻ ⇌ Ag(s) + Cl⁻','E° nuevo = E°(Ag⁺/Ag) + 0,0592·log Kps']
+],'compareTable')}
+`);
+
+  add('precip-complejo','Precipitación + complejos','COMPLEJOS · COMBINADOS 2',`
+<p>Si el catión del precipitado forma un complejo estable con un ligando, al agregar ese ligando baja el catión libre, Q cae por debajo del Kps y el sólido se disuelve.</p>
+${rxs(['AgCl(s) <=> Ag^+ + Cl^-','Kps = 1,8·10⁻¹⁰'],['Ag^+ + 2 NH3 <=> [Ag(NH3)2]^+','Kf = 1,7·10⁷'],['AgCl(s) + 2 NH3 <=> [Ag(NH3)2]^+ + Cl^-','K = Kps·Kf = 3,1·10⁻³'])}
+${example('Solubilidad del AgCl en NH₃ 1,0 M','<p>Calcular s y compararla con la del agua (1,34·10⁻⁵ M).</p>',
+ step('1. Tabla con la reacción global',table(['M','NH₃','[Ag(NH₃)₂]⁺','Cl⁻'],[['Inicio','1,0','0','0'],['Se disuelve s','−2s','+s','+s'],['Equilibrio','1,0 − 2s','s','s']]))+
+ step('2. Suponemos',sup([['Toda la plata disuelta está como complejo ([Ag(NH₃)₂⁺] = s)','Kf es grande y hay mucho NH₃: el Ag⁺ libre es despreciable (lo verificamos).']]))+
+ step('3. Resolvemos',chain([R`3{,}06\times10^{-3}=\frac{s\cdot s}{(1{,}0-2s)^2}\ \Rightarrow\ \frac{s}{1{,}0-2s}=\sqrt{3{,}06\times10^{-3}}=0{,}0553`,'raíz cuadrada de los dos lados: no hace falta la cuadrática'],R`s=\frac{0{,}0553}{1+2\cdot0{,}0553}=0{,}050\ \mathrm{M}`))+
+ step('4. Verificamos',ver('<p>'+m(R`[\mathrm{Ag^+}]=\frac{K_{ps}}{[\mathrm{Cl^-}]}=\frac{1{,}8\times10^{-10}}{0{,}050}=3{,}6\times10^{-9}\ \mathrm{M}`)+', despreciable frente a 0,050 M de complejo ✔. NH₃ libre = 0,90 M (sigue en exceso) ✔.</p>')),
+ 's = 0,050 M: unas 3700 veces más soluble que en agua')}
+${table(['Haluro','Kps','K = Kps·Kf','s en NH₃ 1 M','¿Se disuelve?'],[['AgCl','1,8·10⁻¹⁰','3,1·10⁻³','5,0·10⁻² M','sí'],['AgBr','5,0·10⁻¹³','8,5·10⁻⁶','2,9·10⁻³ M','poco'],['AgI','8,3·10⁻¹⁷','1,4·10⁻⁹','3,8·10⁻⁵ M','prácticamente no']])}
+${idea('Esto se usa en la marcha','<p>Con NH₃ se disuelve el AgCl del grupo I y queda el Hg₂Cl₂ (que con NH₃ se ennegrece). Y con la tabla se entiende por qué para disolver AgI hace falta un ligando mucho más fuerte, como el CN⁻ o el S₂O₃²⁻ (Kf enormes).</p>')}
+${example('¿Cuánto amoníaco hace falta para disolver un precipitado?','<p>¿Qué concentración total de NH₃ se necesita para disolver 0,010 mol de AgCl en 1,0 L?</p>',
+ step('1. Si se disuelve todo',chain(R`[\mathrm{Ag(NH_3)_2^+}]=[\mathrm{Cl^-}]=0{,}010\ \mathrm{M}`))+
+ step('2. NH₃ libre necesario',chain(R`[\mathrm{NH_3}]=\frac{0{,}010}{\sqrt{3{,}06\times10^{-3}}}=0{,}18\ \mathrm{M}`))+
+ step('3. Total',chain([R`C_{\mathrm{NH_3}}=0{,}18+2\cdot0{,}010=0{,}20\ \mathrm{M}`,'libre + el que está en el complejo'])),
+ 'Hace falta NH₃ 0,20 M en total (el mismo patrón que en la Unidad 3)')}
+`);
+
+  // =====================================================================
+  add('condicional','Complejos + precipitado + pH: fracciones α','COMPLEJOS',`
+<p>Cuando el catión está repartido entre libre y complejado, y el anión entre sus formas ácido-base, sólo las formas <b>libres</b> entran en el Kps. Se usan fracciones:</p>
+${chain([R`\alpha_{\mathrm{M}}=\frac{[\mathrm{M}]}{C_{\mathrm{M}}}=\frac{1}{1+K_f[\mathrm{L}]^n}`,'fracción de metal libre (ligando libre conocido)'],[R`\alpha_{\mathrm{S^{2-}}}=\frac{K_{a1}K_{a2}}{[\mathrm{H_3O^+}]^2+K_{a1}[\mathrm{H_3O^+}]+K_{a1}K_{a2}}`,'fracción del anión libre (pH conocido)'],[R`K_{ps}=(s\,\alpha_{\mathrm{M}})(s\,\alpha_{\mathrm{S^{2-}}})\ \Rightarrow\ s=\sqrt{\frac{K_{ps}}{\alpha_{\mathrm{M}}\,\alpha_{\mathrm{S^{2-}}}}}`,'sal 1:1'])}
+${idea('Lectura química','<p>Cada fracción α &lt; 1 “saca” iones del Kps: el ligando baja el metal libre y el H₃O⁺ baja el anión libre. Por Le Châtelier, el sólido se disuelve más para compensar. Es el razonamiento de los ejercicios de ZnS y NiS con cianuro a pH fijo.</p>')}
+`);
+
+  add('complejo-acido','Complejos + ácido-base','COMPLEJOS · COMBINADOS 3',`
+<p>Si el ligando es una base (NH₃, CN⁻, OH⁻, F⁻), el H⁺ compite con el metal por él. Al acidificar, el ligando se protona y el complejo se destruye.</p>
+${rxs(['[Ag(NH3)2]^+ <=> Ag^+ + 2 NH3','Ki = 5,9·10⁻⁸'],['2 NH3 + 2 H^+ <=> 2 NH4^+','(1/Ka)², Ka(NH₄⁺) = 5,6·10⁻¹⁰'],['[Ag(NH3)2]^+ + 2 H^+ <=> Ag^+ + 2 NH4^+','K = Ki/Ka²'])}
+${chain([R`K=\frac{K_i}{K_a^2}=\frac{5{,}9\times10^{-8}}{(5{,}6\times10^{-10})^2}=1{,}9\times10^{11}`,'≫ 1: el complejo se destruye en medio ácido'])}
+${example('La prueba confirmatoria de la plata','<p>Al acidificar con HNO₃ la solución amoniacal del grupo I (que tiene [Ag(NH₃)₂]⁺ y Cl⁻), reaparece un precipitado blanco. Justificar con la constante global.</p>',
+ step('1. Reacción global',rx('[Ag(NH3)2]^+ + Cl^- + 2 H^+ -> AgCl(s)↓ + 2 NH4^+'))+
+ step('2. Descomposición',rxs(['[Ag(NH3)2]^+ + 2 H^+ <=> Ag^+ + 2 NH4^+','1,9·10¹¹'],['Ag^+ + Cl^- <=> AgCl(s)','1/Kps = 5,6·10⁹']))+
+ step('3. K global',chain(R`K=\frac{1{,}9\times10^{11}}{1{,}8\times10^{-10}}=1{,}1\times10^{21}`)),
+ 'K ≈ 10²¹: la reprecipitación del AgCl es prácticamente completa — confirma la plata')}
+${idea('Anfóteros: el otro lado de la misma idea','<p>Al(OH)₃, Zn(OH)₂, Pb(OH)₂ y Sn(OH)₂ se disuelven en exceso de OH⁻ porque forman hidroxocomplejos ('+f('[Al(OH)4]^-')+', '+f('[Zn(OH)4]^2-')+'). Con ácido se redisuelven como cationes. El Fe(OH)₃ no forma ese complejo: así se separa Fe de Al y Zn con NaOH en exceso.</p>')}
 `);
 
   // =====================================================================
@@ -134,5 +205,5 @@ ${cards([
 ])}
 `);
 
-  window.ET27_QAC5.units.push({id:'u3',n:3,title:'Equilibrio de complejación',short:'Complejos',lead:'Ion central y ligandos, constantes de formación, inestabilidad y disociación, y el patrón que se repite en todos los ejercicios: despreciar el catión libre, reemplazar en K y verificar.',sections:s});
+  window.ET27_QAC5.units.push({id:'complejos',n:5,title:'Equilibrio de complejación',short:'Complejos',lead:'Ion central y ligandos, constantes de formación, inestabilidad y disociación, y el patrón que se repite en todos los ejercicios: despreciar el catión libre, reemplazar en K y verificar. Ligando limitante y equilibrios combinados con precipitación y ácido-base, con todas las guías resueltas.',sections:s});
 })();

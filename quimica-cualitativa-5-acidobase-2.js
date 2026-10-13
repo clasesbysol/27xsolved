@@ -6,10 +6,10 @@
   const K=window.ET27Kit,Q=window.ET27QI,A=window.ET27QAC;if(!K||!Q||!A||!window.ET27_QAC5)return;
   const {M,m,chain,key,sym,simple,idea,warn,note,deep,example,step,table,figure,cards,calc,field}=K;
   const {rx,rxs,f,punch,facts}=Q;
-  const {sup,ver,flow,memo,spec,opt}=A;
+  const {sup,ver,flow,memo,spec,opt,jus,desc}=A;
   const R=String.raw;
-  const u=window.ET27_QAC5.units.find(x=>x.id==='u1');if(!u)return;
-  const s=u.sections;const add=(k,l,kk,h)=>s.push({key:`qac-u1-${k}`,label:l,kicker:kk,html:h});
+  const u=window.ET27_QAC5.units.find(x=>x.id==='acido-base');if(!u)return;
+  const s=u.sections;const add=(k,l,kk,h)=>s.push({key:`qac-ab-${k}`,label:l,kicker:kk,html:h});
 
   // =====================================================================
   add('debiles','Ácidos y bases débiles: ley de acción de masas, BM y BC','ÁCIDO-BASE · 08',`
@@ -52,6 +52,7 @@ ${example('Al revés: calcular Ka a partir del pH','<p>Una solución 0,20 M de u
  step('3. Grado',chain(R`\alpha=\frac{10^{-3}}{0{,}20}=5\times10^{-3}\ \Rightarrow\ 0{,}5\,\%`))+
  note('Acá no hace falta suponer','<p>El pH es dato: conocemos x exactamente. Sólo supusimos (y es obvio a pH 3) que el agua no aporta.</p>'),
  'Ka = 5,0·10⁻⁶ · α = 0,5 %')}
+${deep('Ácido débil MUY diluido (o muy débil): vuelve a importar el agua',`<p>Si el ácido aporta tan poco H₃O⁺ como el agua (Ka·C del orden de Kw), no se puede despreciar la autoprotólisis. Del BC ${m(R`[\mathrm{H_3O^+}]=[\mathrm{A^-}]+[\mathrm{HO^-}]`)} con ${m(R`[\mathrm{A^-}]=K_a[\mathrm{HA}]/[\mathrm{H_3O^+}]`)}:</p>${M(R`[\mathrm{H_3O^+}]=\sqrt{K_a[\mathrm{HA}]+K_w}`)}<p>Ejemplos de la guía: HClO 10⁻⁶ M (Ka = 2,95·10⁻⁸) da pH 6,72, y la urea (Kb = 1,2·10⁻¹⁴) prácticamente no cambia el pH del agua.</p>`)}
 ${calc('qacWeak','Ácido o base débil: aproximado vs. exacto',opt('t',[['a','ácido débil (Ka)'],['b','base débil (Kb)']],'Tipo')+field('k','Ka o Kb',1.8e-5)+field('c','concentración C (M)',0.1),'Escribí las potencias como 1.8e-5. Probá HF: K = 6.8e-4 y C = 0.01.')}
 `);
 
@@ -72,7 +73,8 @@ ${key(R`\alpha=\frac{\text{concentración disociada}}{\text{concentración inici
 ${chain([R`[\mathrm{H^+}]=[\mathrm{A^-}]=\alpha C\qquad[\mathrm{HA}]=C(1-\alpha)`],[R`K_a=\frac{(\alpha C)^2}{C(1-\alpha)}=\frac{\alpha^2C}{1-\alpha}`,'ley de dilución de Ostwald (exacta salvo el agua)'],[R`\text{si }\alpha\ll1:\quad \alpha\approx\sqrt{\frac{K_a}{C}}`,'misma suposición que x ≪ C'])}
 ${punch('Al diluir, el ácido débil se disocia MÁS (α sube), aunque la [H⁺] total baje. Es Le Châtelier: del lado derecho hay más partículas.')}
 ${table(['C del HAc (M)','α exacto','% disociado','pH'],[['1,0','0,0042','0,42 %','2,37'],['0,10','0,013','1,3 %','2,87'],['0,010','0,042','4,2 %','3,38'],['0,0010','0,125','12,5 %','3,90']])}
-${idea('El criterio del 5 % es lo mismo que pedir α ≤ 0,05','<p>Por eso decir “x ≪ C” es lo mismo que decir “se disocia menos del 5 %”. Fijate en la tabla: para HAc 0,001 M el α es 12,5 % y la fórmula aproximada ya no sirve.</p>')}
+${idea('Por qué α sube al diluir: choques efectivos','<p>En la solución diluida los H₃O⁺ y A⁻ están más lejos: hay menos choques efectivos que rearmen HA, así que la fracción disociada aumenta. Es la justificación teórica de la tabla (y coincide con Le Châtelier: al diluir se favorece el lado con más partículas).</p>')}
+${idea('Verificar el desprecio es verificar α','<p>“x ≪ C” es lo mismo que “α chico”. En la tabla, para HAc 0,001 M el α es 12,5 %: la fórmula aproximada ya no sirve (además C/Ka = 56 &lt; 100).</p>')}
 `);
 
   // =====================================================================
@@ -91,6 +93,19 @@ ${example('Leer un diagrama con números','<p>a) ¿Qué fracción del acético e
  step('a) Acético a pH 5',chain(R`[\mathrm{H^+}]=1{,}0\times10^{-5}`,R`\alpha_{\mathrm{Ac^-}}=\frac{1{,}8\times10^{-5}}{1{,}0\times10^{-5}+1{,}8\times10^{-5}}=0{,}64`)+'<p>Tiene sentido: pH 5 está un poco por encima del pKa (4,74), así que predomina apenas la forma básica.</p>')+
  step('b) Fosfato a pH 7,4',`<p>7,4 está entre pKa₂ = 7,21 y pKa₃ = 12,32, muy cerca de pKa₂: predominan ${f('H2PO4^-')} y ${f('HPO4^2-')}. Como 7,4 &gt; 7,21, gana apenas HPO₄²⁻ (61 % frente a 39 %). H₃PO₄ y PO₄³⁻ son menos del 0,001 %.</p>`),
  'a) 64 % como Ac⁻ · b) HPO₄²⁻ 61 % y H₂PO₄⁻ 39 %')}
+<h3>Cómo confeccionar un diagrama (lo piden así)</h3>
+${flow([
+ ['1. Escribir los equilibrios y sus pKa','Un poliprótico con n protones tiene n equilibrios y <b>n + 1 especies</b>.'],
+ ['2. Ubicar los pKa en el eje de pH','En cada pKa se cruzan dos curvas consecutivas, con α = 0,5.'],
+ ['3. Rangos de predominio','Por debajo de pKa₁ predomina la forma más protonada; entre pKa₁ y pKa₂, la siguiente; etc.'],
+ ['4. Forma de las curvas','A pKa ± 1 la otra especie del par es ≈ 9 %; a pKa ± 2, ≈ 1 %. Las fracciones suman 1 en todo pH.'],
+ ['5. Ninguna curva toca el cero','Fuera de su zona, una especie es despreciable pero existe (ver el gráfico logarítmico).']
+])}
+${figure(A.specLog([4.74],['HAc','Ac⁻'],{labels:[['HAc',1.5,-0.6,0],['Ac⁻',12.5,-0.6,1]]}),'El mismo diagrama del acético en escala logarítmica: a pH 12 la fracción de HAc es ≈ 10⁻⁷. Muy chica, pero no cero. “Despreciable” no es “inexistente”.')}
+${table(['Pregunta típica','Respuesta'],[['¿Qué información da el diagrama?','qué fracción de la concentración total está como cada especie a cada pH, qué especie predomina y en qué rango, y dónde hay pares conjugados en cantidades comparables (zona de buffer).'],['¿Cómo se ve si está mal hecho?','curvas que no se cruzan en los pKa, fracciones que no suman 1, una especie con α = 0 o un número de especies que no es n + 1.'],['¿Se relaciona con la cinética?','<b>No</b>: describe el estado de equilibrio, no la velocidad con que se alcanza.']])}
+<h3>Los indicadores son diagramas de especiación con color</h3>
+<p>Un indicador es un ácido débil HIn cuya forma ácida y básica tienen distinto color. Vira cuando pasa de predominar una forma a la otra: en <b>pKi ± 1</b>.</p>
+${table(['Indicador','Forma ácida','Forma básica','pKi','Viraje (pH)'],[['Anaranjado de metilo','rojo','amarillo-anaranjado','3,4','3,1–4,4'],['Rojo de metilo','rojo','amarillo','5,0','4,2–6,2'],['Azul de bromotimol','amarillo','azul','7,3','6,0–7,6'],['Fenolftaleína','incoloro','púrpura','9,1','8,3–10,0']])}
 ${deep('Fórmulas generales de las fracciones (diprótico)',`${M(R`D=[\mathrm{H^+}]^2+K_{a1}[\mathrm{H^+}]+K_{a1}K_{a2}`)}${M(R`\alpha_{\mathrm{H_2A}}=\frac{[\mathrm{H^+}]^2}{D}\qquad\alpha_{\mathrm{HA^-}}=\frac{K_{a1}[\mathrm{H^+}]}{D}\qquad\alpha_{\mathrm{A^{2-}}}=\frac{K_{a1}K_{a2}}{D}`)}<p>El patrón se extiende a cualquier número de protones: cada término agrega una Ka y le saca un [H⁺]. Así se dibujaron los diagramas de esta página.</p>`)}
 `);
 
@@ -171,6 +186,20 @@ ${example('Acético 0,10 M + fórmico 0,10 M','<p>Ka(HAc) = 1,8·10⁻⁵ · Ka(
   // =====================================================================
   add('hidrolisis','Hidrólisis de sales','ÁCIDO-BASE · 16',`
 <p>Una sal disuelta se separa completamente en iones. La pregunta es: <b>¿alguno de esos iones reacciona con el agua?</b> Reacciona (hidroliza) el que es <b>conjugado de una especie débil</b>. Los conjugados de fuertes (Na⁺, K⁺, Cl⁻, NO₃⁻…) son espectadores.</p>
+<h3>El método de la cátedra: mirar de dónde viene cada ion</h3>
+${flow([
+ ['1. Escribir la neutralización que da origen a la sal','Ej.: HAc + NaOH → NaAc + H₂O. Así queda claro de qué ácido y de qué base viene.'],
+ ['2. Disociación total de la sal (electrolito fuerte)','NaAc → Na⁺ + Ac⁻.'],
+ ['3. Analizar cada ion con Brønsted–Lowry','Si viene de un electrolito <b>fuerte</b>, su conjugado no tiene comportamiento ácido-base: queda inalterado. Si viene de un electrolito <b>débil</b>, su conjugado reacciona con el agua: escribir el equilibrio.'],
+ ['4. Concluir','Ninguno reacciona → neutra · sólo el catión → ácida · sólo el anión → básica · los dos → comparar constantes (no se puede generalizar).']
+])}
+${example('Aplicado a las cuatro categorías','<p>NaCl · NH₄Cl · NaAc · NH₄Ac</p>',
+ step('NaCl (ácido fuerte + base fuerte)',jus('<p>Na⁺ viene del NaOH (fuerte) y Cl⁻ del HCl (fuerte): ninguno altera la autoprotólisis del agua → <b>neutra</b> (pH 7 a 25 °C).</p>'))+
+ step('NH₄Cl (ácido fuerte + base débil)',rx('NH4^+ + H2O <=> NH3 + H3O^+')+jus('<p>Cl⁻ inalterado; el NH₄⁺, ácido conjugado de una base débil, genera H₃O⁺ → <b>ácida</b>.</p>'))+
+ step('NaAc (ácido débil + base fuerte)',rx('Ac^- + H2O <=> HAc + HO^-')+jus('<p>Na⁺ inalterado; el Ac⁻, base conjugada de un ácido débil, genera HO⁻ → <b>básica</b>.</p>'))+
+ step('NH₄Ac (ácido débil + base débil)',jus('<p>Ambos iones reaccionan con el agua: el carácter depende de comparar Ka(NH₄⁺) con Kb(Ac⁻). Acá son iguales (5,6·10⁻¹⁰) → pH 7, pero <b>no se puede generalizar</b>.</p>')),
+ 'Fuerte–fuerte neutra · fuerte–débil ácida · débil–fuerte básica · débil–débil: comparar constantes')}
+
 ${table(['Sal formada por…','Ejemplo','Ion que hidroliza','Medio'],[
  ['ácido fuerte + base fuerte','NaCl, KNO₃','ninguno','<b>neutro</b> (pH 7)'],
  ['ácido débil + base fuerte','NaAc, NaCN, Na₂CO₃','el anión: A⁻ + H₂O ⇌ HA + OH⁻','<b>básico</b>'],
@@ -197,6 +226,7 @@ ${note('Qué se supone en esa fórmula','<p>Que la sal es lo bastante concentrad
 <p>El anión puede ceder o aceptar un H⁺. Las dos tendencias compiten y, si la concentración no es muy baja:</p>
 ${key(R`[\mathrm{H^+}]\approx\sqrt{K_{a1}K_{a2}}\qquad\mathrm{pH}\approx\tfrac12(\mathrm{p}K_{a1}+\mathrm{p}K_{a2})`,'Anfiprótico')}
 ${chain([R`\mathrm{NaHCO_3}:\ \mathrm{pH}=\tfrac12(6{,}37+10{,}25)=8{,}31`,'bicarbonato: levemente básico'],[R`\mathrm{NaH_2PO_4}:\ \mathrm{pH}=\tfrac12(2{,}12+7{,}21)=4{,}67`,'diácido fosfato: ácido'])}
+${deep('Fórmula más general del anfiprótico (cuando C no es ≫ Ka₁)',`${M(R`[\mathrm{H_3O^+}]=\sqrt{\frac{K_{a1}K_{a2}\,C}{K_{a1}+C}}`)}<p>Se deduce del BC suponiendo que el anfiprótico casi no se consume. Si C ≫ Ka₁, el cociente C/(Ka₁ + C) ≈ 1 y vuelve a ${m(R`\sqrt{K_{a1}K_{a2}}`)}. Ejemplo: NaHSO₃ 0,024 M (Ka₁ = 1,7·10⁻², Ka₂ = 6,4·10⁻⁸): C es comparable con Ka₁, la fórmula general da pH 4,60 y la simple 4,48.</p>`)}
 ${sup([['C ≫ Ka₁ y Ka₂·C ≫ Kw','se cumple en las concentraciones habituales (≥ 0,01 M). En el bicarbonato 0,1 M: C/Ka₁ ≈ 2·10⁵.']],'Suponemos (en la fórmula del anfiprótico)')}
 <h3>Cationes metálicos que acidifican</h3>
 <p>Los cationes pequeños y con carga alta (Fe³⁺, Al³⁺, Cr³⁺, Zn²⁺, Cu²⁺) polarizan las moléculas de agua que los rodean y liberan H⁺:</p>
@@ -204,51 +234,6 @@ ${rx('[Fe(H2O)6]^3+ + H2O <=> [Fe(OH)(H2O)5]^2+ + H3O^+','Ka ≈ 6·10⁻³: ¡t
 ${idea('Consecuencia práctica en el laboratorio','<p>Las soluciones de FeCl₃ o de sales de Al³⁺ son ácidas. Por eso se preparan con un poco de ácido: si no, por hidrólisis precipitan los hidróxidos (la solución se enturbia).</p>')}
 `);
 
-  // =====================================================================
-  add('buffers','Soluciones reguladoras (buffers)','ÁCIDO-BASE · 17',`
-<p>Un buffer es una solución que <b>resiste los cambios de pH</b> cuando se le agregan pequeñas cantidades de ácido o base fuerte, o cuando se diluye. Se arma con un <b>par conjugado</b> en concentraciones parecidas:</p>
-${table(['Caso','Ejemplo','Componente ácido','Componente básico'],[
- ['Ácido débil + su sal','HAc + NaAc',f('HAc'),f('Ac^-')],
- ['Base débil + su sal','NH₃ + NH₄Cl',f('NH4^+'),f('NH3')],
- ['Dos sales de un poliprótico','NaH₂PO₄ + Na₂HPO₄',f('H2PO4^-'),f('HPO4^2-')],
- ['Neutralización parcial','HAc en exceso + NaOH','el HAc que sobra','el Ac⁻ que se formó']
-])}
-<h3>Cómo funciona</h3>
-${rxs(['Ac^- + H^+ -> HAc','si agrego ácido, lo “come” la base del par'],['HAc + OH^- -> Ac^- + H2O','si agrego base, la “come” el ácido del par'])}
-<p>El ácido o base fuerte agregado se transforma en el componente débil del par: en lugar de cambiar mucho [H⁺], cambia un poco la relación entre las dos formas.</p>
-<h3>Ecuación de Henderson–Hasselbalch</h3>
-${chain([R`K_a=\frac{[\mathrm{H^+}][\mathrm{A^-}]}{[\mathrm{HA}]}\ \Rightarrow\ [\mathrm{H^+}]=K_a\frac{[\mathrm{HA}]}{[\mathrm{A^-}]}`],[R`-\log[\mathrm{H^+}]=-\log K_a-\log\frac{[\mathrm{HA}]}{[\mathrm{A^-}]}`],[R`\mathrm{pH}=\mathrm{p}K_a+\log\frac{[\mathrm{A^-}]}{[\mathrm{HA}]}`])}
-${sup([
- ['[HA] ≈ C<sub>a</sub> y [A⁻] ≈ C<sub>s</sub> (lo que pusimos)','por ion común, el ácido casi no se disocia (lo reprime A⁻) y la base casi no hidroliza (la reprime HA). El cambio x es mucho menor que C<sub>a</sub> y C<sub>s</sub>.'],
- ['Las concentraciones no son muy bajas','si C<sub>a</sub> y C<sub>s</sub> fueran del orden de [H⁺] u [OH⁻], la suposición anterior se rompe.']
-])}
-${key(R`\mathrm{pH}=\mathrm{p}K_a+\log\frac{C_s}{C_a}=\mathrm{p}K_a+\log\frac{n_{base}}{n_{ácido}}`,'Henderson–Hasselbalch')}
-${ver('<p>Calcular [H⁺] (y [OH⁻]) y comprobar que son ≤ 5 % de C<sub>a</sub> y de C<sub>s</sub>.</p>')}
-${example('Buffer acético: pH y agregado de ácido y base fuertes','<p>100 mL de solución con HAc 0,10 M y NaAc 0,15 M (pKa = 4,74). a) pH. b) pH al agregar 1,0 mL de HCl 1,0 M. c) pH al agregar 1,0 mL de NaOH 1,0 M. d) Comparar con agregar el HCl a 100 mL de agua.</p>',
- step('a) pH inicial',chain(R`\mathrm{pH}=4{,}74+\log\frac{0{,}15}{0{,}10}=4{,}74+0{,}18=4{,}92`)+ver('<p>'+m(R`[\mathrm{H^+}]=1{,}2\times10^{-5}\ \mathrm{M}`)+': es 0,012 % de 0,10 ✔</p>'))+
- step('b) Agrego 1,0 mmol de H⁺: PRIMERO estequiometría',table(['mmol','Ac⁻','H⁺','HAc'],[['Inicio','15','1,0','10'],['Reacción completa','−1,0','−1,0','+1,0'],['Final','14','0','11']])+chain(R`\mathrm{pH}=4{,}74+\log\frac{14}{11}=4{,}85\qquad\Delta\mathrm{pH}=-0{,}07`))+
- step('c) Agrego 1,0 mmol de OH⁻',chain(R`\mathrm{HAc}:10-1=9\qquad\mathrm{Ac^-}:15+1=16`,R`\mathrm{pH}=4{,}74+\log\frac{16}{9}=5{,}00\qquad\Delta\mathrm{pH}=+0{,}08`))+
- step('d) El mismo HCl en agua pura',chain(R`[\mathrm{H^+}]=\frac{1{,}0\ \mathrm{mmol}}{101\ \mathrm{mL}}=9{,}9\times10^{-3}\ \Rightarrow\ \mathrm{pH}=2{,}00\qquad\Delta\mathrm{pH}=-5`)),
- 'Buffer: 4,92 → 4,85 con ácido y → 5,00 con base · Agua: 7 → 2,00')}
-${idea('Por qué se pueden usar moles en Henderson','<p>Ácido y base conjugada están en el mismo volumen: '+m(R`\frac{C_s}{C_a}=\frac{n_s/V}{n_a/V}=\frac{n_s}{n_a}`)+'. Además eso explica por qué <b>diluir un buffer no cambia su pH</b> (mientras no se diluya demasiado).</p>')}
-${example('Armar un buffer por neutralización parcial','<p>Se mezclan 50,0 mL de HAc 0,20 M con 25,0 mL de NaOH 0,20 M. Calcular el pH.</p>',
- step('1. Estequiometría',chain(R`n_{\mathrm{HAc}}=10{,}0\ \mathrm{mmol}\qquad n_{\mathrm{OH^-}}=5{,}0\ \mathrm{mmol}`,R`\text{quedan }5{,}0\ \mathrm{mmol\ HAc}\ \text{y se forman }5{,}0\ \mathrm{mmol\ Ac^-}`))+
- step('2. Henderson',chain(R`\mathrm{pH}=4{,}74+\log\frac{5{,}0}{5{,}0}=4{,}74=\mathrm{p}K_a`)),
- 'pH = 4,74: neutralizar un ácido débil “a la mitad” da pH = pKa')}
-${example('Buffer amoniacal','<p>NH₃ 0,20 M + NH₄Cl 0,10 M (Kb = 1,8·10⁻⁵).</p>',
- step('Dos caminos equivalentes',chain([R`\mathrm{pOH}=\mathrm{p}K_b+\log\frac{[\mathrm{NH_4^+}]}{[\mathrm{NH_3}]}=4{,}74+\log\frac{0{,}10}{0{,}20}=4{,}44\ \Rightarrow\ \mathrm{pH}=9{,}56`,'con Kb'],[R`\mathrm{pH}=\mathrm{p}K_a(\mathrm{NH_4^+})+\log\frac{[\mathrm{NH_3}]}{[\mathrm{NH_4^+}]}=9{,}26+0{,}30=9{,}56`,'con Ka del amonio ✔'])),
- 'pH = 9,56')}
-<h3>Capacidad reguladora: ¿cuándo es máxima?</h3>
-<p>La capacidad reguladora es la cantidad de ácido o base fuerte que el buffer puede absorber sin que el pH cambie demasiado. Depende de dos cosas:</p>
-${flow([['Concentración total','Más concentrado (más moles de HA y A⁻) → más capacidad.'],['Relación entre las formas','Es <b>máxima cuando [HA] = [A⁻]</b>, es decir cuando <b>pH = pKa</b>. El rango útil es pKa ± 1 (relación entre 1:10 y 10:1).']])}
-${example('¿Qué buffer resiste más?','<p>Dos buffers acéticos de 100 mL con la misma concentración total (0,20 M): A con 10 mmol HAc + 10 mmol Ac⁻; B con 2 mmol HAc + 18 mmol Ac⁻. Se agregan 2,0 mmol de HCl a cada uno.</p>',
- step('Buffer A (1 : 1)',chain(R`\mathrm{pH}:\ 4{,}74\ \to\ 4{,}74+\log\frac{8}{12}=4{,}56\qquad\Delta\mathrm{pH}=-0{,}18`))+
- step('Buffer B (1 : 9)',chain(R`\mathrm{pH}:\ 4{,}74+\log 9=5{,}70\ \to\ 4{,}74+\log\frac{16}{4}=5{,}34\qquad\Delta\mathrm{pH}=-0{,}35`)),
- 'El buffer 1:1 cambia la mitad: la capacidad es máxima cuando pH = pKa')}
-${deep('La capacidad reguladora como fórmula',`${M(R`\beta=\frac{dC_b}{d\,\mathrm{pH}}\approx2{,}303\,C\,\frac{K_a[\mathrm{H^+}]}{(K_a+[\mathrm{H^+}])^2}`)}<p>Derivando respecto de [H⁺] se ve que el máximo está en [H⁺] = Ka (pH = pKa), donde β = 2,303·C/4 ≈ 0,58·C. Es lo mismo que muestra el diagrama de especiación: en pH = pKa las dos curvas tienen la máxima pendiente, así que hace falta agregar más base para mover el pH.</p>`)}
-${calc('qacBuffer','Buffer: pH antes y después de un agregado',field('pka','pKa',4.74)+field('na','ácido HA (mmol)',10)+field('nb','base A⁻ (mmol)',15)+field('add','agregado (mmol, + ácido / − base)',1),'Cargado con el ejemplo del acético. Probá agregar 16 mmol para agotar el buffer.')}
-${warn('Errores típicos en buffers','<ul><li>Aplicar Henderson <b>antes</b> de hacer la reacción con el ácido o base fuerte agregado.</li><li>Invertir el cociente: va <b>base sobre ácido</b> (A⁻ / HA).</li><li>Usar Henderson cuando el agregado se come todo un componente: ahí ya no hay buffer.</li></ul>')}
-`);
 
   // =====================================================================
   add('estrategia','Estrategia general: ¿qué fórmula uso?','ÁCIDO-BASE · 18',`
@@ -260,7 +245,7 @@ ${table(['Lo que queda en solución','Fórmula','Suposición a verificar'],[
  ['Base débil sola','[OH⁻] = √(Kb·C)','x/C ≤ 5 %'],
  ['Sal de ácido débil (A⁻)','[OH⁻] = √(Kw/Ka · C)','x/C ≤ 5 %'],
  ['Sal de base débil (BH⁺)','[H⁺] = √(Kw/Kb · C)','x/C ≤ 5 %'],
- ['Ácido débil + su base conjugada','Henderson','[H⁺], [OH⁻] ≪ Ca, Cs'],
+ ['Ácido débil + su base conjugada','Henderson (sección Buffer)','[H⁺], [OH⁻] ≪ Ca, Cs'],
  ['Ácido fuerte + ácido débil','[H⁺] ≈ C fuerte','el débil aporta &lt; 5 %'],
  ['Dos ácidos débiles','[H⁺] = √(Ka₁C₁ + Ka₂C₂)','α de cada uno ≤ 5 %'],
  ['Poliprótico','primera etapa','Ka₂ ≪ Ka₁ y x/C ≤ 5 %'],

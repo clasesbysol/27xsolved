@@ -8,7 +8,7 @@
   const {rx,rxs,f,punch,facts,vira,swatch}=Q;
   const {sup,ver,flow,memo}=A;
   const R=String.raw;
-  const s=[];const add=(k,l,kk,h)=>s.push({key:`qac-u2-${k}`,label:l,kicker:kk,html:h});
+  const s=[];const add=(k,l,kk,h)=>s.push({key:`qac-pp-${k}`,label:l,kicker:kk,html:h});
 
   // =====================================================================
   add('solubilidad','Solubilidad de sustancias inorgánicas','PRECIPITACIÓN · 01',`
@@ -38,6 +38,7 @@ ${rxs(['AgCl(s) <=> Ag^+ + Cl^-','Kps = [Ag⁺][Cl⁻]'],['Ag2CrO4(s) <=> 2 Ag^+
 ${key(R`\mathrm{A}_m\mathrm{B}_n(s)\rightleftharpoons m\,\mathrm{A}^{n+}+n\,\mathrm{B}^{m-}\qquad K_{ps}=[\mathrm{A}^{n+}]^m[\mathrm{B}^{m-}]^n`,'Producto de solubilidad')}
 <h3>Kps vs. producto iónico Q</h3>
 <p>La expresión es la misma, pero <b>Kps</b> usa las concentraciones <b>en el equilibrio</b> (solución saturada) y <b>Q</b> usa las concentraciones <b>que hay en este momento</b>, sean las que sean.</p>
+${figure(window.ET27QAC.draw.qkps,'El mismo cálculo (producto de concentraciones) responde dos preguntas distintas según qué concentraciones uses.')}
 ${table(['Comparación','Situación','Qué pasa'],[['Q &lt; Kps','no saturada','no precipita; si hay sólido, se disuelve'],['Q = Kps','saturada','equilibrio'],['Q &gt; Kps','sobresaturada','<b>precipita</b> hasta que Q = Kps']])}
 <h3>De Kps a s (en agua pura)</h3>
 <p>Si se disuelven s mol/L de A<sub>m</sub>B<sub>n</sub>, aparecen m·s de catión y n·s de anión:</p>
@@ -62,6 +63,19 @@ ${example('Solubilidad y pH de una solución saturada de Mg(OH)₂','<p>Kps = 1,
  step('3. Verificar',ver('<p>Supusimos que todo el OH⁻ viene del hidróxido: el agua aportaría ≈ 10⁻¹⁰ M (en medio básico), despreciable frente a 3,3·10⁻⁴ ✔.</p>')),
  's = 1,65·10⁻⁴ M · pH = 10,52 (la “leche de magnesia”)')}
 ${calc('qacKps','Solubilidad a partir de Kps',field('m','m (cationes por fórmula)',2)+field('n','n (aniones por fórmula)',1)+field('kps','Kps',1.1e-12)+field('cc','ion común: [anión] agregado (M, 0 = agua)',0),'Cargado con Ag₂CrO₄. Probá AgCl (1, 1, 1.8e-10) con 0.01 M de Cl⁻.')}
+`);
+
+  // =====================================================================
+  add('datos','Kps a partir de datos de solubilidad (y la temperatura)','PRECIPITACIÓN',`
+<p><b>Concepto analítico de solubilidad:</b> s es la cantidad de sal que se disuelve por litro de solución saturada, sumando <b>todas</b> las formas en que quedó disuelta. Si los iones no reaccionan con nada más, cada ion vale m·s o n·s.</p>
+${flow([['1. Pasar el dato a mol/L de SAL','g/L ÷ M(sal); mg/100 mL → ×10 para g/L… ojo: si el dato es de un ION, dividir por la masa molar del ion y por su subíndice.'],['2. Concentración de cada ion','[A] = m·s, [B] = n·s.'],['3. Reemplazar en Kps','Kps = (m·s)ᵐ·(n·s)ⁿ.']])}
+${example('Cromato de plata: 4,35 mg en 100 mL','<p>Calcular Kps.</p>',
+ step('1. Solubilidad molar',chain(R`s=\frac{4{,}35\times10^{-3}\ \mathrm{g}/0{,}100\ \mathrm{L}}{331{,}7\ \mathrm{g/mol}}=1{,}31\times10^{-4}\ \mathrm{M}`))+
+ step('2. Kps',chain(R`K_{ps}=(2s)^2\,s=4s^3=9{,}0\times10^{-12}`)),
+ 'Kps = 9,0·10⁻¹²')}
+${warn('¿El dato es de la sal o de un ion?','<p>“La concentración de <b>estroncio</b> en la solución saturada de SrF₂ es 0,111 g/L” es un dato del <b>ion</b>: s = 0,111/87,62 = 1,27·10⁻³ M. Si se divide por la masa molar del SrF₂ se está tratando el dato como si fuera de la sal (y el Kps sale distinto).</p>')}
+<h3>Kps y temperatura</h3>
+<p>Kps es una constante de equilibrio: sólo cambia con T. Por Le Châtelier: si la disolución es <b>exotérmica</b>, al calentar se desplaza hacia el sólido → Kps y s <b>disminuyen</b>; si es endotérmica (la mayoría), aumentan.</p>
 `);
 
   // =====================================================================
@@ -125,6 +139,7 @@ ${flow([
  ['Calcular cuánto queda del primero cuando empieza el segundo','Con la concentración de reactivo del paso 1 para el segundo ion y el Kps del primero.'],
  ['Decidir si la separación es efectiva','Si en ese momento queda ≤ 0,1 % (o ≤ 10⁻⁵ M) del primero, la separación es buena.']
 ])}
+${figure(window.ET27QAC.draw.fraccionada,'Precipitación fraccionada de I⁻ y Cl⁻ con Ag⁺: cada haluro empieza a precipitar a una [Ag⁺] distinta.')}
 ${example('Cloruro y cromato con Ag⁺ (método de Mohr)','<p>Una solución es 0,10 M en Cl⁻ y 0,010 M en CrO₄²⁻. Se agrega AgNO₃ gota a gota (sin cambio de volumen). a) ¿Qué precipita primero? b) ¿Cuánto Cl⁻ queda cuando empieza a precipitar el Ag₂CrO₄?</p>',
  step('1. Ag⁺ necesaria para cada uno',chain([R`\mathrm{AgCl}:\ [\mathrm{Ag^+}]=\frac{1{,}8\times10^{-10}}{0{,}10}=1{,}8\times10^{-9}\ \mathrm{M}`,''],[R`\mathrm{Ag_2CrO_4}:\ [\mathrm{Ag^+}]=\sqrt{\frac{1{,}1\times10^{-12}}{0{,}010}}=1{,}05\times10^{-5}\ \mathrm{M}`,'raíz: la Ag⁺ va al cuadrado']))+
  step('2. Primero el AgCl',`<p>Necesita 1,8·10⁻⁹ M, miles de veces menos plata: precipita primero el AgCl (blanco).</p>`)+
@@ -183,6 +198,25 @@ ${idea('Sales de ácidos débiles se disuelven en ácidos','<p>CaCO₃, FeS, ZnS
 ${rxs(['CaCO3(s) + 2 H^+ -> Ca^2+ + CO2(g)↑ + H2O','se disuelve con efervescencia'],['FeS(s) + 2 H^+ -> Fe^2+ + H2S(g)↑','olor a huevo podrido'])}
 `);
 
+  add('precip-acido','Precipitación + ácido-base','PRECIPITACIÓN · pH',`
+<p>Si el anión del precipitado es la base conjugada de un ácido débil, el H⁺ se lo “roba” y el sólido se disuelve más. Si es un hidróxido, el pH fija directamente [OH⁻].</p>
+${example('¿Se disuelve el CaCO₃ en ácido? (con K global)','<p>Kps CaCO₃ = 4,5·10⁻⁹ · Ka₁ = 4,3·10⁻⁷ · Ka₂ = 5,6·10⁻¹¹ del H₂CO₃.</p>',
+ step('1. Reacción global y su descomposición',rxs(['CaCO3(s) <=> Ca^2+ + CO3^2-','Kps'],['CO3^2- + H^+ <=> HCO3^-','1/Ka₂'],['HCO3^- + H^+ <=> H2CO3','1/Ka₁'],['CaCO3(s) + 2 H^+ <=> Ca^2+ + H2CO3','suma']))+
+ step('2. K global',chain(R`K=\frac{K_{ps}}{K_{a1}K_{a2}}=\frac{4{,}5\times10^{-9}}{4{,}3\times10^{-7}\cdot5{,}6\times10^{-11}}=1{,}9\times10^{8}`))+
+ step('3. Interpretar',`<p>K ≫ 1: el carbonato se disuelve en ácido. Además el H₂CO₃ se descompone en CO₂ + H₂O y el gas se escapa, lo que tira todavía más el equilibrio hacia la derecha.</p>`),
+ 'K = 1,9·10⁸: el CaCO₃ se disuelve en ácidos (con efervescencia)')}
+${example('Solubilidad del CaF₂ en una solución regulada a pH 2,00','<p>Kps CaF₂ = 3,9·10⁻¹¹ · Ka HF = 6,8·10⁻⁴. Comparar con la solubilidad en agua (2,1·10⁻⁴ M).</p>',
+ step('1. Qué cambia respecto del agua',`<p>El F⁻ que se disuelve se reparte entre F⁻ y HF. Sólo el F⁻ libre entra en el Kps. Usamos la fracción del diagrama de especiación.</p>`)+
+ step('2. Suponemos',sup([['[H⁺] = 1,0·10⁻² M constante','la solución está <b>regulada</b>: el buffer absorbe los H⁺ que consume el F⁻ al protonarse.']]))+
+ step('3. Fracción de F⁻ libre',chain([R`\alpha_{\mathrm{F^-}}=\frac{K_a}{K_a+[\mathrm{H^+}]}=\frac{6{,}8\times10^{-4}}{6{,}8\times10^{-4}+10^{-2}}=0{,}064`,'sólo el 6,4 % del fluoruro queda como F⁻']))+
+ step('4. Balance de masa y Kps',chain([R`[\mathrm{Ca^{2+}}]=s\qquad[\mathrm{F^-}]+[\mathrm{HF}]=2s\ \Rightarrow\ [\mathrm{F^-}]=2s\,\alpha_{\mathrm{F^-}}`,''],R`K_{ps}=s\,(2s\,\alpha)^2=4\alpha^2s^3`,R`s=\sqrt[3]{\frac{3{,}9\times10^{-11}}{4\cdot(0{,}064)^2}}=1{,}3\times10^{-3}\ \mathrm{M}`)),
+ 's = 1,3·10⁻³ M: unas 6 veces más soluble que en agua')}
+${example('Mg(OH)₂ a pH 9,00 (regulado)','<p>¿Cuánto Mg²⁺ puede quedar en solución a pH 9 sin que precipite? Kps = 1,8·10⁻¹¹.</p>',
+ step('Con el pH fijo, [OH⁻] es dato',chain(R`[\mathrm{OH^-}]=10^{-5}\ \mathrm{M}`,R`[\mathrm{Mg^{2+}}]_{\text{máx}}=\frac{1{,}8\times10^{-11}}{(10^{-5})^2}=0{,}18\ \mathrm{M}`)),
+ 'Hasta 0,18 M de Mg²⁺ a pH 9: por eso en el buffer amoniacal el Mg no precipita')}
+${idea('Regla cualitativa para el laboratorio','<ul><li>Se disuelven en ácidos: carbonatos, sulfitos, sulfuros (los más solubles), fosfatos, fluoruros, oxalatos, cromatos, hidróxidos.</li><li>No se disuelven en ácidos (sus aniones vienen de ácidos fuertes): cloruros, bromuros, yoduros, sulfatos.</li></ul>')}
+`);
+
   // =====================================================================
   add('repaso','Repaso de precipitación','PRECIPITACIÓN · REPASO',`
 ${cards([
@@ -201,5 +235,5 @@ ${cards([
 ])}
 `);
 
-  window.ET27_QAC5.units.push({id:'u2',n:2,title:'Equilibrio heterogéneo o de precipitación',short:'Precipitación',lead:'Solubilidad, Kps y producto iónico, comparación de Kps, ion común, ¿precipita o no?, precipitación fraccionada, agentes precipitantes de la marcha de cationes y el control con el pH.',sections:s});
+  window.ET27_QAC5.units.push({id:'precipitacion',n:3,title:'Equilibrio heterogéneo o de precipitación',short:'Precipitación',lead:'Solubilidad, Kps y producto iónico, comparación de Kps, ion común, ¿precipita o no?, precipitación fraccionada, agentes precipitantes de la marcha de cationes y el control con el pH (solubilidad con equilibrios ácido-base). Con la Guía 4, la guía 2024 y evaluaciones.',sections:s});
 })();

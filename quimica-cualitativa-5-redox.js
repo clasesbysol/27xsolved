@@ -8,7 +8,7 @@
   const {rx,rxs,f,punch,facts,vira,swatch}=Q;
   const {sup,ver,flow,memo}=A;
   const R=String.raw;
-  const s=[];const add=(k,l,kk,h)=>s.push({key:`qac-u4-${k}`,label:l,kicker:kk,html:h});
+  const s=[];const add=(k,l,kk,h)=>s.push({key:`qac-rx-${k}`,label:l,kicker:kk,html:h});
 
   const pila=`<svg viewBox="0 0 660 300" role="img" aria-label="Pila de Daniell: ánodo de zinc, cátodo de cobre, puente salino y circulación de electrones por el circuito externo">
     <defs><marker id="qacArrP" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10z" class="svgAccentFill"/></marker></defs>
@@ -126,6 +126,18 @@ ${warn('No restes “al revés” ni cambies signos de más','<p>En la fórmula 
 `);
 
   // =====================================================================
+  add('notacion','Leer la notación de una pila (y las pilas raras)','REDOX',`
+${M(R`\underbrace{\mathrm{Zn(s)\,|\,Zn^{2+}(c_1)}}_{\text{ánodo: oxidación}}\ \|\ \underbrace{\mathrm{Cu^{2+}(c_2)\,|\,Cu(s)}}_{\text{cátodo: reducción}}`)}
+${table(['Símbolo','Significa'],[['|','límite entre fases (metal | solución, sólido | solución)'],['‖','puente salino'],[',','especies en la misma solución (ej. Fe³⁺, Fe²⁺)'],['Pt','electrodo inerte: se usa cuando las dos formas del par están disueltas'],['izquierda / derecha','ánodo / cátodo (por convención)']])}
+${table(['Pila “rara”','Cómo se piensa'],[
+ ['Electrodo con precipitado: Pb | PbSO₄ | SO₄²⁻','el Pb²⁺ libre lo fija el Kps: [Pb²⁺] = Kps/[SO₄²⁻]; después Nernst del par Pb²⁺/Pb.'],
+ ['Pila de concentración: Zn | Zn²⁺(c₁) ‖ Zn²⁺(c₂) | Zn','E° = 0: '+m(R`E=\frac{0{,}0592}{n}\log\frac{c_{\text{cát}}}{c_{\text{án}}}`)+'. Sirve para medir concentraciones muy bajas (y de ahí Kps o Kf).'],
+ ['Con complejo: Zn | Zn(CN)₄²⁻, CN⁻','el Zn²⁺ libre lo fija Kf: [Zn²⁺] = [Zn(CN)₄²⁻]/(Kf·[CN⁻]⁴).']
+])}
+${warn('¿Está en equilibrio?','<p>Si el voltímetro marca un valor distinto de cero, <b>no</b>: hay diferencia de potencial y la reacción sigue avanzando. El equilibrio es E = 0 (Q = K).</p>')}
+`);
+
+  // =====================================================================
   add('potenciales','Potenciales estándar, tablas y el electrodo de hidrógeno','REDOX · 06',`
 <h3>El electrodo normal de hidrógeno (ENH)</h3>
 <p>No se puede medir el potencial de un electrodo solo: siempre se mide una <b>diferencia</b> entre dos. Por eso se eligió uno de referencia y se le asignó potencial cero:</p>
@@ -134,7 +146,7 @@ ${rx('2 H^+(1 M) + 2 e^- <=> H2(g, 1 atm)','E° = 0,00 V')}
 <p>El potencial estándar de cualquier par es la fem de la pila que forma con el ENH, con todas las especies en condiciones estándar (1 M, 1 atm, 25 °C).</p>
 <h3>Tabla de potenciales estándar de reducción</h3>
 ${table(['Hemirreacción de reducción','E° (V)'],[
- ['F₂ + 2e⁻ → 2F⁻','+2,87'],['H₂O₂ + 2H⁺ + 2e⁻ → 2H₂O','+1,78'],['MnO₄⁻ + 8H⁺ + 5e⁻ → Mn²⁺ + 4H₂O','+1,51'],['Cl₂ + 2e⁻ → 2Cl⁻','+1,36'],['Cr₂O₇²⁻ + 14H⁺ + 6e⁻ → 2Cr³⁺ + 7H₂O','+1,33'],['O₂ + 4H⁺ + 4e⁻ → 2H₂O','+1,23'],['Br₂ + 2e⁻ → 2Br⁻','+1,07'],['NO₃⁻ + 4H⁺ + 3e⁻ → NO + 2H₂O','+0,96'],['Ag⁺ + e⁻ → Ag','+0,80'],['Fe³⁺ + e⁻ → Fe²⁺','+0,77'],['I₂ + 2e⁻ → 2I⁻','+0,54'],['Cu²⁺ + 2e⁻ → Cu','+0,34'],['Sn⁴⁺ + 2e⁻ → Sn²⁺','+0,15'],['<b>2H⁺ + 2e⁻ → H₂</b>','<b>0,00</b>'],['Pb²⁺ + 2e⁻ → Pb','−0,13'],['Ni²⁺ + 2e⁻ → Ni','−0,25'],['Fe²⁺ + 2e⁻ → Fe','−0,44'],['Zn²⁺ + 2e⁻ → Zn','−0,76'],['Al³⁺ + 3e⁻ → Al','−1,66'],['Mg²⁺ + 2e⁻ → Mg','−2,37'],['Na⁺ + e⁻ → Na','−2,71']
+ ['F₂ + 2e⁻ → 2F⁻','+2,87'],['NaBiO₃ + 6H⁺ + 2e⁻ → Bi³⁺ + Na⁺ + 3H₂O','≈ +1,8 (según tabla)'],['H₂O₂ + 2H⁺ + 2e⁻ → 2H₂O','+1,78'],['MnO₄⁻ + 8H⁺ + 5e⁻ → Mn²⁺ + 4H₂O','+1,51'],['Cl₂ + 2e⁻ → 2Cl⁻','+1,36'],['Cr₂O₇²⁻ + 14H⁺ + 6e⁻ → 2Cr³⁺ + 7H₂O','+1,33'],['O₂ + 4H⁺ + 4e⁻ → 2H₂O','+1,23'],['Br₂ + 2e⁻ → 2Br⁻','+1,07'],['NO₃⁻ + 4H⁺ + 3e⁻ → NO + 2H₂O','+0,96'],['Ce⁴⁺ + e⁻ → Ce³⁺','+1,61'],['Hg²⁺ + 2e⁻ → Hg','+0,85'],['Ag⁺ + e⁻ → Ag','+0,80'],['Fe³⁺ + e⁻ → Fe²⁺','+0,77'],['I₂ + 2e⁻ → 2I⁻','+0,54'],['Cu²⁺ + 2e⁻ → Cu','+0,34'],['AgCl + e⁻ → Ag + Cl⁻','+0,22'],['Sn⁴⁺ + 2e⁻ → Sn²⁺','+0,15'],['<b>2H⁺ + 2e⁻ → H₂</b>','<b>0,00</b>'],['Pb²⁺ + 2e⁻ → Pb','−0,13'],['Sn²⁺ + 2e⁻ → Sn','−0,14'],['Ni²⁺ + 2e⁻ → Ni','−0,25'],['Fe²⁺ + 2e⁻ → Fe','−0,44'],['Zn²⁺ + 2e⁻ → Zn','−0,76'],['Al³⁺ + 3e⁻ → Al','−1,66'],['Mg²⁺ + 2e⁻ → Mg','−2,37'],['Na⁺ + e⁻ → Na','−2,71']
 ])}
 ${flow([
  ['Arriba de la tabla (E° grande y positivo)','las formas oxidadas son <b>oxidantes fuertes</b> (F₂, MnO₄⁻, Cl₂): tienen muchas ganas de reducirse.'],
@@ -204,6 +216,21 @@ ${example('Concentraciones en el equilibrio y verificación con la condición E�
 ${idea('Las dos caras de la misma moneda','<p>'+m(R`\Delta G^\circ=-nFE^\circ`)+' y '+m(R`\Delta G^\circ=-RT\ln K`)+' juntas dan '+m(R`\ln K=\frac{nFE^\circ}{RT}`)+', que en log decimal a 25 °C es la fórmula de arriba. Por eso un E° positivo es lo mismo que una K mayor que 1 y que un ΔG° negativo.</p>')}
 `);
 
+  add('redox-otro','Redox + precipitación y redox + complejos','REDOX · COMBINADOS',`
+<p>Si el ion de un par redox precipita o forma un complejo, su concentración libre baja muchísimo y, por Nernst, <b>el potencial cambia</b>. Se puede calcular un “E° nuevo” para el par con el sólido o el complejo.</p>
+${example('E° del electrodo AgCl/Ag','<p>Calcular el E° de AgCl(s) + e⁻ → Ag(s) + Cl⁻, sabiendo que E°(Ag⁺/Ag) = 0,80 V y Kps AgCl = 1,8·10⁻¹⁰.</p>',
+ step('1. Nernst del par de la plata',chain(R`E=0{,}80-0{,}0592\log\frac{1}{[\mathrm{Ag^+}]}=0{,}80+0{,}0592\log[\mathrm{Ag^+}]`))+
+ step('2. La plata libre la fija el Kps',chain(R`[\mathrm{Ag^+}]=\frac{K_{ps}}{[\mathrm{Cl^-}]}`,R`E=0{,}80+0{,}0592\log K_{ps}-0{,}0592\log[\mathrm{Cl^-}]`))+
+ step('3. “Estándar” del nuevo par: [Cl⁻] = 1 M',chain(R`E^\circ(\mathrm{AgCl/Ag})=0{,}80+0{,}0592\log(1{,}8\times10^{-10})=0{,}80-0{,}577=0{,}22\ \mathrm{V}`))+
+ ver('<p>El valor tabulado es 0,222 V ✔. Es el electrodo de referencia de plata–cloruro de plata que se usa en los pH-metros.</p>'),
+ 'E°(AgCl/Ag) = 0,22 V: la plata es mucho peor oxidante cuando está precipitada')}
+${example('E° del complejo amoniacal de plata','<p>Calcular el E° de [Ag(NH₃)₂]⁺ + e⁻ → Ag + 2 NH₃ (Ki = 5,9·10⁻⁸).</p>',
+ step('Mismo razonamiento, con el complejo',chain(R`[\mathrm{Ag^+}]=K_i\frac{[\mathrm{Ag(NH_3)_2^+}]}{[\mathrm{NH_3}]^2}\ \xrightarrow{\ \text{todo 1 M}\ }\ [\mathrm{Ag^+}]=K_i`,R`E^\circ=0{,}80+0{,}0592\log(5{,}9\times10^{-8})=0{,}37\ \mathrm{V}`)),
+ 'E° = 0,37 V (tabulado 0,373 V ✔)')}
+${punch('Precipitar o complejar la forma OXIDADA baja el potencial (el par se vuelve peor oxidante). Hacerlo con la forma REDUCIDA lo sube.')}
+${idea('Redox + ácido-base','<p>Ya lo viste en la Unidad 4: cuando hay H⁺ en la hemirreacción (MnO₄⁻, Cr₂O₇²⁻, NO₃⁻), el potencial depende del pH. Por eso los oxidantes oxigenados se usan en medio ácido.</p>')}
+`);
+
   // =====================================================================
   add('repaso','Repaso de redox','REDOX · REPASO',`
 ${cards([
@@ -223,5 +250,5 @@ ${cards([
 ])}
 `);
 
-  window.ET27_QAC5.units.push({id:'u4',n:4,title:'Equilibrio redox',short:'Redox',lead:'Reacciones redox, método del ion-electrón en medio ácido y básico paso a paso, oxidantes y reductores, pilas con sus dos fórmulas, potenciales y electrodo de hidrógeno, Nernst (y el n del denominador) y la relación con la constante de equilibrio.',sections:s});
+  window.ET27_QAC5.units.push({id:'redox',n:4,title:'Equilibrio redox',short:'Redox',lead:'Reacciones redox, método del ion-electrón en medio ácido y básico paso a paso, oxidantes y reductores, pilas con sus dos fórmulas, potenciales y electrodo de hidrógeno, Nernst (y el n del denominador) y la relación con la constante de equilibrio.',sections:s});
 })();

@@ -5,41 +5,56 @@
   const K=window.ET27Kit,Q=window.ET27QI,A=window.ET27QAC;if(!K||!Q||!A||!window.ET27_QAC5)return;
   const {M,m,chain,key,sym,simple,idea,warn,note,deep,example,step,table,figure,cards,calc,field}=K;
   const {rx,rxs,f,punch,facts}=Q;
-  const {sup,ver,flow,memo,pasajes,scale,opt}=A;
+  const {sup,ver,flow,memo,pasajes,scale,opt,jus,desc}=A;
   const R=String.raw;
-  const s=[];const add=(k,l,kk,h)=>s.push({key:`qac-u1-${k}`,label:l,kicker:kk,html:h});
+  const s=[];const add=(k,l,kk,h)=>s.push({key:`qac-ab-${k}`,label:l,kicker:kk,html:h});
 
   // =====================================================================
-  add('metodo','Antes de arrancar: cómo se piensa esta materia','ÁCIDO-BASE · 00',`
-<p>Cualitativa tiene fama de difícil, pero en realidad <b>todas las unidades usan el mismo razonamiento</b>. Si lo entendés una vez acá, en ácido-base, después precipitación, complejos y redox son variaciones del mismo juego.</p>
-${punch('Escribir el equilibrio → plantear la constante → suponer lo que se puede despreciar → resolver → VERIFICAR la suposición.')}
-<h3>La receta que vamos a repetir en toda la materia</h3>
+  add('metodo','Antes de arrancar: cómo se trabaja (y cómo corrige la profe)','ÁCIDO-BASE',`
+<p>Cualitativa se aprueba <b>justificando</b>. Un resultado numérico sin la justificación de por qué se planteó así vale poco. Todas las unidades usan el mismo razonamiento, y si lo entendés acá en ácido-base, después precipitación, complejos y redox son variaciones.</p>
+${punch('Describir el sistema → plantear K, BM y BC → justificar qué se desprecia y por qué → despejar y reemplazar en K → resolver → VERIFICAR el desprecio.')}
 ${flow([
- ['1. ¿Qué hay en el vaso?','Antes de cualquier cuenta: identificá qué especies se pusieron y cuáles reaccionan completamente (fuertes, neutralizaciones). Recién después pensá en equilibrios.'],
- ['2. Escribir el o los equilibrios','Con las especies que realmente quedan en solución: '+f('HA')+' ⇌ '+f('H^+')+' + '+f('A^-')+', el del agua, etc.'],
- ['3. Plantear la constante','Ley de acción de masas: productos sobre reactivos, cada concentración elevada a su coeficiente. Sólidos y el agua (solvente) no entran.'],
- ['4. Balances','<b>Balance de masa (BM)</b>: lo que pusiste se reparte entre las especies. <b>Balance de carga (BC)</b>: la solución es eléctricamente neutra.'],
- ['5. Suponer y explicar por qué','Despreciamos lo que es <b>chico frente a otra cosa</b>, y siempre decimos <b>por qué</b> esperamos que sea chico (la constante es chica, hay un ion común, la solución no es muy diluida…).'],
- ['6. Resolver','Con las suposiciones, la ecuación queda simple (en general una raíz cuadrada).'],
- ['7. Verificar','Con el resultado, calculamos lo que despreciamos y comprobamos que de verdad era chico. Si no lo era, volvemos a resolver sin esa aproximación.']
+ ['1. ¿Qué hay en el vaso?','Antes de cualquier cuenta: qué se puso, qué reacciona completo (fuertes, neutralizaciones) y qué queda en equilibrio.'],
+ ['2. Descripción del sistema','Disociaciones totales con →, equilibrios con ⇌ y su constante, la autoprotólisis del agua <b>siempre</b>. (Sección “Descripción del sistema”.)'],
+ ['3. Balances','<b>BM</b>: lo que pusiste se reparte entre sus especies. <b>BC</b>: la solución es eléctricamente neutra.'],
+ ['4. Justificar los desprecios','Con argumentos teóricos: fuerza del electrolito, concentración (choques efectivos), Le Châtelier, ion común, diagrama de especiación. <b>Nunca “porque sí”.</b>'],
+ ['5. Despejar de BM y BC y reemplazar en K','Queda una ecuación simple. Resolver.'],
+ ['6. Verificar','Con el resultado, comprobar que lo despreciado de verdad era chico. Si no, resolver sin despreciar.']
 ])}
-<h3>Notación que vamos a usar</h3>
-${sym([
- [R`C_a,\ C_b,\ C_s`,'concentración analítica: lo que se puso de ácido, base o sal (dato)','M'],
- [R`[\mathrm{X}]`,'concentración molar de la especie X en el equilibrio (lo que realmente hay)','M'],
- [R`K_a,\ K_b`,'constantes de acidez y basicidad',''],
- [R`\mathrm{p}X=-\log X`,'el “p” siempre significa menos logaritmo decimal',''],
- [R`\alpha`,'grado de disociación: fracción que se disoció','—']
+<h3>El criterio para despreciar</h3>
+${table(['Cuándo','Qué se mira','Criterio'],[
+ ['<b>Antes</b> de calcular (para justificar el desprecio)','cociente entre la concentración inicial y la constante',m(R`\frac{C_{\text{inicial}}}{K}>100\ \Rightarrow`)+' se disocia poco: x se desprecia frente a C'],
+ ['<b>Después</b> de calcular (verificación)','lo despreciado frente a aquello de lo que se restó o sumó',m(R`\frac{x}{C}\cdot100\le5\,\%`)+' ✔ (si no, cuadrática o planteo completo)']
 ])}
-${idea('El criterio del 5 %','<p>Decimos que una cantidad <b>x es despreciable frente a C</b> cuando'+m(R`\frac{x}{C}\cdot 100\le 5\,\%`)+'. Es el criterio más usado en los cursos: con 5 % de error en una concentración, el pH cambia en menos de 0,02 unidades, que está por debajo de lo que se informa. Si tu profesor usa otro criterio (1 % o 10 %), cambiá el número, pero el razonamiento es el mismo.</p>')}
-${warn('El error que más puntos cuesta','<p>Usar una fórmula “de memoria” (por ejemplo '+m(R`[\mathrm{H^+}]=\sqrt{K_aC}`)+') <b>sin decir qué se supuso ni verificarlo</b>. En los parciales la fórmula sola no alcanza: hay que escribir la suposición, justificarla y verificar al final. En todos los ejemplos de esta materia vas a ver esas tres cajas: <b>Suponemos</b>, el cálculo, y <b>Verificamos</b>.</p>')}
-${deep('Balance de masa y balance de carga, explicados con calma',`
-<p><b>Balance de masa (BM).</b> La materia no desaparece: si disolvemos 0,1 mol/L de ácido acético, todo ese acético tiene que estar en alguna forma. Como el acético se reparte entre la forma sin disociar y el anión acetato:</p>
-${M(R`C_a=[\mathrm{HAc}]+[\mathrm{Ac^-}]=0{,}1\ \mathrm{M}`)}
-<p><b>Balance de carga (BC).</b> Una solución no tiene carga neta: la suma de concentraciones de cargas positivas es igual a la de cargas negativas. Cada ion se multiplica por el valor absoluto de su carga:</p>
-${M(R`[\mathrm{H^+}]=[\mathrm{Ac^-}]+[\mathrm{OH^-}]`)}
-${M(R`\text{Ejemplo con carga 2: }\ \mathrm{Na_2SO_4}:\quad [\mathrm{Na^+}]+[\mathrm{H^+}]=2[\mathrm{SO_4^{2-}}]+[\mathrm{OH^-}]`)}
-<p>Con BM, BC, la constante del equilibrio y Kw tenemos tantas ecuaciones como incógnitas: el problema tiene solución exacta. Las aproximaciones sólo sirven para no tener que resolver ecuaciones de tercer o cuarto grado.</p>`)}
+${note('Ojo con el número','<p>Algunos docentes verifican pidiendo que lo despreciado sea 100 veces menor (1 %) y otros aceptan 5 %. Escribí siempre la verificación con el número que usa tu profe; lo que no puede faltar es <b>hacerla</b>.</p>')}
+${warn('El error que más puntos cuesta','<p>Usar una fórmula de memoria (por ejemplo '+m(R`[\mathrm{H^+}]=\sqrt{K_aC}`)+') <b>sin decir qué se supuso, por qué, ni verificarlo</b>. En todos los ejemplos de esta materia vas a ver las cajas <b>Suponemos</b> y <b>Verificamos</b>: así se escribe en el parcial.</p>')}
+${deep('Balance de masa y balance de carga, con calma',`
+<p><b>BM.</b> La materia no se crea ni se destruye: si disolvemos 0,1 mol/L de acético, todo ese acético está en alguna forma: ${m(R`C_a=[\mathrm{HAc}]+[\mathrm{Ac^-}]`)}.</p>
+<p><b>BC.</b> La solución no tiene carga neta: suma de cargas positivas = suma de negativas, cada ion multiplicado por su carga: ${m(R`[\mathrm{H_3O^+}]=[\mathrm{Ac^-}]+[\mathrm{HO^-}]`)}; con Na₂SO₄: ${m(R`[\mathrm{Na^+}]+[\mathrm{H_3O^+}]=2[\mathrm{SO_4^{2-}}]+[\mathrm{HO^-}]`)}.</p>
+<p>Con K, Kw, BM y BC hay tantas ecuaciones como incógnitas: el problema tiene solución exacta. Los desprecios sólo evitan ecuaciones de grado 3 o 4.</p>`)}
+`);
+
+  // =====================================================================
+  add('justificar','Cómo se justifica: las herramientas teóricas','ÁCIDO-BASE',`
+<p>Cada vez que algo “se desprecia”, “predomina” o “se desplaza”, hay que decir <b>con qué concepto</b>. Son siempre los mismos cinco:</p>
+${table(['Herramienta','Qué permite justificar','Frase modelo (corta)'],[
+ ['<b>Fuerza del electrolito y valor de K</b>','si algo se disocia todo, poco o casi nada','“El HAc es un electrolito débil (Ka = 1,8·10⁻⁵): se disocia parcialmente.”'],
+ ['<b>Concentración · choques efectivos</b>','por qué α baja al concentrar y sube al diluir','“A mayor concentración hay más choques efectivos entre H₃O⁺ y A⁻, que vuelven a formar HA: α disminuye.”'],
+ ['<b>Le Châtelier</b>','hacia dónde se corre un equilibrio al agregar, quitar, diluir o calentar','“El H₃O⁺ del HCl desplaza el equilibrio del acético hacia la izquierda (ion común).”'],
+ ['<b>Diagrama de especiación</b>','qué especie predomina a un pH y cuáles son despreciables','“A pH 7,4 la fracción de CO₃²⁻ es ≈ 10⁻³: despreciable frente a HCO₃⁻, pero no nula.”'],
+ ['<b>BM, BC y despeje en K</b>','el cálculo, y qué término del balance se puede tachar','“En el BC [HO⁻] ≪ [Ac⁻] porque el medio es ácido; queda [H₃O⁺] ≈ [Ac⁻].”']
+],'compareTable')}
+<h3>Teoría de los choques efectivos y el grado de disociación</h3>
+<p>Para que dos partículas reaccionen tienen que <b>chocar</b> con la orientación y la energía adecuadas (choque efectivo). En un ácido débil, la reacción inversa (H₃O⁺ + A⁻ → HA + H₂O) depende de que los iones se encuentren:</p>
+${figure(A.draw.choques,'Más concentrado = más encuentros entre iones = más recombinación = menor grado de disociación.')}
+${flow([['Solución concentrada','muchas partículas por volumen → muchos choques efectivos entre H₃O⁺ y A⁻ → se rearma HA → <b>α baja</b>.'],['Solución diluida','los iones quedan lejos → pocos choques efectivos → la recombinación es lenta → <b>α alta</b>.'],['Le Châtelier dice lo mismo','al diluir, el equilibrio se desplaza hacia el lado con más partículas disueltas (los iones).']])}
+<h3>Cómo se escribe un desprecio bien justificado</h3>
+${example('Modelo de redacción','<p>HAc 0,10 M (Ka = 1,8·10⁻⁵): justificar los desprecios.</p>',
+ step('Desprecio 1 · el aporte del agua',jus('<p>Se desprecia el H₃O⁺ que aporta el agua (y por lo tanto [HO⁻] en el BC) porque el acético aporta mucho más H₃O⁺ que 10⁻⁷ M y, por Le Châtelier, ese H₃O⁺ desplaza la autoprotólisis del agua hacia la izquierda.</p>'))+
+ step('Desprecio 2 · la disociación frente a C',jus('<p>El HAc es un electrolito débil (Ka ≪ 1) en concentración alta: C/Ka = 5560 &gt; 100. Por choques efectivos, la recombinación es favorable y se disocia poco: x ≪ 0,10.</p>'))+
+ step('Verificación (siempre al final)',ver('<p>x = 1,34·10⁻³ M → 1,3 % de 0,10 ✔ · [HO⁻] = 7,5·10⁻¹² M ≪ [H₃O⁺] ✔</p>')),
+ 'Justificación conceptual + criterio numérico + verificación')}
+${idea('Conciso, no largo','<p>La justificación ideal es <b>una o dos oraciones</b> que nombren el concepto (débil, ion común, choques, especiación, Le Châtelier) y el dato que lo respalda (K, C/K, pH vs pKa). Un párrafo largo sin concepto vale menos que una línea precisa.</p>')}
 `);
 
   // =====================================================================
@@ -51,6 +66,7 @@ ${table(['','Definición','Reacción típica'],[
  ['Base','sustancia que <b>en agua</b> libera iones '+f('OH^-'),rx('NaOH(ac) -> Na^+(ac) + OH^-(ac)')],
  ['Neutralización','H⁺ + OH⁻ forman agua',rx('H^+(ac) + OH^-(ac) -> H2O(l)')]
 ])}
+${idea('¿Por qué hoy la teoría de Arrhenius no se considera válida (o suficiente)?','<p>Porque es demasiado restringida: sólo vale en agua, exige que el ácido o la base <b>contengan</b> H⁺ u OH⁻ (no explica el NH₃, el Na₂CO₃ básico ni el NH₄Cl ácido), no explica reacciones sin agua y supone un H⁺ libre que en solución no existe (está como H₃O⁺). Brønsted–Lowry la incluye y la amplía.</p>')}
 ${warn('Lo que Arrhenius no puede explicar','<ul><li>El <b>amoníaco</b> es básico, pero no tiene OH⁻ en su fórmula.</li><li>Sólo vale <b>en agua</b>: no sirve para reacciones en fase gaseosa o en otros solventes (por ejemplo NH₃(g) + HCl(g) → NH₄Cl(s)).</li><li>El H⁺ “desnudo” no existe en agua: siempre está unido a moléculas de agua.</li></ul>')}
 <h3>2 · Brønsted–Lowry (1923): transferencia de protones</h3>
 ${key(R`\text{ácido}=\text{dador de }\mathrm{H^+}\qquad\text{base}=\text{aceptor de }\mathrm{H^+}`,'Brønsted–Lowry')}
@@ -168,6 +184,20 @@ ${warn('Cuidado en el parcial','<p>Si el enunciado da una temperatura distinta d
 `);
 
   // =====================================================================
+  add('lam','Ley de acción de masas y electrolitos fuertes y débiles','ÁCIDO-BASE',`
+${key(R`a\,\mathrm{A}+b\,\mathrm{B}\rightleftharpoons c\,\mathrm{C}+d\,\mathrm{D}\qquad K=\frac{[\mathrm{C}]^c[\mathrm{D}]^d}{[\mathrm{A}]^a[\mathrm{B}]^b}`,'Ley de acción de masas')}
+<p><b>Qué representa:</b> en un sistema en equilibrio, a temperatura constante, el cociente entre las concentraciones de productos y de reactivos (cada una elevada a su coeficiente) es un número fijo, K, sin importar de qué concentraciones se partió. Sólidos puros y el agua como solvente no entran. K sólo cambia con la temperatura, y no dice nada sobre la velocidad.</p>
+${table(['','Electrolito fuerte','Electrolito débil'],[
+ ['Disociación','total (α = 1)','parcial (α &lt; 1)'],
+ ['Cómo se escribe','flecha simple → y sin constante','equilibrio ⇌ con su K'],
+ ['En solución hay','sólo iones (la especie sin disociar no existe)','iones y especie sin disociar, en equilibrio'],
+ ['Ejemplos','HCl, HNO₃, NaOH, sales solubles (NaCl, NaAc, NH₄Cl)','HAc, HF, NH₃, H₂CO₃, HSO₄⁻'],
+ ['Conductividad','alta','baja para la misma concentración']
+])}
+${warn('Una sal es un electrolito fuerte aunque venga de un ácido débil','<p>El acetato de sodio se disocia <b>totalmente</b> (NaAc → Na⁺ + Ac⁻): es un electrolito fuerte. Lo que es débil es el comportamiento ácido-base del ion Ac⁻ con el agua. Son dos cosas distintas y conviene decirlas por separado.</p>')}
+`);
+
+  // =====================================================================
   add('lista','Fuertes y débiles: aprendelos ANTES de calcular','ÁCIDO-BASE · 05',`
 <p>El primer paso de cualquier ejercicio es saber si el ácido o la base es <b>fuerte</b> (se disocia todo) o <b>débil</b> (equilibrio). Si te equivocás acá, todo lo que sigue está mal aunque las cuentas sean perfectas. Por eso conviene <b>memorizar la lista corta de fuertes</b>: todo lo que no está en ella, es débil.</p>
 ${memo([
@@ -193,6 +223,59 @@ ${cards([
  ['¿Fuerte o débil?','NH₃','Base débil (Kb = 1,8·10⁻⁵).'],
  ['¿Fuerte o débil?','H₂CO₃','Ácido débil diprótico (Ka₁ = 4,3·10⁻⁷).'],
  ['¿Fuerte o débil?','KOH','Base fuerte.']
+])}
+`);
+
+  // =====================================================================
+  add('fuerza','Comparar la fuerza de ácidos y bases','ÁCIDO-BASE',`
+${table(['Para comparar…','Más fuerte es el que tiene…'],[['ácidos','mayor Ka · <b>menor pKa</b>'],['bases','mayor Kb · <b>menor pKb</b>'],['una base dada por el pKa de su ácido conjugado','pKb = 14 − pKa: <b>mayor pKa del conjugado</b> → base más fuerte']])}
+${example('Ordenar bases dadas con pKa y pKb mezclados','<p>Ordenar en fuerza creciente: F⁻ (pKa HF 3,45), NH₃ (pKb 4,75), Ac⁻ (pKa HAc 4,75).</p>',
+ step('Pasar todo a pKb',chain([R`\mathrm{F^-}:\ 14-3{,}45=10{,}55`,'base muy débil'],[R`\mathrm{Ac^-}:\ 14-4{,}75=9{,}25`,''],[R`\mathrm{NH_3}:\ 4{,}75`,'dato'])),
+ 'F⁻ &lt; Ac⁻ &lt; NH₃ (menor pKb = más fuerte)')}
+${idea('Por qué funciona','<p>Por Ka·Kb = Kw: cuanto más fuerte es un ácido (Ka grande), más débil es su base conjugada (Kb chica). El HF es más fuerte que el acético, por eso el F⁻ es una base más débil que el Ac⁻.</p>')}
+`);
+
+  // =====================================================================
+  add('descripcion','Descripción del sistema (cualitativa y cuantitativa)','ÁCIDO-BASE',`
+<p>Es la consigna más frecuente: “describa el sistema”, “realice la descripción cuali–cuantitativa”. Es escribir <b>todo lo que pasa</b> en la solución, en orden, y después las concentraciones.</p>
+${flow([
+ ['1. Disociaciones totales (→, sin K)','Electrolitos fuertes: sales solubles, ácidos y bases fuertes.'],
+ ['2. Equilibrios con el agua (⇌, con K y su expresión)','Cada especie débil reacciona con H₂O (Brønsted). Polipróticos: <b>un protón por equilibrio</b>, cada uno con su Ka.'],
+ ['3. Autoprotólisis del agua (⇌, Kw)','Siempre, en cualquier solución acuosa.'],
+ ['4. BM y BC',''],
+ ['5. Análisis cualitativo','Comparar constantes y concentraciones: qué especies predominan, cuáles son despreciables (justificado). El pH será ácido, básico o neutro según quién gane.'],
+ ['6. Cuantitativo','Desprecios, despeje en K, cálculo de <b>todas</b> las concentraciones (incluidas [HO⁻] y las minoritarias) y verificación.']
+])}
+${example('Descripción completa de NH₄Cl 0,10 M','<p>(Kb NH₃ = 1,8·10⁻⁵)</p>',
+ step('Cualitativa',desc(rxs(['NH4Cl(ac) -> NH4^+(ac) + Cl^-(ac)','electrolito fuerte: disociación total'],['NH4^+(ac) + H2O(l) <=> NH3(ac) + H3O^+(ac)','Ka = Kw/Kb = 5,6·10⁻¹⁰'],['H2O(l) + H2O(l) <=> H3O^+(ac) + HO^-(ac)','Kw'])+chain([R`K_a=\frac{[\mathrm{NH_3}][\mathrm{H_3O^+}]}{[\mathrm{NH_4^+}]}`,''],[R`\text{BM: }0{,}10=[\mathrm{NH_4^+}]+[\mathrm{NH_3}]=[\mathrm{Cl^-}]`,''],[R`\text{BC: }[\mathrm{NH_4^+}]+[\mathrm{H_3O^+}]=[\mathrm{Cl^-}]+[\mathrm{HO^-}]`,'']))+jus('<p>El Cl⁻ proviene del HCl (fuerte): no tiene comportamiento ácido-base. El NH₄⁺ proviene del NH₃ (débil): es un ácido débil que cede H⁺ al agua → <b>solución ácida</b>.</p>'))+
+ step('Cuantitativa',sup([['[HO⁻] ≪ [H₃O⁺] en el BC','medio ácido.'],['[NH₃] ≪ 0,10 en el BM','Ka muy chica y C/Ka ≫ 100.']])+chain(R`\text{BC}-\text{BM}:\ [\mathrm{H_3O^+}]\approx[\mathrm{NH_3}]`,R`K_a=\frac{[\mathrm{H_3O^+}]^2}{0{,}10}\Rightarrow[\mathrm{H_3O^+}]=7{,}5\times10^{-6}\ \mathrm{M}\quad\mathrm{pH}=5{,}13`,R`[\mathrm{NH_3}]=7{,}5\times10^{-6}\quad[\mathrm{NH_4^+}]=[\mathrm{Cl^-}]=0{,}10\quad[\mathrm{HO^-}]=1{,}3\times10^{-9}\ \mathrm{M}`)+ver('<p>7,5·10⁻⁶ es 0,0075 % de 0,10 ✔ · [HO⁻] ≪ [H₃O⁺] ✔</p>')),
+ 'Ácida, pH 5,13, con todas las concentraciones')}
+<h3>Errores de descripción que la profe marca siempre</h3>
+${table(['Error','Por qué está mal','Correcto'],[
+ [rx('H3PO4 + 3 H2O -> 3 H3O^+ + PO4^3-'),'un débil no se disocia totalmente (va ⇌) y los protones salen <b>de a uno</b>, cada uno con su Ka','tres equilibrios: H₃PO₄ ⇌ H₂PO₄⁻ ⇌ HPO₄²⁻ ⇌ PO₄³⁻'],
+ [rx('HSO4^- -> SO4^2- + H3O^+'),'la segunda disociación del sulfúrico es débil (Ka₂ = 1,2·10⁻²)','HSO₄⁻ + H₂O ⇌ SO₄²⁻ + H₃O⁺, con Ka₂'],
+ [rx('NH4^+ -> NH3 + H3O^+'),'faltan el agua (Brønsted: el H⁺ va al H₂O), el equilibrio y la constante','NH₄⁺ + H₂O ⇌ NH₃ + H₃O⁺, Ka'],
+ [rx('H2O + H2O -> H3O^+ + HO^-'),'la autoprotólisis es un equilibrio','⇌ con Kw'],
+ ['[HO⁻] = 0 en un ácido','Kw siempre vale: [HO⁻] = Kw/[H₃O⁺], chico pero no cero','calcularla'],
+ ['Olvidar la autoprotólisis del agua','está en todas las soluciones acuosas','escribirla siempre']
+],'compareTable')}
+`);
+
+  // =====================================================================
+  add('trampas','Preguntas trampa frecuentes','ÁCIDO-BASE',`
+${cards([
+ ['Equilibrio','¿Un sistema de dos sustancias “alcanza el equilibrio”?','Siempre. En solución acuosa al menos está la autoprotólisis del agua; cualquier agregado desplaza el sistema hasta un nuevo equilibrio.'],
+ ['Equilibrio','¿Una solución de HCl alcanza el equilibrio si el HCl se disocia todo?','Sí: la disociación es total, pero el agua sigue en equilibrio (Kw) con [HO⁻] = Kw/[H₃O⁺].'],
+ ['Especiación','¿Alguna especie tiene concentración 0?','Nunca. Puede ser despreciable (α muy chico) frente a otra, pero no nula.'],
+ ['Especiación','¿El diagrama de especiación informa sobre la cinética de disociación?','No. Muestra fracciones en el equilibrio (termodinámica), no a qué velocidad se llega.'],
+ ['pH','¿Agua pura con pH 6,63 es ácida?','No: a 50 °C pKw = 13,26 y es neutra ([H₃O⁺] = [HO⁻]).'],
+ ['pH','HCl 10⁻⁸ M, ¿pH 8?','No: 6,98. El aporte del agua no se puede despreciar.'],
+ ['Fuerza','¿Fuerte es lo mismo que concentrado?','No. Fuerte/débil = cuánto se disocia; concentrado/diluido = cuánto soluto hay.'],
+ ['Sales','¿Una sal es electrolito fuerte o débil?','Las sales solubles son electrolitos fuertes (disociación total); sus iones pueden luego tener comportamiento ácido-base débil.'],
+ ['Grado','¿Dónde es mayor α, en 10⁻⁴ M o en 0,4 M?','En 10⁻⁴ M: menos choques efectivos (y Le Châtelier por dilución).'],
+ ['Ion común','¿Se puede despreciar el acético frente a HCl a pH 2?','Sí: el H₃O⁺ del HCl desplaza el equilibrio del acético (ion común) y su aporte es despreciable (verificar).'],
+ ['Fórmulas','¿√(Ka·C) vale siempre?','No: sólo si el agua no aporta y C/Ka &gt; 100 (verificar x ≤ 5 %).'],
+ ['Buffer','¿NH₄Cl solo regula el pH?','No: falta la base conjugada (NH₃) en cantidad apreciable.']
 ])}
 `);
 
@@ -247,5 +330,5 @@ ${punch('Regla práctica: si la concentración del ácido o base fuerte es menor
 ${deep('¿Y con una base fuerte muy diluida?',`<p>Es simétrico: ${m(R`[\mathrm{OH^-}]=C_b+[\mathrm{H^+}]`)}, de donde ${m(R`[\mathrm{OH^-}]=\frac{C_b+\sqrt{C_b^2+4K_w}}{2}`)}. Para NaOH 10⁻⁷ M: [OH⁻] = 1,62·10⁻⁷ M → pOH 6,79 → pH 7,21.</p>`)}
 `);
 
-  window.ET27_QAC5.units.push({id:'u1',n:1,title:'Equilibrio ácido-base',short:'Ácido-base',lead:'Las tres teorías, el agua y su producto iónico, pH y pasajes, fuertes y débiles, grado de disociación, especiación, ion común, polipróticos, mezclas, hidrólisis y soluciones reguladoras. Siempre: suponer, justificar y verificar.',sections:s});
+  window.ET27_QAC5.units.push({id:'acido-base',n:1,title:'Equilibrio ácido-base',short:'Ácido-base',lead:'Cómo se justifica, descripción del sistema, las tres teorías, el agua y Kw, pH y pasajes, fuertes y débiles, grado de disociación y choques efectivos, especiación, ion común, polipróticos, mezclas e hidrólisis. Con las guías 2 y 3 y las evaluaciones resueltas.',sections:s});
 })();
