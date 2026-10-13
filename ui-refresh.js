@@ -10,7 +10,8 @@
   const SUBJECTS = [
     { id: 'chemistry', view: 'chemistry', letter: 'Q', name: 'Química General', meta: '4.º año · Propiedades coligativas' },
     { id: 'physics', view: 'physics', letter: 'F', name: 'Física Aplicada', meta: 'Tensión superficial · Circulación de fluidos' },
-    { id: 'inorganic', view: 'inorganic', letter: 'QI', name: 'Química Inorgánica', meta: '4.º año · Teoría · TP 4 y TP 5' }
+    { id: 'inorganic', view: 'inorganic', letter: 'QI', name: 'Química Inorgánica', meta: '4.º año · Teoría · TP 4 y TP 5' },
+    { id: 'cualitativa', view: 'cualitativa', letter: 'AC', name: 'Química Analítica Cualitativa', meta: '5.º año · Teoría · 5 unidades' }
   ];
   const DAYS = [[1, 'Lunes'], [2, 'Martes'], [3, 'Miércoles'], [4, 'Jueves'], [5, 'Viernes']];
 

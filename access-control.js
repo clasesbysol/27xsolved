@@ -112,6 +112,7 @@
       if(view==='chemistry')return'quimica-general-4';
       if(view==='physics')return'fisica-aplicada-4';
       if(view==='inorganic')return'quimica-inorganica-4';
+      if(view==='cualitativa')return'quimica-analitica-cualitativa-5';
       return PAGE_SUBJECTS[pageFile(url.href)]||'';
     }catch(_){ }
     return'';
@@ -266,6 +267,7 @@
     if(view==='chemistry'||view==='unit')return'quimica-general-4';
     if(view==='physics')return'fisica-aplicada-4';
     if(view==='inorganic')return'quimica-inorganica-4';
+    if(view==='cualitativa')return'quimica-analitica-cualitativa-5';
     return'';
   }
   function lockAppContent(){
@@ -391,7 +393,7 @@
   const needsGate=(
     Boolean(PAGE_SUBJECTS[pageFile(location.href)])||
     (Boolean(new URLSearchParams(location.search).get('subject'))&&!!document.getElementById('subjectApp'))||
-    ['chemistry','physics','unit','inorganic'].includes(new URLSearchParams(location.search).get('view')||'')
+    ['chemistry','physics','unit','inorganic','cualitativa'].includes(new URLSearchParams(location.search).get('view')||'')
   );
   if(needsGate){
     document.documentElement.classList.add('et27-pending');

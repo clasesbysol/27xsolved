@@ -111,5 +111,5 @@
     root.querySelectorAll('.flipCard').forEach(c=>c.onclick=()=>{c.classList.toggle('flipped');c.setAttribute('aria-pressed',String(c.classList.contains('flipped')))});
   }
 
-  window.ET27Kit={esc,M,m,chain,key,sym,simple,idea,warn,fix,note,deep,example,step,table,figure,cards,calc,field,init};
+  window.ET27Kit={esc,M,m,chain,key,sym,simple,idea,warn,fix,note,deep,example,step,table,figure,cards,calc,field,init,calcs,fmt};
 })();

@@ -1,0 +1,38 @@
+/* 27xSOLved · Química Analítica Cualitativa 5.º — bloques propios (suponemos / verificamos, especiación). */
+.qacSup,.qacVer{position:relative}
+.qacSup{border-color:color-mix(in srgb,#7b61c9 45%,var(--border));background:color-mix(in srgb,#7b61c9 7%,var(--surface))}
+.qacSup>b{color:color-mix(in srgb,#7b61c9 80%,var(--text))}
+.qacSup ul{display:grid;gap:8px;margin:6px 0 0;padding-left:0;list-style:none}
+.qacSup li{display:grid;gap:2px;padding:8px 10px;border-radius:10px;background:var(--surface)}
+.qacSup li>span{font-size:14px;color:var(--muted)}
+.qacSup li>span:before{content:"¿Por qué? ";font-weight:800;color:color-mix(in srgb,#7b61c9 80%,var(--text))}
+.qacVer.ok{border-color:color-mix(in srgb,#2f9e6b 50%,var(--border));background:color-mix(in srgb,#2f9e6b 8%,var(--surface))}
+.qacVer.ok>b{color:color-mix(in srgb,#2f9e6b 80%,var(--text))}
+.qacVer.bad{border-color:color-mix(in srgb,#d2694e 55%,var(--border));background:color-mix(in srgb,#e8836a 10%,var(--surface))}
+.qacVer.bad>b{color:color-mix(in srgb,#c2533a 85%,var(--text))}
+.qacFlow{display:grid;gap:8px;margin:18px 0;counter-reset:qacflow}
+.qacFlow>div{position:relative;padding:11px 14px 11px 50px;border:1px solid var(--border);border-radius:14px;background:var(--surface);line-height:1.5}
+.qacFlow>div:before{counter-increment:qacflow;content:counter(qacflow);position:absolute;left:12px;top:10px;width:26px;height:26px;display:grid;place-items:center;border-radius:50%;background:var(--accent);color:#fff;font-weight:900;font-size:13px}
+.qacFlow>div>b{display:block}
+.qacMemo{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:16px 0}
+.qacMemo>div{padding:12px 14px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface)}
+.qacMemo>div>small{display:block;font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.qacMemo>div.strong{border-color:color-mix(in srgb,#d2694e 55%,var(--border))}
+.qacMemo>div.weak{border-color:color-mix(in srgb,#3b8fd9 55%,var(--border))}
+.qacMemo ul{margin:4px 0 0;padding-left:18px;display:grid;gap:3px}
+/* Diagramas de especiación y de pasajes */
+.qacAxis{stroke:var(--muted);stroke-width:1.5;fill:none}
+.qacGrid{stroke:var(--border);stroke-width:1;fill:none}
+.qacPk{stroke:var(--muted);stroke-width:1.5;stroke-dasharray:5 5;fill:none}
+.qacC0,.qacC1,.qacC2,.qacC3{fill:none;stroke-width:3.2;stroke-linejoin:round}
+.qacC0{stroke:#2f7fd1}.qacC1{stroke:#e0752d}.qacC2{stroke:#2f9e6b}.qacC3{stroke:#a24fc2}
+.qacF0{fill:#2f7fd1}.qacF1{fill:#e0752d}.qacF2{fill:#2f9e6b}.qacF3{fill:#a24fc2}
+.qacTick{fill:var(--muted);font:600 12px Nunito,system-ui,sans-serif}
+.qacBox{fill:color-mix(in srgb,var(--accent) 10%,var(--surface));stroke:var(--accent);stroke-width:2}
+.qacBoxAlt{fill:color-mix(in srgb,#e0752d 12%,var(--surface));stroke:#e0752d;stroke-width:2}
+.qacBig{fill:var(--text);font:900 20px Nunito,system-ui,sans-serif}
+.qacLab{fill:var(--accent);font:800 13px Nunito,system-ui,sans-serif}
+.qacLab.alt{fill:#c95f1f}
+.qacScale{display:grid;grid-template-columns:repeat(15,1fr);gap:2px;margin:14px 0 6px;font-size:11px;font-weight:800;text-align:center}
+.qacScale>span{padding:6px 0;border-radius:6px;color:#fff}
+.qacScaleLegend{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:16px}

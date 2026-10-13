@@ -25,7 +25,7 @@ window.ET27_ACADEMIC_CATALOG = {
       year: 5,
       subjects: [
         { id: 'matematica-5', name: 'Matemática de 5.º', kind: 'Materia', status: 'Esqueleto listo', letter: 'M5', href: './materia.html?subject=matematica-5' },
-        { id: 'quimica-analitica-cualitativa-5', name: 'Química Analítica Cualitativa', kind: 'Materia', status: 'Esqueleto listo', letter: 'AC', href: './materia.html?subject=quimica-analitica-cualitativa-5' },
+        { id: 'quimica-analitica-cualitativa-5', name: 'Química Analítica Cualitativa', kind: 'Materia', status: 'Teoría cargada', letter: 'AC', href: './?view=cualitativa', existing: true },
         { id: 'quimica-organica-1', name: 'Química Orgánica I', kind: 'Materia', status: 'Esqueleto listo', letter: 'O1', href: './materia.html?subject=quimica-organica-1' },
         { id: 'industrial-1', name: 'Industrial I', kind: 'Materia', status: 'Esqueleto listo', letter: 'I1', href: './materia.html?subject=industrial-1' },
         { id: 'quimica-industrial-1', name: 'Química Industrial I', kind: 'Materia', status: 'Esqueleto listo', letter: 'QI', href: './materia.html?subject=quimica-industrial-1' },
