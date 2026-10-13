@@ -19,8 +19,11 @@
     {id:'none',label:'Sin acceso',short:''},
     {id:'theory',label:'Solo teórica',short:'Teórica'},
     {id:'theory_eval',label:'Teórica + evaluaciones',short:'Teórica + eval.'},
-    {id:'full',label:'Materia completa',short:'Completa'}
+    {id:'full',label:'Materia completa',short:'Completa'},
+    {id:'custom',label:'Por sección',short:'Por sección'}
   ];
+  // Materias con acceso por sección (teoría y ejercicios por separado).
+  const SECTIONED={'quimica-analitica-cualitativa-5':()=>(window.ET27_QAC5?.units||[]).slice().sort((a,b)=>a.n-b.n).map(u=>({id:u.id,n:u.n,label:u.short||u.title}))};
 
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const dbSubject=id=>ALIASES[id]||id;
@@ -37,7 +40,7 @@
 
   // ---------- Estado (sobrevive a los re-render de app.js) ----------
   const st={
-    email:'',loadedEmail:'',levels:{},original:{},profile:null,
+    email:'',loadedEmail:'',levels:{},original:{},custom:{},originalCustom:{},profile:null,
     openYear:null,openSubject:null,
     duration:'1m',customDate:'',
     users:[],grants:[],listLoaded:false,listError:'',
@@ -77,10 +80,19 @@
   // ---------- Niveles <-> permisos ----------
   function levelFromRows(rows){
     if(!rows.length)return 'none';
+    if(rows.some(g=>g.grant_type==='chapter'||g.grant_type==='practice'))return 'custom';
     const theory=rows.some(g=>g.grant_type==='resource'&&g.grant_key==='theory');
     if(!theory&&rows.some(g=>g.grant_type==='unit'&&g.grant_key==='*'))return 'full';
     return rows.some(g=>g.grant_type==='evaluation')?'theory_eval':'theory';
   }
+  function customFromGrants(grants){
+    const out={};
+    Object.keys(SECTIONED).forEach(db=>{const rows=grants.filter(g=>g.subject===db);out[db]={t:rows.filter(g=>g.grant_type==='chapter').map(g=>g.grant_key).sort(),e:rows.filter(g=>g.grant_type==='practice').map(g=>g.grant_key).sort()}});
+    return out;
+  }
+  const customKey=db=>JSON.stringify(st.custom[db]||{t:[],e:[]});
+  const origCustomKey=db=>JSON.stringify(st.originalCustom[db]||{t:[],e:[]});
+  const isChanged=db=>(st.levels[db]||'none')!==(st.original[db]||'none')||((st.levels[db]==='custom')&&customKey(db)!==origCustomKey(db));
   function levelsFromGrants(grants){
     const out={};
     allSubjects().forEach(s=>{out[s.db]=levelFromRows(grants.filter(g=>g.subject===s.db))});
@@ -90,6 +102,12 @@
     const out=[];
     const add=(unit_no,grant_type,grant_key)=>out.push({subject:db,unit_no,grant_type,grant_key});
     if(level==='none')return out;
+    if(level==='custom'){
+      const c=st.custom[db]||{t:[],e:[]};
+      c.t.forEach(k=>add(1,'chapter',k));
+      c.e.forEach(k=>add(1,'practice',k));
+      return out;
+    }
     const units=db==='chemistry'?[...Array(13)].map((_,i)=>i+1):[1];
     if(level==='full'){
       units.forEach(u=>add(u,'unit','*'));
@@ -125,8 +143,21 @@
   }
   function summary(email){
     const levels=levelsFromGrants(st.grants.filter(g=>String(g.email).toLowerCase()===email));
-    const parts=allSubjects().filter(s=>levels[s.db]!=='none').map(s=>`${s.name} (${levelShort(levels[s.db])})`);
+    const parts=allSubjects().filter(s=>levels[s.db]!=='none').map(s=>`${s.name} (${levels[s.db]==='custom'?customSummary(st.grants.filter(g=>String(g.email).toLowerCase()===email&&g.subject===s.db),s.db):levelShort(levels[s.db])})`);
     return parts.length?parts.join(' · '):'Sin materias habilitadas';
+  }
+
+  function customSummary(rows,db){
+    const secs=SECTIONED[db]?SECTIONED[db]():[];const lab=id=>(secs.find(x=>x.id===id)||{}).label||id;
+    const t=rows.filter(g=>g.grant_type==='chapter').map(g=>lab(g.grant_key)),e=rows.filter(g=>g.grant_type==='practice').map(g=>lab(g.grant_key));
+    return `teoría: ${t.join(', ')||'—'} · ejercicios: ${e.join(', ')||'—'}`;
+  }
+  function sectionGrid(db){
+    const secs=SECTIONED[db]();const c=st.custom[db]||(st.custom[db]={t:[],e:[]});
+    const box=(kind,id)=>`<input type="checkbox" data-xa-sec="${esc(db)}|${kind}|${esc(id)}" ${c[kind].includes(id)?'checked':''}>`;
+    return `<div class="xa-secs"><div class="xa-secQuick"><span>Atajos: hasta…</span>${secs.map(x=>`<button type="button" data-xa-upto="${esc(db)}|${x.n}">${esc(x.label)}</button>`).join('')}<button type="button" data-xa-upto="${esc(db)}|0">Nada</button></div>
+      <table class="xa-secTable"><thead><tr><th>Sección</th><th>Teoría y clase</th><th>Ejercicios resueltos</th></tr></thead><tbody>${secs.map(x=>`<tr><td><b>${x.n}</b> · ${esc(x.label)}</td><td>${box('t',x.id)}</td><td>${box('e',x.id)}</td></tr>`).join('')}</tbody></table>
+      <small class="xa-secNote">“Hasta” habilita teoría y ejercicios de esa sección y de todas las anteriores. Después podés destildar los ejercicios que no quieras dar.</small></div>`;
   }
 
   // ---------- Acciones ----------
@@ -155,6 +186,8 @@
       st.profile=(profiles||[])[0]||null;
       st.levels=levelsFromGrants(grants||[]);
       st.original={...st.levels};
+      st.custom=customFromGrants(grants||[]);
+      st.originalCustom=JSON.parse(JSON.stringify(st.custom));
       st.loadedEmail=email;
       st.duration=st.profile?'keep':'1m';st.customDate='';
       if(!st.profile)setMsg('Alumno nuevo: elegí materias y guardá.','info',true);
@@ -164,7 +197,8 @@
   async function save(){
     const email=st.loadedEmail;
     if(!email||st.busy)return;
-    const changed=allSubjects().filter(s=>(st.levels[s.db]||'none')!==(st.original[s.db]||'none'));
+    const changed=allSubjects().filter(s=>isChanged(s.db));
+    for(const s of changed){if(st.levels[s.db]==='custom'){const c=st.custom[s.db]||{t:[],e:[]};if(!c.t.length&&!c.e.length){setMsg(`Elegí al menos una sección de ${s.name} o cambiá el nivel.`,'error');return}}}
     const durationChanged=!(st.profile&&st.duration==='keep');
     if(!changed.length&&!durationChanged){setMsg('No hay cambios para guardar.','info');return}
     st.busy=true;setMsg('Guardando…','info');
@@ -197,7 +231,8 @@
   async function save(){
     const email=st.loadedEmail;
     if(!email||st.busy)return;
-    const changed=allSubjects().filter(s=>(st.levels[s.db]||'none')!==(st.original[s.db]||'none'));
+    const changed=allSubjects().filter(s=>isChanged(s.db));
+    for(const s of changed){if(st.levels[s.db]==='custom'){const c=st.custom[s.db]||{t:[],e:[]};if(!c.t.length&&!c.e.length){setMsg(`Elegí al menos una sección de ${s.name} o cambiá el nivel.`,'error');return}}}
     const durationChanged=!(st.profile&&st.duration==='keep');
     if(!changed.length&&!durationChanged){setMsg('No hay cambios para guardar.','info');return}
     st.busy=true;setMsg('Guardando…','info');
@@ -220,6 +255,7 @@
         if(a!==b)throw new Error('Los permisos guardados no coinciden con lo elegido. Revisá la conexión y volvé a guardar.');
       }
       st.original={...st.levels};
+      st.originalCustom=JSON.parse(JSON.stringify(st.custom));
       st.profile={...(st.profile||{}),email,active:true,access_starts_at:starts,access_expires_at:expires};
       st.duration='keep';
       setMsg(`✓ Guardado para ${email}.`,'success',true);
@@ -239,7 +275,8 @@
   // ---------- Vista ----------
   function subjectMarkup(s){
     const level=st.levels[s.db]||'none';
-    const dirty=level!==(st.original[s.db]||'none');
+    const dirty=isChanged(s.db);
+    const levels=LEVELS.filter(l=>l.id!=='custom'||SECTIONED[s.db]);
     const open=st.openSubject===s.db;
     return `<div class="xa-subject ${open?'is-open':''}">
       <button type="button" class="xa-row" data-xa-subject="${esc(s.db)}" aria-expanded="${open}">
@@ -248,7 +285,7 @@
         <span class="xa-chip ${level==='none'?'is-off':''}">${esc(level==='none'?'Sin acceso':levelShort(level))}${dirty?' •':''}</span>
         <b class="xa-caret" aria-hidden="true">›</b>
       </button>
-      ${open?`<div class="xa-levels" role="radiogroup" aria-label="Acceso a ${esc(s.name)}">${LEVELS.map(l=>`<label class="xa-level ${level===l.id?'is-on':''}"><input type="radio" name="xa-${esc(s.db)}" value="${l.id}" data-xa-level="${esc(s.db)}" ${level===l.id?'checked':''}><span>${esc(l.label)}</span></label>`).join('')}</div>`:''}
+      ${open?`<div class="xa-levels" role="radiogroup" aria-label="Acceso a ${esc(s.name)}">${levels.map(l=>`<label class="xa-level ${level===l.id?'is-on':''}"><input type="radio" name="xa-${esc(s.db)}" value="${l.id}" data-xa-level="${esc(s.db)}" ${level===l.id?'checked':''}><span>${esc(l.label)}</span></label>`).join('')}</div>${level==='custom'&&SECTIONED[s.db]?sectionGrid(s.db):''}`:''}
     </div>`;
   }
   function yearMarkup(y){
@@ -316,12 +353,14 @@
       if(t.dataset.xaSubject){st.openSubject=st.openSubject===t.dataset.xaSubject?null:t.dataset.xaSubject;draw();return}
       if(t.dataset.xaDuration){st.duration=t.dataset.xaDuration;st.customDate='';draw();return}
       if(t.hasAttribute('data-xa-save')){save();return}
+      if(t.dataset.xaUpto){const [db,n]=t.dataset.xaUpto.split('|');const ids=SECTIONED[db]().filter(x=>x.n<=Number(n)).map(x=>x.id);st.custom[db]={t:[...ids],e:[...ids]};st.msg='';draw();return}
       if(t.dataset.xaEdit){st.openYear=null;st.openSubject=null;loadEmail(t.dataset.xaEdit);el.scrollIntoView({behavior:'smooth',block:'start'});return}
       if(t.dataset.xaToggle){toggleUser(t.dataset.xaToggle,t.dataset.active!=='1');return}
     });
     el.addEventListener('change',e=>{
       const t=e.target;
-      if(t.dataset?.xaLevel){st.levels[t.dataset.xaLevel]=t.value;st.msg='';draw();return}
+      if(t.dataset?.xaLevel){st.levels[t.dataset.xaLevel]=t.value;if(t.value==='custom'&&!st.custom[t.dataset.xaLevel])st.custom[t.dataset.xaLevel]={t:[],e:[]};st.msg='';draw();return}
+      if(t.dataset?.xaSec){const [db,kind,id]=t.dataset.xaSec.split('|');const c=st.custom[db]||(st.custom[db]={t:[],e:[]});c[kind]=t.checked?[...new Set([...c[kind],id])].sort():c[kind].filter(x=>x!==id);if(kind==='e'&&t.checked&&!c.t.includes(id))c.t=[...c.t,id].sort();st.msg='';draw();return}
       if(t.hasAttribute?.('data-xa-date')){st.customDate=t.value;st.duration=t.value?'custom':(st.profile?'keep':'1m');draw()}
     });
     el.addEventListener('input',e=>{if(e.target.matches('[data-xa-email]'))st.email=e.target.value});
@@ -362,6 +401,11 @@
       .xa-levels{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 14px 14px}
       .xa-level{display:flex;align-items:center;gap:8px;padding:10px;border:1px solid var(--border,#d8e5f0);border-radius:11px;font-size:.82rem;font-weight:800;cursor:pointer}
       .xa-level.is-on{border-color:var(--accent,#15579D);background:color-mix(in srgb,var(--accent,#15579D) 9%,transparent)}
+      .xa-secs{display:grid;gap:8px;padding:0 14px 14px}
+      .xa-secQuick{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.xa-secQuick span{font-size:.75rem;font-weight:900;color:var(--muted,#5b6b7a)}
+      .xa-secQuick button{border:1px solid var(--border,#d8e5f0);background:var(--surface2,#f5f8fb);color:inherit;border-radius:999px;padding:5px 10px;font:inherit;font-size:.75rem;font-weight:800;cursor:pointer}
+      .xa-secTable{width:100%;border-collapse:collapse;font-size:.82rem}.xa-secTable th{text-align:left;font-size:.7rem;color:var(--muted,#5b6b7a);padding:6px}.xa-secTable td{padding:7px 6px;border-top:1px solid var(--border,#d8e5f0)}
+      .xa-secTable input{width:18px;height:18px}.xa-secNote{color:var(--muted,#5b6b7a)}
       .xa-save{justify-self:start}.xa-save[disabled]{opacity:.7;cursor:wait}
       .xa-user{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid var(--border,#d8e5f0)}
       .xa-userInfo{display:grid;gap:3px;min-width:0}.xa-userInfo b{overflow-wrap:anywhere}.xa-userInfo small{color:var(--muted,#5b6b7a)}

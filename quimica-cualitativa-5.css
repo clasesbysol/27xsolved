@@ -13,7 +13,7 @@
 .qacFlow{display:grid;gap:8px;margin:18px 0;counter-reset:qacflow}
 .qacFlow>div{position:relative;padding:11px 14px 11px 50px;border:1px solid var(--border);border-radius:14px;background:var(--surface);line-height:1.5}
 .qacFlow>div:before{counter-increment:qacflow;content:counter(qacflow);position:absolute;left:12px;top:10px;width:26px;height:26px;display:grid;place-items:center;border-radius:50%;background:var(--accent);color:#fff;font-weight:900;font-size:13px}
-.qacFlow>div>b{display:block}
+.qacFlow>div>b{display:inline}
 .qacMemo{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:16px 0}
 .qacMemo>div{padding:12px 14px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface)}
 .qacMemo>div>small{display:block;font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
@@ -55,3 +55,54 @@
 .qacParts small{font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
 .qacParts b{font-size:18px}.qacParts span{font-size:13px;color:var(--muted)}
 .qacExTag{display:inline-block;margin:0 6px 6px 0;padding:2px 8px;border-radius:999px;background:var(--surface2);font-size:11px;font-weight:800;color:var(--muted)}
+.qacSys{border-color:color-mix(in srgb,var(--accent) 40%,var(--border));background:var(--surface)}
+.qacSys>b{color:var(--accent)}
+.qacSysPart{margin-top:10px}
+.qacSysPart>small{display:block;margin-bottom:4px;font-size:10.5px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.qacSysRx{margin:6px 0;padding:6px 12px;border-radius:12px;background:var(--surface2)}
+.qacSysRx .rxRow{padding:0}
+.qacSysK{padding:2px 0 4px 14px;overflow-x:auto;border-left:3px solid color-mix(in srgb,var(--accent) 45%,transparent)}
+.qacSysEq{padding:4px 12px;overflow-x:auto}
+.qacLc{margin:16px 0;padding:12px 14px;border:1.5px solid var(--border);border-radius:16px;background:var(--surface)}
+.qacLcPert{font-size:14px}.qacLcPert>span{display:inline-block;margin-right:8px;padding:2px 8px;border-radius:999px;background:var(--surface2);font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.qacLc .rxRow{margin:8px 0;padding:6px 12px;border-radius:12px;background:var(--surface2)}
+.qacLcDir{display:inline-block;padding:4px 12px;border-radius:999px;font-weight:900;font-size:13px}
+.qacLcDir.left{background:color-mix(in srgb,#e0752d 16%,var(--surface));color:#b85a1c}
+.qacLcDir.right{background:color-mix(in srgb,#2f9e6b 16%,var(--surface));color:#237a52}
+.qacLcChips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.qacLcChips span{padding:3px 10px;border-radius:999px;font-size:13px;font-weight:800;border:1px solid var(--border)}
+.qacLcChips .up{background:color-mix(in srgb,#2f9e6b 12%,var(--surface))}
+.qacLcChips .down{background:color-mix(in srgb,#d2694e 12%,var(--surface))}
+.qacLcConcl{margin:8px 0 0;font-size:14px}
+.qacRules{border:2px solid color-mix(in srgb,#d2694e 45%,var(--border));background:color-mix(in srgb,#e8836a 6%,var(--surface))}
+.qacRules ol{margin:6px 0 0;padding-left:20px;display:grid;gap:6px}
+.svgArrow.alt{stroke:#e0752d}
+/* Machete fijo debajo del índice */
+.qacRail{position:sticky;top:88px;align-self:start;min-width:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:13px;max-height:calc(100vh - 104px);overflow:hidden}
+.qacRail>.unitToc{position:static!important;top:auto!important;margin:0!important;max-height:38vh!important;overflow:auto!important}
+.qacCheat{min-height:0;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;padding:12px 11px 13px;border:1px solid color-mix(in srgb,var(--accent) 28%,var(--border));border-radius:20px;background:color-mix(in srgb,var(--surface) 97%,var(--accent))}
+.qacCheat>header{position:sticky;top:-12px;z-index:2;margin:-12px -11px 8px;padding:11px 11px 9px;background:color-mix(in srgb,var(--surface) 97%,var(--accent));border-bottom:1px solid var(--border)}
+.qacCheat>header span{display:block;color:var(--accent);font-size:.62rem;font-weight:950;letter-spacing:.14em}
+.qacCheat>header b{display:block;font-size:.9rem}
+.qacCheatGroup{padding:7px 2px 4px;border-top:1px solid var(--border)}
+.qacCheatGroup:first-of-type{border-top:0}
+.qacCheatGroup>strong{display:block;margin:0 3px 5px;color:var(--muted);font-size:.61rem;font-weight:950;letter-spacing:.11em;text-transform:uppercase}
+.qacCheatItem{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:6px;align-items:center;padding:4px 3px;border-radius:8px}
+.qacCheatItem:hover{background:color-mix(in srgb,var(--accent) 7%,var(--surface))}
+.qacCheatItem>span{color:var(--muted);font-size:.66rem;font-weight:800;line-height:1.15}
+.qacCheatItem>div{min-width:0;text-align:right;overflow-x:auto;font-size:.74rem}
+.qacCheatItem>div em{font-style:normal;font-weight:700;font-size:.72rem}
+.qacCheatItem .katex{font-size:1em}
+@media(max-width:920px){.qacRail{position:static;display:block;max-height:none;overflow:visible}.qacRail>.unitToc{display:none!important}.qacRail>.unitToc.open{display:block!important;position:sticky!important;top:122px!important;z-index:11;max-height:55vh!important;margin-bottom:16px!important}.qacCheat{display:none}}
+.qacParts button:disabled,.unitSwitch button:disabled{opacity:.55;cursor:not-allowed}
+.qacRail>.unitToc{padding:18px;background:var(--surface);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow)}
+.qacRail>.unitToc>b{display:block;padding:5px 10px 13px;color:var(--text);font-size:.82rem}
+.qacRail>.unitToc>div{display:grid;gap:3px;margin:0}
+.qacRail>.unitToc button{display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:start;width:100%;padding:9px 10px;border:0;border-radius:10px;background:transparent;color:var(--muted);text-align:left;white-space:normal;font:700 .84rem/1.25 Nunito,sans-serif;cursor:pointer}
+.qacRail>.unitToc button span{color:var(--accent);font-size:.73rem}
+.qacRail>.unitToc button:hover,.qacRail>.unitToc button.active{background:color-mix(in srgb,var(--accent) 10%,var(--surface));color:var(--text)}
+.qacRail>.unitToc button.active{box-shadow:inset 3px 0 var(--accent)}
+.qacPrac{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin:12px 0}
+.qacPrac button{display:grid;gap:2px;text-align:left;padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);font:inherit;cursor:pointer}
+.qacPrac button:hover{border-color:var(--accent)}
+.qacPrac span{font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}

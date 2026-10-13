@@ -6,10 +6,9 @@
   const K=window.ET27Kit,Q=window.ET27QI,A=window.ET27QAC;if(!K||!Q||!A||!window.ET27_QAC5)return;
   const {M,m,chain,key,sym,simple,idea,warn,note,deep,example,step,table,figure,cards,calc,field}=K;
   const {rx,rxs,f,punch,facts}=Q;
-  const {sup,ver,flow,memo,spec,opt,jus,desc}=A;
+  const {sup,ver,flow,memo,spec,opt,jus,desc,sys,lc}=A;
   const R=String.raw;
-  const u=window.ET27_QAC5.units.find(x=>x.id==='acido-base');if(!u)return;
-  const s=u.sections;const add=(k,l,kk,h)=>s.push({key:`qac-ab-${k}`,label:l,kicker:kk,html:h});
+  const s=[];const add=(k,l,kk,h)=>s.push({key:`qac-ab-${k}`,label:l,kicker:kk,html:h});
 
   // =====================================================================
   add('debiles','Ácidos y bases débiles: ley de acción de masas, BM y BC','ÁCIDO-BASE · 08',`
@@ -50,7 +49,7 @@ ${example('Al revés: calcular Ka a partir del pH','<p>Una solución 0,20 M de u
  step('1. Del pH sale x',chain(R`[\mathrm{H^+}]=[\mathrm{A^-}]=10^{-3}\ \mathrm{M}`,R`[\mathrm{HA}]=0{,}20-0{,}001=0{,}199\ \mathrm{M}`))+
  step('2. Constante',chain(R`K_a=\frac{(10^{-3})^2}{0{,}199}=5{,}0\times10^{-6}`))+
  step('3. Grado',chain(R`\alpha=\frac{10^{-3}}{0{,}20}=5\times10^{-3}\ \Rightarrow\ 0{,}5\,\%`))+
- note('Acá no hace falta suponer','<p>El pH es dato: conocemos x exactamente. Sólo supusimos (y es obvio a pH 3) que el agua no aporta.</p>'),
+ note('Acá no hace falta suponer','<p>El pH es dato: conocemos x exactamente. Sólo supusimos (y es obvio a pH 3) que el agua no aporta.</p>')+A.jus('<p>Como el pH es dato, [H₃O⁺] se conoce exactamente: no hace falta despreciar nada para hallar Ka. Del BC, [A⁻] ≈ [H₃O⁺] porque es razonable suponer [HO⁻] baja respecto de [A⁻] en un medio de pH 3.</p>'),
  'Ka = 5,0·10⁻⁶ · α = 0,5 %')}
 ${deep('Ácido débil MUY diluido (o muy débil): vuelve a importar el agua',`<p>Si el ácido aporta tan poco H₃O⁺ como el agua (Ka·C del orden de Kw), no se puede despreciar la autoprotólisis. Del BC ${m(R`[\mathrm{H_3O^+}]=[\mathrm{A^-}]+[\mathrm{HO^-}]`)} con ${m(R`[\mathrm{A^-}]=K_a[\mathrm{HA}]/[\mathrm{H_3O^+}]`)}:</p>${M(R`[\mathrm{H_3O^+}]=\sqrt{K_a[\mathrm{HA}]+K_w}`)}<p>Ejemplos de la guía: HClO 10⁻⁶ M (Ka = 2,95·10⁻⁸) da pH 6,72, y la urea (Kb = 1,2·10⁻¹⁴) prácticamente no cambia el pH del agua.</p>`)}
 ${calc('qacWeak','Ácido o base débil: aproximado vs. exacto',opt('t',[['a','ácido débil (Ka)'],['b','base débil (Kb)']],'Tipo')+field('k','Ka o Kb',1.8e-5)+field('c','concentración C (M)',0.1),'Escribí las potencias como 1.8e-5. Probá HF: K = 6.8e-4 y C = 0.01.')}
@@ -91,7 +90,7 @@ ${figure(spec([6.37,10.25],['H₂CO₃','HCO₃⁻','CO₃²⁻']),'Dos pKa, tre
 ${figure(spec([2.12,7.21,12.32],['H₃PO₄','H₂PO₄⁻','HPO₄²⁻','PO₄³⁻'],{mark:[{pH:7.4,label:'pH 7,4'}],markY:150}),'A pH 7,4 conviven H₂PO₄⁻ (39 %) y HPO₄²⁻ (61 %): por eso el fosfato regula el pH de la sangre y de las células.')}
 ${example('Leer un diagrama con números','<p>a) ¿Qué fracción del acético está como Ac⁻ a pH 5,00? b) ¿Qué especies del fosfato predominan a pH 7,40?</p>',
  step('a) Acético a pH 5',chain(R`[\mathrm{H^+}]=1{,}0\times10^{-5}`,R`\alpha_{\mathrm{Ac^-}}=\frac{1{,}8\times10^{-5}}{1{,}0\times10^{-5}+1{,}8\times10^{-5}}=0{,}64`)+'<p>Tiene sentido: pH 5 está un poco por encima del pKa (4,74), así que predomina apenas la forma básica.</p>')+
- step('b) Fosfato a pH 7,4',`<p>7,4 está entre pKa₂ = 7,21 y pKa₃ = 12,32, muy cerca de pKa₂: predominan ${f('H2PO4^-')} y ${f('HPO4^2-')}. Como 7,4 &gt; 7,21, gana apenas HPO₄²⁻ (61 % frente a 39 %). H₃PO₄ y PO₄³⁻ son menos del 0,001 %.</p>`),
+ step('b) Fosfato a pH 7,4',`<p>7,4 está entre pKa₂ = 7,21 y pKa₃ = 12,32, muy cerca de pKa₂: predominan ${f('H2PO4^-')} y ${f('HPO4^2-')}. Como 7,4 &gt; 7,21, gana apenas HPO₄²⁻ (61 % frente a 39 %). H₃PO₄ y PO₄³⁻ son menos del 0,001 %.</p>`)+A.jus('<p>Cada fracción α sale de combinar Ka con el balance de masa. A pH 5 el pH está por encima del pKa (4,74), así que predomina la forma básica del par; a pH 7,4 el fosfato está entre pKa₂ y pKa₃, cerca de pKa₂: conviven H₂PO₄⁻ y HPO₄²⁻.</p>'),
  'a) 64 % como Ac⁻ · b) HPO₄²⁻ 61 % y H₂PO₄⁻ 39 %')}
 <h3>Cómo confeccionar un diagrama (lo piden así)</h3>
 ${flow([
@@ -115,7 +114,7 @@ ${deep('Fórmulas generales de las fracciones (diprótico)',`${M(R`D=[\mathrm{H^
 <p>Cuando en un equilibrio intervienen gases, la constante puede escribirse con presiones parciales (Kp) o con concentraciones (Kc). Como para un gas ideal ${m(R`p=\frac{n}{V}RT=[\,\mathrm{gas}\,]\,RT`)}:</p>
 ${key(R`K_p=K_c\,(RT)^{\Delta n}\qquad \Delta n=\text{moles de gas productos}-\text{moles de gas reactivos}`,'Kp y Kc')}
 ${example('N₂O₄ ⇌ 2 NO₂ a 25 °C','<p>Kc = 4,61·10⁻³. Calcular Kp (R = 0,082 atm·L/mol·K).</p>',
- step('Δn y cálculo',chain(R`\Delta n=2-1=1`,R`K_p=4{,}61\times10^{-3}\cdot(0{,}082\cdot298)^1=0{,}113`)),
+ step('Δn y cálculo',chain(R`\Delta n=2-1=1`,R`K_p=4{,}61\times10^{-3}\cdot(0{,}082\cdot298)^1=0{,}113`))+A.jus('<p>Para gases, presión parcial y concentración están relacionadas por p = [ ]·RT; al reemplazar en Kp aparece el factor (RT) elevado a la diferencia de moles gaseosos.</p>'),
  'Kp = 0,113 · si Δn = 0, Kp = Kc')}
 `);
 
@@ -149,14 +148,14 @@ ${sup([
 ${example('H₂S 0,10 M (solución saturada)','<p>Calcular pH, [HS⁻] y [S²⁻].</p>',
  step('1. Primera etapa, como monoprótico',chain(R`[\mathrm{H^+}]=\sqrt{K_{a1}C}=\sqrt{1{,}0\times10^{-7}\cdot0{,}10}=1{,}0\times10^{-4}\ \mathrm{M}`,R`\mathrm{pH}=4{,}00\qquad[\mathrm{HS^-}]\approx1{,}0\times10^{-4}\ \mathrm{M}`))+
  step('2. Segunda etapa',chain(R`[\mathrm{S^{2-}}]=K_{a2}\frac{[\mathrm{HS^-}]}{[\mathrm{H^+}]}\approx K_{a2}=1{,}3\times10^{-13}\ \mathrm{M}`))+
- step('3. Verificamos',ver('<p>(a) '+m(R`\frac{10^{-4}}{0{,}10}=0{,}1\,\%`)+' → x ≪ C ✔. (b) La segunda etapa aporta 1,3·10⁻¹³ M de H⁺ frente a 10⁻⁴: despreciable ✔.</p>')),
+ step('3. Verificamos',ver('<p>(a) '+m(R`\frac{10^{-4}}{0{,}10}=0{,}1\,\%`)+' → x ≪ C ✔. (b) La segunda etapa aporta 1,3·10⁻¹³ M de H⁺ frente a 10⁻⁴: despreciable ✔.</p>'))+A.jus('<p>El pH lo fija la primera disociación: es razonable suponer el H₃O⁺ de la segunda bajo respecto del de la primera porque Ka₂ ≪ Ka₁ y además la segunda está reprimida por el H₃O⁺ de la primera (ion común). Es razonable suponer [HS⁻] baja respecto de C porque C/Ka₁ &gt; 100.</p>'),
  'pH 4,00 · [HS⁻] = 1,0·10⁻⁴ M · [S²⁻] = 1,3·10⁻¹³ M')}
 ${idea('La [S²⁻] se controla con el pH','<p>Despejando de la constante total: '+m(R`[\mathrm{S^{2-}}]=\frac{K_{a1}K_{a2}[\mathrm{H_2S}]}{[\mathrm{H^+}]^2}=\frac{1{,}3\times10^{-21}}{[\mathrm{H^+}]^2}`)+' (con H₂S saturado 0,10 M). Cambiando el pH con HCl se puede subir o bajar [S²⁻] en muchos órdenes: es la base de la separación de cationes por sulfuros (Unidades 2 y 5).</p>')}
 ${example('Ácido sulfúrico 0,010 M: el caso especial','<p>Calcular el pH de H₂SO₄ 0,010 M (Ka₂ = 1,2·10⁻²).</p>',
  step('1. Primera etapa: fuerte',rx('H2SO4 -> H^+ + HSO4^-','0,010 → 0,010 + 0,010'))+
  step('2. Segunda etapa: débil, pero con Ka₂ grande',rx('HSO4^- <=> H^+ + SO4^2-')+chain([R`1{,}2\times10^{-2}=\frac{(0{,}010+x)\,x}{0{,}010-x}`,'el H⁺ de la primera etapa es ion común']))+
  step('3. ¿Podemos suponer x ≪ 0,010?',ver('<p>No: Ka₂ = 0,012 es del mismo orden que C. Hay que resolver la cuadrática.</p>',false)+chain(R`x^2+0{,}022x-1{,}2\times10^{-4}=0\ \Rightarrow\ x=4{,}5\times10^{-3}\ \mathrm{M}`,R`[\mathrm{H^+}]=0{,}010+0{,}0045=0{,}0145\ \mathrm{M}\ \Rightarrow\ \mathrm{pH}=1{,}84`))+
- step('4. Las dos respuestas incorrectas típicas',table(['Error','pH que da'],[['Tomar los dos H como fuertes (2·0,010)','1,70'],['Ignorar la segunda etapa','2,00'],['<b>Correcto</b>','<b>1,84</b>']])),
+ step('4. Las dos respuestas incorrectas típicas',table(['Error','pH que da'],[['Tomar los dos H como fuertes (2·0,010)','1,70'],['Ignorar la segunda etapa','2,00'],['<b>Correcto</b>','<b>1,84</b>']]))+A.jus('<p>La primera disociación es total (ácido fuerte). La segunda es débil, pero Ka₂ es del orden de C: no es razonable suponer x baja respecto de 0,010, por eso se resuelve la cuadrática. El H₃O⁺ de la primera etapa actúa como ion común y reprime en parte la segunda.</p>'),
  'pH = 1,84')}
 ${example('H₃PO₄ 0,10 M: la primera etapa no cumple x ≪ C','<p>Calcular el pH (Ka₁ = 7,5·10⁻³).</p>',
  step('1. Suponemos y verificamos',sup([['Sólo cuenta la primera etapa','Ka₂ es 120 000 veces menor.']])+chain(R`x\approx\sqrt{7{,}5\times10^{-3}\cdot0{,}10}=0{,}027`)+ver('<p>27 % de 0,10: no vale x ≪ C.</p>',false))+
@@ -166,21 +165,27 @@ ${example('H₃PO₄ 0,10 M: la primera etapa no cumple x ≪ C','<p>Calcular el
 `);
 
   // =====================================================================
-  add('mezclas','Mezclas de ácidos','ÁCIDO-BASE · 15',`
-${table(['Mezcla','Qué pasa','Cómo se calcula'],[
- ['Fuerte + fuerte','todos se disocian','sumar los H⁺ (moles) y dividir por el volumen total'],
- ['Fuerte + débil','el fuerte reprime al débil (ion común)','[H⁺] ≈ la del fuerte; verificar que el débil aporta &lt; 5 %'],
- ['Débil + débil','los dos aportan H⁺ y se reprimen mutuamente','[H⁺] = √(Ka₁C₁ + Ka₂C₂); verificar los dos α'],
- ['Débil muy diferente','si Ka₁C₁ ≫ Ka₂C₂ manda el primero','calcular con el primero y verificar']
+  add('mezclas','Mezclas de ácidos','ÁCIDO-BASE',`
+<p>Cuando hay dos ácidos en el mismo vaso, los dos aportan H₃O⁺ y cada uno <b>reprime al otro</b> por ion común (Le Châtelier). La pregunta es siempre la misma: ¿puedo despreciar el aporte de uno <b>respecto del</b> otro?</p>
+${table(['Mezcla','Qué pasa','Cómo se razona'],[
+ ['Fuerte + fuerte','los dos se disocian totalmente','se suman los moles de H₃O⁺ y se divide por el volumen total'],
+ ['Fuerte + débil','el H₃O⁺ del fuerte reprime al débil (ion común)','se supone [A⁻] del débil baja respecto de [Cl⁻] (o el anión del fuerte) en el BC; se verifica'],
+ ['Débil + débil','el de mayor Ka·C aporta casi todo; el otro queda reprimido','se supone el aporte del más débil bajo respecto del otro en el BC; se verifica. Si no verifica, se resuelve el BC completo']
 ])}
-<h3>Deducción para dos ácidos débiles</h3>
-${chain([R`\text{BC: }[\mathrm{H^+}]=[\mathrm{A_1^-}]+[\mathrm{A_2^-}]`,'despreciando OH⁻'],[R`[\mathrm{A_i^-}]=\frac{K_{ai}[\mathrm{HA_i}]}{[\mathrm{H^+}]}\approx\frac{K_{ai}C_i}{[\mathrm{H^+}]}`,'suponiendo que cada uno se disocia poco'],[R`[\mathrm{H^+}]^2=K_{a1}C_1+K_{a2}C_2\ \Rightarrow\ [\mathrm{H^+}]=\sqrt{K_{a1}C_1+K_{a2}C_2}`])}
-${example('Acético 0,10 M + fórmico 0,10 M','<p>Ka(HAc) = 1,8·10⁻⁵ · Ka(HCOOH) = 1,8·10⁻⁴. Calcular el pH.</p>',
- step('1. Suponemos',sup([['Cada ácido se disocia poco (HAᵢ ≈ Cᵢ)','son débiles y además se reprimen entre sí por el H⁺ común.'],['El agua no aporta','medio ácido.']]))+
- step('2. Resolvemos',chain(R`[\mathrm{H^+}]=\sqrt{1{,}8\times10^{-5}\cdot0{,}10+1{,}8\times10^{-4}\cdot0{,}10}=\sqrt{1{,}98\times10^{-5}}=4{,}45\times10^{-3}\ \mathrm{M}`,R`\mathrm{pH}=2{,}35`))+
- step('3. Verificamos cada ácido',chain(R`[\mathrm{Ac^-}]=\frac{1{,}8\times10^{-6}}{4{,}45\times10^{-3}}=4{,}0\times10^{-4}\ (0{,}4\,\%\ \text{de }0{,}10)`,R`[\mathrm{HCOO^-}]=\frac{1{,}8\times10^{-5}}{4{,}45\times10^{-3}}=4{,}0\times10^{-3}\ (4{,}0\,\%\ \text{de }0{,}10)`)+ver('<p>Los dos por debajo del 5 % ✔. Control del BC: 4,0·10⁻⁴ + 4,0·10⁻³ = 4,4·10⁻³ ≈ [H⁺] ✔. El fórmico aporta el 90 % de la acidez.</p>')),
- 'pH = 2,35')}
-<p>El caso <b>fuerte + débil</b> está resuelto completo en la sección del ion común (HAc + HCl).</p>
+${example('Ácido fórmico 0,10 M + HCN 0,10 M','<p>Ka(HCOOH) = 1,8·10⁻⁴ · Ka(HCN) = 4,9·10⁻¹⁰. Calcular el pH y [CN⁻].</p>',
+ step('1. Planteo',sys({rx:[['HCOOH + H2O <=> HCOO^- + H3O^+',R`K_{a1}=\frac{[\mathrm{HCOO^-}][\mathrm{H_3O^+}]}{[\mathrm{HCOOH}]}`],['HCN + H2O <=> CN^- + H3O^+',R`K_{a2}=\frac{[\mathrm{CN^-}][\mathrm{H_3O^+}]}{[\mathrm{HCN}]}`],['H2O + H2O <=> H3O^+ + HO^-',R`K_w=[\mathrm{H_3O^+}][\mathrm{HO^-}]`]],bm:[R`0{,}10=[\mathrm{HCOOH}]+[\mathrm{HCOO^-}]`,R`0{,}10=[\mathrm{HCN}]+[\mathrm{CN^-}]`],bc:[R`[\mathrm{H_3O^+}]=[\mathrm{HCOO^-}]+[\mathrm{CN^-}]+[\mathrm{HO^-}]`]}))+
+ step('2. Qué molesta y por qué lo puedo sacar',jus('<p>En el BC me molestan [CN⁻] y [HO⁻]. Es razonable suponer que [CN⁻] es baja <b>respecto de</b> [HCOO⁻]: el HCN es un ácido muchísimo más débil (Ka 10⁶ veces menor) y además el H₃O⁺ del fórmico lo reprime (ion común, Le Châtelier). Es razonable suponer [HO⁻] baja respecto de [HCOO⁻] porque el medio es ácido.</p><p>En el BM del fórmico, es razonable suponer [HCOO⁻] baja respecto de 0,10: es débil y C/Ka = 556 &gt; 100.</p>'))+
+ step('3. Despeje y reemplazo en Ka₁',chain([R`[\mathrm{H_3O^+}]\approx[\mathrm{HCOO^-}]\qquad[\mathrm{HCOOH}]\approx0{,}10`,'de BC y BM'],R`K_{a1}=\frac{[\mathrm{H_3O^+}]^2}{0{,}10}\Rightarrow[\mathrm{H_3O^+}]=4{,}24\times10^{-3}\ \mathrm{M}\quad\mathrm{pH}=2{,}37`))+
+ step('4. El ácido despreciado se calcula con su K',chain([R`[\mathrm{CN^-}]=\frac{K_{a2}[\mathrm{HCN}]}{[\mathrm{H_3O^+}]}=\frac{4{,}9\times10^{-10}\cdot0{,}10}{4{,}24\times10^{-3}}=1{,}2\times10^{-8}\ \mathrm{M}`,'[HCN] ≈ 0,10']))+
+ step('5. Verificación (respecto de la misma especie)',ver('<p>[CN⁻] = 1,2·10⁻⁸ respecto de [HCOO⁻] = 4,2·10⁻³: 3·10⁻⁴ % ✔ · [HCOO⁻] respecto de C: 4,2 % ✔ · [HO⁻] = 2,4·10⁻¹² respecto de [HCOO⁻] ✔</p>')),
+ 'pH = 2,37 · [CN⁻] = 1,2·10⁻⁸ M')}
+${example('Ácido acético 0,10 M + ácido fórmico 0,10 M: cuando el desprecio NO vale','<p>Ka(HAc) = 1,8·10⁻⁵ · Ka(HCOOH) = 1,8·10⁻⁴.</p>',
+ step('1. Intento',jus('<p>Supongo [Ac⁻] baja respecto de [HCOO⁻] en el BC (el acético es 10 veces más débil y está reprimido por el H₃O⁺ del fórmico). Con el ejemplo anterior: [H₃O⁺] = 4,24·10⁻³ M.</p>')+chain(R`[\mathrm{Ac^-}]=\frac{1{,}8\times10^{-5}\cdot0{,}10}{4{,}24\times10^{-3}}=4{,}2\times10^{-4}\ \mathrm{M}`))+
+ step('2. Verificación',ver('<p>[Ac⁻] es el 10 % de [HCOO⁻] (4,2·10⁻³): <b>no</b> se puede despreciar. Las constantes no son tan distintas.</p>',false))+
+ step('3. BC sin despreciar a ninguno de los dos',jus('<p>Se mantienen los dos aniones en el BC y se despeja cada uno de su propia K (en cada BM, sí sigue valiendo [A⁻] baja respecto de C: los dos son débiles y están reprimidos).</p>')+chain([R`[\mathrm{H_3O^+}]=[\mathrm{HCOO^-}]+[\mathrm{Ac^-}]=\frac{K_{a1}\cdot0{,}10}{[\mathrm{H_3O^+}]}+\frac{K_{a2}\cdot0{,}10}{[\mathrm{H_3O^+}]}`,'reemplazo cada anión despejado de su K'],R`[\mathrm{H_3O^+}]^2=1{,}8\times10^{-5}+1{,}8\times10^{-6}\Rightarrow[\mathrm{H_3O^+}]=4{,}45\times10^{-3}\ \mathrm{M}\quad\mathrm{pH}=2{,}35`)+ver('<p>[HCOO⁻] = 4,0·10⁻³ (4 % de C) ✔ y [Ac⁻] = 4,0·10⁻⁴ (0,4 % de C) ✔: los desprecios en los BM sí valen.</p>')),
+ 'pH = 2,35 (el acético aporta el 10 %)')}
+${punch('Nunca se usa una fórmula de memoria para una mezcla: se escribe el BC y se decide, con justificación, qué término es bajo respecto de cuál.')}
+<p>El caso <b>fuerte + débil</b> está resuelto en la sección del ion común (HAc + HCl) y en el Examen E2.</p>
 `);
 
   // =====================================================================
@@ -216,7 +221,7 @@ ${example('Acetato de sodio 0,10 M','<p>Calcular el pH (Ka del HAc = 1,8·10⁻�
  'pH = 8,87 (básico)')}
 ${example('Cloruro de amonio 0,10 M','<p>Calcular el pH (Kb del NH₃ = 1,8·10⁻⁵).</p>',
  step('Hidrólisis del catión',rx('NH4^+ <=> NH3 + H^+')+chain(R`K_a(\mathrm{NH_4^+})=\frac{10^{-14}}{1{,}8\times10^{-5}}=5{,}6\times10^{-10}`,R`[\mathrm{H^+}]=\sqrt{5{,}6\times10^{-10}\cdot0{,}10}=7{,}5\times10^{-6}\ \Rightarrow\ \mathrm{pH}=5{,}13`))+
- step('Verificamos',ver('<p>Mismas suposiciones y mismos números que el acetato, del otro lado de 7 ✔.</p>')),
+ step('Verificamos',ver('<p>Mismas suposiciones y mismos números que el acetato, del otro lado de 7 ✔.</p>'))+A.jus('<p>El Cl⁻ viene del HCl (fuerte) y no reacciona con el agua; el NH₄⁺ es el ácido conjugado de una base débil y cede H⁺ al agua: la solución es ácida. Es razonable suponer [HO⁻] baja respecto de [NH₃] en el BC (medio ácido) y [NH₃] baja respecto de C en el BM (Ka muy chica, C/Ka ≫ 100).</p>'),
  'pH = 5,13 (ácido)')}
 <h3>Sal de ácido débil y base débil</h3>
 ${key(R`[\mathrm{H^+}]=\sqrt{\frac{K_w\,K_a}{K_b}}\qquad\mathrm{pH}=\tfrac12\left(\mathrm{p}K_w+\mathrm{p}K_a-\mathrm{p}K_b\right)`,'Ka del ácido del anión · Kb de la base del catión')}
@@ -247,7 +252,7 @@ ${table(['Lo que queda en solución','Fórmula','Suposición a verificar'],[
  ['Sal de base débil (BH⁺)','[H⁺] = √(Kw/Kb · C)','x/C ≤ 5 %'],
  ['Ácido débil + su base conjugada','Henderson (sección Buffer)','[H⁺], [OH⁻] ≪ Ca, Cs'],
  ['Ácido fuerte + ácido débil','[H⁺] ≈ C fuerte','el débil aporta &lt; 5 %'],
- ['Dos ácidos débiles','[H⁺] = √(Ka₁C₁ + Ka₂C₂)','α de cada uno ≤ 5 %'],
+ ['Dos ácidos débiles','BC: el de mayor Ka·C fija el pH; el otro se desprecia respecto de él','[A⁻] del más débil ≤ 5 % del otro; si no, BC completo'],
  ['Poliprótico','primera etapa','Ka₂ ≪ Ka₁ y x/C ≤ 5 %'],
  ['Anfiprótico (HA⁻)','pH = ½(pKa₁ + pKa₂)','C no muy baja'],
  ['Sal de ácido y base débiles','pH = ½(pKw + pKa − pKb)','—']
@@ -276,4 +281,5 @@ ${cards([
  ['Buffers','¿Cuándo es máxima la capacidad reguladora?','Cuando [HA] = [A⁻], o sea pH = pKa (y a mayor concentración total).']
 ])}
 `);
+  window.ET27_QAC5.units.push({id:'acido-base-2',n:2,title:'Ácido-base II · Especiación, polipróticos e hidrólisis',short:'Ácido-base II',lead:'Diagramas de especiación, efecto del ion común, ácidos polipróticos, mezclas de ácidos e hidrólisis de sales. Con las guías 2 y 3 (polipróticos, sales y desafíos) y las evaluaciones resueltas.',sections:s});
 })();

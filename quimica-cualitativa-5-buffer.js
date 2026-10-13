@@ -67,7 +67,7 @@ ${table(['Situación','Por qué falla','Qué hacer'],[
 ${example('HF 0,010 M + NaF 0,010 M: Henderson falla','<p>Ka = 6,8·10⁻⁴ (pKa 3,17).</p>',
  step('Con Henderson',chain(R`\mathrm{pH}=3{,}17+\log1=3{,}17\ \Rightarrow\ [\mathrm{H_3O^+}]=6{,}8\times10^{-4}`))+
  step('Verificamos',ver('<p>6,8·10⁻⁴ es 6,8 % de 0,010: no es despreciable.</p>',false))+
- step('Sin despreciar h',chain(R`6{,}8\times10^{-4}=\frac{h\,(0{,}010+h)}{0{,}010-h}\ \Rightarrow\ h=6{,}0\times10^{-4}\ \mathrm{M}`,R`\mathrm{pH}=3{,}22`)),
+ step('Sin despreciar h',chain(R`6{,}8\times10^{-4}=\frac{h\,(0{,}010+h)}{0{,}010-h}\ \Rightarrow\ h=6{,}0\times10^{-4}\ \mathrm{M}`,R`\mathrm{pH}=3{,}22`))+A.jus('<p>Henderson supone [H₃O⁺] baja respecto de Cₐ y Cₛ. Con un Ka grande (6,8·10⁻⁴) y concentraciones bajas esa suposición no se cumple: el HF se disocia apreciablemente aunque haya ion común, y hay que conservar h en el planteo.</p>'),
  'pH 3,22 (Henderson daba 3,17)')}
 <h3>¿Qué pasa justo en el pKa?</h3>
 ${chain([R`C_s=C_a\ \Rightarrow\ \log\frac{C_s}{C_a}=\log1=0\ \Rightarrow\ \mathrm{pH}=\mathrm{p}K_a`])}
@@ -79,7 +79,7 @@ ${flow([['pH = pKa','las dos formas en igual cantidad (en el diagrama de especia
 ${flow([['Depende de la concentración total','más moles de HA y A⁻ → más ácido o base fuerte se puede absorber.'],['Depende de la relación','es <b>máxima cuando [HA] = [A⁻]</b> (pH = pKa). El rango útil es pKa ± 1.']])}
 ${example('¿Qué buffer resiste más?','<p>Dos buffers acéticos de 100 mL con la misma concentración total (0,20 M): A con 10 mmol HAc + 10 mmol Ac⁻; B con 2 mmol HAc + 18 mmol Ac⁻. Se agregan 2,0 mmol de HCl a cada uno.</p>',
  step('Buffer A (1 : 1)',chain(R`4{,}74\ \to\ 4{,}74+\log\frac{8}{12}=4{,}56\qquad\Delta\mathrm{pH}=-0{,}18`))+
- step('Buffer B (1 : 9)',chain(R`4{,}74+\log9=5{,}70\ \to\ 4{,}74+\log\frac{16}{4}=5{,}34\qquad\Delta\mathrm{pH}=-0{,}35`)),
+ step('Buffer B (1 : 9)',chain(R`4{,}74+\log9=5{,}70\ \to\ 4{,}74+\log\frac{16}{4}=5{,}34\qquad\Delta\mathrm{pH}=-0{,}35`))+A.jus('<p>Los dos tienen la misma concentración total; cambia la relación entre las formas. Con [HA] = [A⁻] el cociente que entra en el log cambia proporcionalmente menos al agregar ácido: por eso la capacidad es máxima en pH = pKa.</p>'),
  'El 1:1 cambia la mitad: máxima capacidad en pH = pKa')}
 ${deep('La capacidad reguladora como fórmula',`${M(R`\beta=\frac{dC_b}{d\,\mathrm{pH}}\approx2{,}303\,C\,\frac{K_a[\mathrm{H_3O^+}]}{(K_a+[\mathrm{H_3O^+}])^2}`)}<p>El máximo está en [H₃O⁺] = Ka (pH = pKa), donde β = 2,303·C/4 ≈ 0,58·C. En el diagrama de especiación es el punto de máxima pendiente.</p>`)}
 `);
@@ -100,7 +100,7 @@ ${example('1,0 L de buffer acético de pH 5,00 con concentración total 0,20 M',
  step('Relación y concentraciones',chain(R`\frac{C_s}{C_a}=10^{5{,}00-4{,}745}=1{,}80`,R`C_s=0{,}20\cdot\frac{1{,}80}{2{,}80}=0{,}129\ \mathrm{M}\qquad C_a=0{,}071\ \mathrm{M}`))+
  step('Opción A: ácido + sal',chain(R`n_{\mathrm{NaAc}}=0{,}129\ \mathrm{mol}\ \to\ 10{,}5\ \mathrm{g\ de\ NaAc}`,R`n_{\mathrm{HAc}}=0{,}071\ \mathrm{mol}`))+
  step('Opción B: neutralización parcial',chain([R`0{,}20\ \mathrm{mol\ HAc}+0{,}129\ \mathrm{mol\ NaOH}`,'el NaOH convierte 0,129 mol de HAc en Ac⁻']))+
- step('Verificamos',ver('<p>[H₃O⁺] = 10⁻⁵ M: ≪ 0,071 y 0,129 ✔</p>')),
+ step('Verificamos',ver('<p>[H₃O⁺] = 10⁻⁵ M: ≪ 0,071 y 0,129 ✔</p>'))+A.jus('<p>pH 5,00 está dentro de pKa ± 1 del acético, así que el par HAc/Ac⁻ regula. Henderson vale porque es razonable suponer [H₃O⁺] (10⁻⁵ M) baja respecto de Cₐ y Cₛ: por ion común el ácido casi no se disocia y la base casi no hidroliza.</p>'),
  'NaAc 0,129 mol + HAc 0,071 mol, o HAc 0,20 mol + NaOH 0,129 mol, en 1 L')}
 `);
 
@@ -111,11 +111,11 @@ ${example('Buffer acético: pH y agregado de ácido y base fuertes','<p>100 mL c
  step('a) pH inicial',chain(R`\mathrm{pH}=4{,}74+\log\frac{0{,}15}{0{,}10}=4{,}92`)+ver('<p>[H₃O⁺] = 1,2·10⁻⁵ M ≪ 0,10 ✔</p>'))+
  step('b) 1,0 mmol de H⁺',table(['mmol','Ac⁻','H⁺','HAc'],[['Inicio','15','1,0','10'],['Reacción completa','−1,0','−1,0','+1,0'],['Final','14','0','11']])+chain(R`\mathrm{pH}=4{,}74+\log\frac{14}{11}=4{,}85\qquad\Delta\mathrm{pH}=-0{,}07`))+
  step('c) 1,0 mmol de HO⁻',chain(R`\mathrm{pH}=4{,}74+\log\frac{16}{9}=5{,}00\qquad\Delta\mathrm{pH}=+0{,}08`))+
- step('d) En agua pura',chain(R`[\mathrm{H_3O^+}]=\frac{1{,}0}{101}=9{,}9\times10^{-3}\ \Rightarrow\ \mathrm{pH}=2{,}00\qquad\Delta\mathrm{pH}=-5`)),
+ step('d) En agua pura',chain(R`[\mathrm{H_3O^+}]=\frac{1{,}0}{101}=9{,}9\times10^{-3}\ \Rightarrow\ \mathrm{pH}=2{,}00\qquad\Delta\mathrm{pH}=-5`))+A.jus('<p>Lo fuerte que se agrega reacciona completamente con el componente del par que lo neutraliza (K muy grande): por eso primero se hace la estequiometría y recién después Henderson. El pH casi no cambia porque sólo varía un poco el cociente [Ac⁻]/[HAc].</p>'),
  'Buffer: ±0,08 · agua: −5 unidades')}
 ${example('Dilución: hasta dónde vale Henderson','<p>El mismo buffer (HAc 0,10 / NaAc 0,15) diluido 1000 veces: C<sub>a</sub> = 1,0·10⁻⁴, C<sub>s</sub> = 1,5·10⁻⁴ M.</p>',
  step('Henderson diría',chain(R`\mathrm{pH}=4{,}92\ \Rightarrow\ h=1{,}2\times10^{-5}`)+ver('<p>1,2·10⁻⁵ es el 12 % de 1,0·10⁻⁴: no vale.</p>',false))+
- step('Exacto',chain(R`1{,}8\times10^{-5}=\frac{h(1{,}5\times10^{-4}+h)}{1{,}0\times10^{-4}-h}\ \Rightarrow\ h=1{,}0\times10^{-5}\ \mathrm{M},\ \mathrm{pH}=5{,}00`)),
+ step('Exacto',chain(R`1{,}8\times10^{-5}=\frac{h(1{,}5\times10^{-4}+h)}{1{,}0\times10^{-4}-h}\ \Rightarrow\ h=1{,}0\times10^{-5}\ \mathrm{M},\ \mathrm{pH}=5{,}00`))+A.jus('<p>Al diluir mucho, [H₃O⁺] deja de ser baja respecto de Cₐ y Cₛ: la suposición de Henderson se rompe y hay que conservar h en el planteo.</p>'),
  'Diluir poco no cambia el pH; diluir mucho, sí')}
 ${calc('qacBuffer','Buffer: pH antes y después de un agregado',field('pka','pKa',4.74)+field('na','ácido HA (mmol)',10)+field('nb','base A⁻ (mmol)',15)+field('add','agregado (mmol, + ácido / − base)',1),'Probá agregar 16 mmol para agotar el buffer.')}
 `);
@@ -146,5 +146,5 @@ ${cards([
 ])}
 `);
 
-  window.ET27_QAC5.units.push({id:'buffer',n:2,title:'Soluciones reguladoras',short:'Buffer',lead:'Qué son y cómo funcionan, criterios para decidir si una solución regula, Henderson–Hasselbalch (cuándo sí y cuándo no), qué pasa en el pKa, capacidad reguladora y cómo elegir y diseñar un buffer.',sections:s});
+  window.ET27_QAC5.units.push({id:'buffer',n:3,title:'Soluciones reguladoras',short:'Buffer',lead:'Qué son y cómo funcionan, criterios para decidir si una solución regula, Henderson–Hasselbalch (cuándo sí y cuándo no), qué pasa en el pKa, capacidad reguladora y cómo elegir y diseñar un buffer.',sections:s});
 })();

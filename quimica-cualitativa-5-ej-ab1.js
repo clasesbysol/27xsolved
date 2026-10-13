@@ -95,14 +95,14 @@
   e2(16,'Describir sistemas finales (1 mol de cada uno)',st('Describa el sistema final (si son 2 sustancias, 1 mol de cada una):',['NaNO₃','NaNO₂','HNO₃ y HCl','cloruro de trimetilamonio','NaNO₃ y HNO₃','NaNO₂ y HNO₂','metilamina','metilamina y HCl','metilamina e Ca(OH)₂','Ca(OH)₂ y HCl','Ca(OH)₂ y ácido acético']),
    table(['','Qué queda','Carácter / tipo'],[
     ['a','Na⁺ y NO₃⁻ (de fuertes)','neutra'],['b','Na⁺ y NO₂⁻; NO₂⁻ + H₂O ⇌ HNO₂ + HO⁻','básica'],['c','dos ácidos fuertes, total','ácida'],['d','(CH₃)₃NH⁺ + H₂O ⇌ (CH₃)₃N + H₃O⁺; Cl⁻ inalterado','ácida'],['e','HNO₃ fuerte + iones espectadores','ácida'],['f','HNO₂ y NO₂⁻ en igual cantidad: par conjugado débil','<b>reguladora</b>, pH = pKa = 3,35'],['g','CH₃NH₂ + H₂O ⇌ CH₃NH₃⁺ + HO⁻','básica'],['h','neutralización 1:1 → CH₃NH₃Cl; CH₃NH₃⁺ ácido débil','ácida (no regula: no queda base)'],['i','base fuerte + base débil: el HO⁻ del Ca(OH)₂ reprime a la metilamina (ion común)','básica'],['j','Ca(OH)₂ aporta 2 mol HO⁻ y HCl 1 mol H₃O⁺: sobra 1 mol HO⁻','básica'],['k','2 mol HO⁻ + 1 mol HAc → 1 mol Ac⁻ y sobra 1 mol HO⁻','básica (manda el fuerte)']
-   ]),
+   ])+jus('<p>Primero se hacen las reacciones completas entre fuertes (K muy grande). Después se mira qué queda: si sobra un electrolito fuerte, él fija el carácter; si quedan sólo iones de sales, se analiza de qué electrolito viene cada uno; si quedan un ácido débil y su base conjugada en cantidades comparables, es reguladora.</p>'),
    'Sólo f es reguladora');
 
   e2(19,'pH de los sistemas no reguladores del ítem 16',st('Para los sistemas NO reguladores del ítem 16 justifique si el pH será ácido, básico o neutro.'),
    jus('<p>Ver la tabla del ítem 16: neutro a; ácidos c, d, e, h; básicos b, g, i, j, k. Cuando sobra un electrolito fuerte (e, i, j, k) manda el fuerte; si sólo quedan iones de una sal, se analiza de qué electrolito viene cada ion.</p>'),
    'Neutro: a · ácidos: c, d, e, h · básicos: b, g, i, j, k');
 
-  A.addEx('acido-base',{group:'g2',label:'Guía 2 · ejercicios de ácido-base',intro:'<p>Ítems conceptuales de la Guía N° 2. Los de soluciones reguladoras (15, 18, 20, 21, 22) están en la sección Buffer y los del cobre con amoníaco y la plata con cloruro (8, 17), en Complejos.</p>'},g2);
+  A.addEx('acido-base-2',{group:'g2',label:'Guía 2 · ejercicios de ácido-base',intro:'<p>Ítems conceptuales de la Guía N° 2. Los de soluciones reguladoras (15, 18, 20, 21, 22) están en la sección Buffer y los del cobre con amoníaco y la plata con cloruro (8, 17), en Complejos.</p>'},g2);
 
   // =====================================================================
   // GUÍA N° 3 · ácidos y bases monopróticos
@@ -131,7 +131,7 @@
   e3(5,'HClO 1·10⁻⁶ M: débil y muy diluido',st('Calcular el pH y el grado de disociación de HClO 1·10⁻⁶ M. Ka = 2,95·10⁻⁸.'),
    desc(rx('HClO + H2O <=> ClO^- + H3O^+','Ka')+W+chain(R`\text{BM: }10^{-6}=[\mathrm{HClO}]+[\mathrm{ClO^-}]\qquad\text{BC: }[\mathrm{H_3O^+}]=[\mathrm{ClO^-}]+[\mathrm{HO^-}]`))+
    step('¿Se puede despreciar el agua?',ver('<p>No: Ka·C = 2,95·10⁻¹⁴, del mismo orden que Kw. El ácido es muy débil y está muy diluido: aporta tanto H₃O⁺ como el agua. Tampoco vale x ≪ C (C/Ka = 34 &lt; 100).</p>',false))+
-   step('Planteo completo',chain([R`[\mathrm{H_3O^+}]=\frac{K_a[\mathrm{HClO}]}{[\mathrm{H_3O^+}]}+\frac{K_w}{[\mathrm{H_3O^+}]}\Rightarrow[\mathrm{H_3O^+}]=\sqrt{K_a[\mathrm{HClO}]+K_w}`,'del BC'],R`[\mathrm{HClO}]=C\frac{[\mathrm{H_3O^+}]}{[\mathrm{H_3O^+}]+K_a}\ \Rightarrow\ \text{resolviendo: }[\mathrm{H_3O^+}]=1{,}88\times10^{-7}\ \mathrm{M}`,R`\mathrm{pH}=6{,}72\qquad\alpha=\frac{K_a}{K_a+[\mathrm{H_3O^+}]}=0{,}135`)),
+   step('Planteo completo',chain([R`[\mathrm{H_3O^+}]=\frac{K_a[\mathrm{HClO}]}{[\mathrm{H_3O^+}]}+\frac{K_w}{[\mathrm{H_3O^+}]}\Rightarrow[\mathrm{H_3O^+}]=\sqrt{K_a[\mathrm{HClO}]+K_w}`,'del BC'],R`[\mathrm{HClO}]=C\frac{[\mathrm{H_3O^+}]}{[\mathrm{H_3O^+}]+K_a}\ \Rightarrow\ \text{resolviendo: }[\mathrm{H_3O^+}]=1{,}88\times10^{-7}\ \mathrm{M}`,R`\mathrm{pH}=6{,}72\qquad\alpha=\frac{K_a}{K_a+[\mathrm{H_3O^+}]}=0{,}135`))+jus('<p>Lo que molesta en el BC es [HO⁻]: con un ácido tan débil y tan diluido no es razonable suponerla baja respecto de [ClO⁻], porque el ácido aporta tanto H₃O⁺ como el agua (Ka·C del orden de Kw). Tampoco [ClO⁻] es baja respecto de C (C/Ka &lt; 100, y la dilución favorece la disociación: pocos choques efectivos). Por eso se conserva todo.</p>'),
    'pH = 6,72 · α = 13,5 %');
 
   const formico=desc(rx('HCOOH + H2O <=> HCOO^- + H3O^+','Ka = 1,78·10⁻⁴')+W+chain(R`\text{BM: }0{,}1=[\mathrm{HCOOH}]+[\mathrm{HCOO^-}]\qquad\text{BC: }[\mathrm{H_3O^+}]=[\mathrm{HCOO^-}]+[\mathrm{HO^-}]`))+
@@ -156,7 +156,7 @@
   e3(9,'Piperidina 0,039 M (Kb 1,6·10⁻³)',st('Calcular pH y grado de disociación. Kb: 1,60·10⁻³.'),
    desc(rx('C5H11N + H2O <=> C5H11NH^+ + HO^-','Kb')+W)+
    ver('<p>C/Kb = 24 &lt; 100: no se puede despreciar x frente a C.</p>',false)+
-   chain(R`1{,}6\times10^{-3}=\frac{x^2}{0{,}039-x}\Rightarrow x=[\mathrm{HO^-}]=7{,}14\times10^{-3}\ \mathrm{M}`,R`\mathrm{pOH}=2{,}15\Rightarrow\mathrm{pH}=11{,}85\qquad\alpha=\frac{7{,}14\times10^{-3}}{0{,}039}=18\,\%`),
+   chain(R`1{,}6\times10^{-3}=\frac{x^2}{0{,}039-x}\Rightarrow x=[\mathrm{HO^-}]=7{,}14\times10^{-3}\ \mathrm{M}`,R`\mathrm{pOH}=2{,}15\Rightarrow\mathrm{pH}=11{,}85\qquad\alpha=\frac{7{,}14\times10^{-3}}{0{,}039}=18\,\%`)+jus('<p>Es una base débil, pero con Kb grande y C/Kb = 24 &lt; 100: no es razonable suponer [BH⁺] baja respecto de C. Sí es razonable suponer [H₃O⁺] baja respecto de [BH⁺] en el BC porque el medio es básico.</p>'),
    'pH 11,85 · α = 18 %');
 
   e3(10,'Ka del ácido cloroso',st('Calcular Ka del ácido cloroso si el pH de una solución 0,1 M es 1,2.'),
@@ -164,11 +164,11 @@
    'Ka ≈ 0,11');
 
   e3(11,'Kb de la butilamina',st('Calcular Kb de la butilamina si una solución 0,1 M tiene pH 12,04.'),
-   chain(R`[\mathrm{HO^-}]=10^{12{,}04-14}=0{,}0110\ \mathrm{M}`,R`K_b=\frac{(0{,}0110)^2}{0{,}1-0{,}0110}=1{,}35\times10^{-3}`),
+   chain(R`[\mathrm{HO^-}]=10^{12{,}04-14}=0{,}0110\ \mathrm{M}`,R`K_b=\frac{(0{,}0110)^2}{0{,}1-0{,}0110}=1{,}35\times10^{-3}`)+jus('<p>Del pH se conoce [HO⁻] exactamente. En el BC es razonable suponer [H₃O⁺] baja respecto de [BH⁺] (medio básico), así que [BH⁺] ≈ [HO⁻]; no se desprecia nada respecto de C porque el dato lo da.</p>'),
    'Kb = 1,35·10⁻³');
 
   e3(12,'Ácido benzoico con α = 2,4 %',st('Una solución de ácido benzoico 0,110 M tiene un grado de disociación de 2,4 %. Calcular el pH y Ka.'),
-   chain(R`[\mathrm{H_3O^+}]=\alpha C=0{,}024\cdot0{,}110=2{,}64\times10^{-3}\ \mathrm{M}\Rightarrow\mathrm{pH}=2{,}58`,R`K_a=\frac{(2{,}64\times10^{-3})^2}{0{,}110-0{,}00264}=6{,}5\times10^{-5}`),
+   chain(R`[\mathrm{H_3O^+}]=\alpha C=0{,}024\cdot0{,}110=2{,}64\times10^{-3}\ \mathrm{M}\Rightarrow\mathrm{pH}=2{,}58`,R`K_a=\frac{(2{,}64\times10^{-3})^2}{0{,}110-0{,}00264}=6{,}5\times10^{-5}`)+jus('<p>El grado de disociación es la fracción disociada: [A⁻] = α·C, y del BC (despreciando [HO⁻] respecto de [A⁻], medio ácido) [H₃O⁺] = [A⁻]. Con eso se reemplaza en Ka sin despreciar nada en el BM.</p>'),
    'pH 2,58 · Ka = 6,5·10⁻⁵');
 
   const metil=step('1. Concentración',chain(R`m_{sc}=50\cdot0{,}85=42{,}5\ \mathrm{g}\Rightarrow m=0{,}35\cdot42{,}5=14{,}9\ \mathrm{g}`,R`C=\frac{14{,}9/31{,}06}{1{,}0\ \mathrm{L}}=0{,}479\ \mathrm{M}`))+
@@ -192,11 +192,11 @@
 
   e3(16,'HF 22,6 M diluido',st('HF 22,6 M (pKa 3,17). Se diluyen 5 cm³ hasta 2 dm³. Calcular: a) pH final; b) [F⁻] en ambas soluciones.'),
    chain(R`C=\frac{22{,}6\cdot5}{2000}=0{,}0565\ \mathrm{M}\qquad K_a=6{,}76\times10^{-4}`)+ver('<p>C/Ka = 84 &lt; 100: no se desprecia x.</p>',false)+
-   chain(R`x=\frac{-K_a+\sqrt{K_a^2+4K_aC}}{2}=5{,}85\times10^{-3}\ \mathrm{M}\Rightarrow\mathrm{pH}=2{,}23`,R`\text{concentrada: }[\mathrm{F^-}]=\sqrt{6{,}76\times10^{-4}\cdot22{,}6}=0{,}124\ \mathrm{M}\ (0{,}55\,\%)`),
+   chain(R`x=\frac{-K_a+\sqrt{K_a^2+4K_aC}}{2}=5{,}85\times10^{-3}\ \mathrm{M}\Rightarrow\mathrm{pH}=2{,}23`,R`\text{concentrada: }[\mathrm{F^-}]=\sqrt{6{,}76\times10^{-4}\cdot22{,}6}=0{,}124\ \mathrm{M}\ (0{,}55\,\%)`)+jus('<p>El HF es débil, pero C/Ka = 84 &lt; 100: no es razonable suponer [F⁻] baja respecto de C, se resuelve la cuadrática. En la solución concentrada sí se puede (C/Ka ≫ 100): hay muchos choques efectivos y se disocia poco (0,55 %).</p>'),
    'a) pH 2,23 · b) [F⁻] = 0,124 M (concentrada) y 5,85·10⁻³ M (diluida)');
 
   e3(17,'Preparar NH₃ de pH 11',st('Preparar 500 mL de amoníaco a pH 11 (Kb 1,8·10⁻⁵). Calcular la concentración y la masa de solución 50 % m/m necesaria.'),
-   chain([R`[\mathrm{HO^-}]=10^{-3}=[\mathrm{NH_4^+}]`,'BC, medio básico'],[R`C=[\mathrm{NH_3}]+[\mathrm{NH_4^+}]=\frac{(10^{-3})^2}{1{,}8\times10^{-5}}+10^{-3}=0{,}0566\ \mathrm{M}`,'BM + Kb'],R`m=0{,}0566\cdot0{,}500\cdot17{,}03=0{,}482\ \mathrm{g\ NH_3}\Rightarrow\frac{0{,}482}{0{,}50}=0{,}963\ \mathrm{g\ de\ solución}`),
+   chain([R`[\mathrm{HO^-}]=10^{-3}=[\mathrm{NH_4^+}]`,'BC, medio básico'],[R`C=[\mathrm{NH_3}]+[\mathrm{NH_4^+}]=\frac{(10^{-3})^2}{1{,}8\times10^{-5}}+10^{-3}=0{,}0566\ \mathrm{M}`,'BM + Kb'],R`m=0{,}0566\cdot0{,}500\cdot17{,}03=0{,}482\ \mathrm{g\ NH_3}\Rightarrow\frac{0{,}482}{0{,}50}=0{,}963\ \mathrm{g\ de\ solución}`)+jus('<p>Del pH sale [HO⁻]. En el BC es razonable suponer [H₃O⁺] baja respecto de [NH₄⁺] (medio básico), así que [NH₄⁺] = [HO⁻]; con Kb se despeja [NH₃] y la concentración total sale del BM (no se desprecia [NH₄⁺] respecto de C porque se quiere el valor exacto).</p>'),
    'C = 0,0566 M · 0,96 g de NH₃ 50 %');
 
   window.ET27_QAC5.shared=Object.assign(window.ET27_QAC5.shared||{},{formico,metil});

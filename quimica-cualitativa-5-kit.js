@@ -19,7 +19,8 @@
   // ver(html, ok): ok=true la aproximación vale; ok=false hay que rehacer la cuenta sin aproximar.
   const ver=(html,ok=true)=>`<div class="kitBox qacVer ${ok?'ok':'bad'}"><b>${ok?'✔ Verificamos: la suposición vale':'✘ Verificamos: la suposición NO vale'}</b>${html}</div>`;
   // Receta numerada.
-  const flow=list=>`<div class="qacFlow">${list.map(([t,d])=>`<div><b>${t}</b>${d||''}</div>`).join('')}</div>`;
+  // Pasos numerados (el número lo pone el CSS): se quita un "1. " manual del título; si el título es sólo un número, va el texto solo.
+  const flow=list=>`<div class="qacFlow">${list.map(([t,d])=>{t=String(t).replace(/^\d+\s*[.)·-]?\s*/,'');if(!t)return `<div>${d||''}</div>`;const sep=!d?'':/[?:.!]$/.test(t)?' ':': ';return `<div><b>${t}</b>${sep}${d||''}</div>`}).join('')}</div>`;
   // Tarjetas para memorizar (strong / weak / neutro).
   const memo=list=>`<div class="qacMemo">${list.map(([tag,cls,html])=>`<div class="${cls||''}"><small>${tag}</small>${html}</div>`).join('')}</div>`;
 
@@ -188,6 +189,40 @@
   const opt=(name,list,label='Dato')=>`<label><span>${label}</span><select name="${name}">${list.map(([v,l])=>`<option value="${v}">${l}</option>`).join('')}</select></label>`;
 
 
+
+  // ---------- Esqueleto de resolución que pide la cátedra ----------
+  // sys({rx:[['eq', 'latex de K' | '', 'nota']], bm:['latex'], bc:['latex'], extra:'html'})
+  const sys=(o,title='Planteo del sistema')=>{
+    const K=window.ET27Kit,Q=window.ET27QI;
+    const rows=(o.rx||[]).map(([eq,k,note])=>`<div class="qacSysRx">${Q.rx(eq,note)}${k?`<div class="qacSysK">${K.m(k)}</div>`:''}</div>`).join('');
+    const part=(n,t,list)=>list&&list.length?`<div class="qacSysPart"><small>${n} · ${t}</small>${list.map(l=>`<div class="qacSysEq">${K.m(l)}</div>`).join('')}</div>`:'';
+    return `<div class="kitBox qacSys"><b>🧾 ${title}</b><div class="qacSysPart"><small>1 · Reacciones (las reversibles, con su constante abajo)</small>${rows}</div>${part(2,'Balance de masa',o.bm)}${part(3,'Balance de carga',o.bc)}${o.extra||''}</div>`;
+  };
+  // ---------- Le Châtelier en forma de reacción ----------
+  // lc('eq', 'perturbación', '←'|'→', [['[X]','↑'],...], 'conclusión')
+  const lc=(eq,pert,dir,changes,concl)=>{
+    const Q=window.ET27QI;
+    return `<div class="qacLc"><div class="qacLcPert"><span>Perturbación</span>${pert}</div>${Q.rx(eq)}<div class="qacLcDir ${dir==='←'?'left':'right'}">${dir==='←'?'⬅ se desplaza hacia los reactivos':'se desplaza hacia los productos ➡'}</div><div class="qacLcChips">${changes.map(([sp,a])=>`<span class="${a==='↑'?'up':a==='↓'?'down':'eq'}">${sp} ${a}</span>`).join('')}</div>${concl?`<p class="qacLcConcl">${concl}</p>`:''}</div>`;
+  };
+  // ---------- Escalera de constantes de un poliprótico ----------
+  // ladder(['H₃PO₄','H₂PO₄⁻','HPO₄²⁻','PO₄³⁻'])
+  const ladder=(sp,label='')=>{
+    const n=sp.length-1,W=150,x=i=>40+i*W,w=Math.max(660,80+n*W);
+    const sub=['₁','₂','₃','₄'];
+    const arrows=[...Array(n)].map((_,i)=>`<line x1="${x(i)+52}" y1="62" x2="${x(i+1)-52}" y2="62" class="svgArrow" marker-end="url(#qacLd)"/><line x1="${x(i+1)-52}" y1="80" x2="${x(i)+52}" y2="80" class="svgArrow alt" marker-end="url(#qacLd2)"/><text x="${(x(i)+x(i+1))/2}" y="48" text-anchor="middle" class="qacLab">Ka${sub[i]}</text><text x="${(x(i)+x(i+1))/2}" y="104" text-anchor="middle" class="qacLab alt">Kb${sub[n-1-i]}</text>`).join('');
+    const nodes=sp.map((t,i)=>`<text x="${x(i)}" y="76" text-anchor="middle" class="qacBig">${t}</text>`).join('');
+    return `<svg viewBox="0 0 ${w} 140" role="img" aria-label="Escalera de equilibrios ${label}"><defs><marker id="qacLd" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10z" class="svgAccentFill"/></marker><marker id="qacLd2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10z" fill="#e0752d"/></marker></defs>${arrows}${nodes}<text x="${w/2}" y="132" text-anchor="middle" class="svgText qiSmall">→ pierde un H⁺ (Ka, arriba) · ← gana un H⁺ (Kb, abajo) · la Kb₁ es la del lado más básico</text></svg>`;
+  };
+  // ---------- Reglas de desprecio ----------
+  const reglas=`<div class="kitBox qacRules"><b>📏 Reglas para despreciar (leelas antes de cualquier cuenta)</b><ol>
+   <li><b>Siempre se desprecia RESPECTO DE otra especie.</b> No existe “[HO⁻] es despreciable” a secas: es “[HO⁻] es despreciable <u>respecto de</u> [A⁻]”. Se escribe así: <i>“es razonable suponer que [HO⁻] es baja respecto de [A⁻] porque…”</i>.</li>
+   <li><b>Sólo se desprecia en sumas y restas</b>, o sea, en los <b>balances de masa y de carga</b>. Nunca en multiplicaciones ni divisiones: en la expresión de K no se tacha nada (si tacharas un factor, K daría 0 o infinito).</li>
+   <li><b>Las dos cosas que se comparan tienen que estar sumándose o restándose en la misma ecuación.</b> Se compara con el término al lado, no con cualquier número.</li>
+   <li><b>Despreciable no es cero.</b> La especie despreciada existe: después de resolver se calcula su concentración (por ejemplo [HO⁻] = Kw/[H₃O⁺]).</li>
+   <li><b>Primero se justifica con teoría</b> (fuerza del electrolito y valor de K, C/K &gt; 100, Le Châtelier, ion común, medio ácido o básico, diagrama de especiación) y <b>al final se verifica</b>: lo despreciado tiene que ser ≤ 5 % de la especie respecto de la cual se despreció.</li>
+   <li><b>Si la verificación falla, no se desprecia</b>: se vuelve a la ecuación y se resuelve completa (cuadrática).</li>
+  </ol></div>`;
+
   // ---------- Ejercicios resueltos ----------
   // st(consigna, [incisos]) → HTML de la consigna.
   const st=(txt,parts)=>`<p>${txt}</p>${parts?`<ol type="a">${parts.map(p=>`<li>${p}</li>`).join('')}</ol>`:''}`;
@@ -198,6 +233,6 @@
     if(!u.sections.some(x=>x.key===`qac-ej-${sec.group}`))u.sections.push({key:`qac-ej-${sec.group}`,label:sec.label,kicker:sec.kicker||'EJERCICIOS RESUELTOS',exercises:true,html:`${sec.intro||''}<div data-qac-guide="${sec.group}"></div>`});
   }
 
-  window.ET27QAC={sup,ver,flow,memo,spec,specLog,fractions,pasajes,scale,opt,jus,desc,rta,draw,st,addEx};
+  window.ET27QAC={sup,ver,flow,memo,spec,specLog,fractions,pasajes,scale,opt,jus,desc,rta,draw,st,addEx,sys,lc,ladder,reglas};
   window.ET27_QAC5=window.ET27_QAC5||{subjectName:'Química Analítica Cualitativa',year:5,units:[]};
 })();

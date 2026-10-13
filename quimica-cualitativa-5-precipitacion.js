@@ -55,12 +55,12 @@ ${note('Los Kps varían mucho entre tablas','<p>Sobre todo los de sulfuros e hid
 ${example('Solubilidad del AgCl en agua','<p>Calcular s en mol/L y en g/L (M = 143,3 g/mol).</p>',
  step('1. Equilibrio y tabla',rx('AgCl(s) <=> Ag^+ + Cl^-')+table(['','Ag⁺','Cl⁻'],[['Se disuelven s mol/L','s','s']]))+
  step('2. Resolver',chain(R`K_{ps}=s^2=1{,}8\times10^{-10}\ \Rightarrow\ s=1{,}34\times10^{-5}\ \mathrm{M}`,R`s=1{,}34\times10^{-5}\cdot143{,}3=1{,}9\times10^{-3}\ \mathrm{g/L}`))+
- note('¿Qué supusimos?','<p>Que los iones no reaccionan con nada más (ni hidrólisis ni complejos). Para Ag⁺ y Cl⁻ es razonable: el Cl⁻ es base conjugada de un ácido fuerte y el Ag⁺ casi no hidroliza.</p>'),
+ note('¿Qué supusimos?','<p>Que los iones no reaccionan con nada más (ni hidrólisis ni complejos). Para Ag⁺ y Cl⁻ es razonable: el Cl⁻ es base conjugada de un ácido fuerte y el Ag⁺ casi no hidroliza.</p>')+A.jus('<p>Es una sal poco soluble en equilibrio con su sólido (equilibrio heterogéneo): el sólido no entra en Kps. Por cada mol que se disuelve aparece 1 mol de Ag⁺ y 1 de Cl⁻, así que [Ag⁺] = [Cl⁻] = s.</p>'),
  's = 1,34·10⁻⁵ M = 1,9 mg/L')}
 ${example('Solubilidad y pH de una solución saturada de Mg(OH)₂','<p>Kps = 1,8·10⁻¹¹. Calcular s y el pH de la solución saturada.</p>',
  step('1. Planteo',rx('Mg(OH)2(s) <=> Mg^2+ + 2 OH^-')+chain(R`K_{ps}=s\,(2s)^2=4s^3`))+
  step('2. Resolver',chain(R`s=\sqrt[3]{\frac{1{,}8\times10^{-11}}{4}}=1{,}65\times10^{-4}\ \mathrm{M}`,R`[\mathrm{OH^-}]=2s=3{,}3\times10^{-4}\ \mathrm{M}\ \Rightarrow\ \mathrm{pOH}=3{,}48\ \Rightarrow\ \mathrm{pH}=10{,}52`))+
- step('3. Verificar',ver('<p>Supusimos que todo el OH⁻ viene del hidróxido: el agua aportaría ≈ 10⁻¹⁰ M (en medio básico), despreciable frente a 3,3·10⁻⁴ ✔.</p>')),
+ step('3. Verificar',ver('<p>Supusimos que todo el OH⁻ viene del hidróxido: el agua aportaría ≈ 10⁻¹⁰ M (en medio básico), despreciable frente a 3,3·10⁻⁴ ✔.</p>'))+A.jus('<p>Por cada mol de Mg(OH)₂ que se disuelve aparecen 2 mol de HO⁻: [HO⁻] = 2s y el coeficiente también se eleva al cuadrado en Kps. Es razonable suponer el HO⁻ del agua bajo respecto del que aporta el hidróxido.</p>'),
  's = 1,65·10⁻⁴ M · pH = 10,52 (la “leche de magnesia”)')}
 ${calc('qacKps','Solubilidad a partir de Kps',field('m','m (cationes por fórmula)',2)+field('n','n (aniones por fórmula)',1)+field('kps','Kps',1.1e-12)+field('cc','ion común: [anión] agregado (M, 0 = agua)',0),'Cargado con Ag₂CrO₄. Probá AgCl (1, 1, 1.8e-10) con 0.01 M de Cl⁻.')}
 `);
@@ -71,7 +71,7 @@ ${calc('qacKps','Solubilidad a partir de Kps',field('m','m (cationes por fórmul
 ${flow([['1. Pasar el dato a mol/L de SAL','g/L ÷ M(sal); mg/100 mL → ×10 para g/L… ojo: si el dato es de un ION, dividir por la masa molar del ion y por su subíndice.'],['2. Concentración de cada ion','[A] = m·s, [B] = n·s.'],['3. Reemplazar en Kps','Kps = (m·s)ᵐ·(n·s)ⁿ.']])}
 ${example('Cromato de plata: 4,35 mg en 100 mL','<p>Calcular Kps.</p>',
  step('1. Solubilidad molar',chain(R`s=\frac{4{,}35\times10^{-3}\ \mathrm{g}/0{,}100\ \mathrm{L}}{331{,}7\ \mathrm{g/mol}}=1{,}31\times10^{-4}\ \mathrm{M}`))+
- step('2. Kps',chain(R`K_{ps}=(2s)^2\,s=4s^3=9{,}0\times10^{-12}`)),
+ step('2. Kps',chain(R`K_{ps}=(2s)^2\,s=4s^3=9{,}0\times10^{-12}`))+A.jus('<p>La solubilidad es la cantidad máxima disuelta por litro (solución saturada): se pasa a mol/L de sal y cada ion vale su subíndice por s.</p>'),
  'Kps = 9,0·10⁻¹²')}
 ${warn('¿El dato es de la sal o de un ion?','<p>“La concentración de <b>estroncio</b> en la solución saturada de SrF₂ es 0,111 g/L” es un dato del <b>ion</b>: s = 0,111/87,62 = 1,27·10⁻³ M. Si se divide por la masa molar del SrF₂ se está tratando el dato como si fuera de la sal (y el Kps sale distinto).</p>')}
 <h3>Kps y temperatura</h3>
@@ -85,7 +85,7 @@ ${table(['Sales del mismo tipo (AB)','Kps','s (M)'],[['AgCl','1,8·10⁻¹⁰','
 <p>Acá sí: menor Kps → menor s. El AgI es el menos soluble.</p>
 ${example('AgCl vs Ag₂CrO₄: la trampa','<p>Kps(AgCl) = 1,8·10⁻¹⁰ · Kps(Ag₂CrO₄) = 1,1·10⁻¹². ¿Cuál es más soluble?</p>',
  step('Mirando sólo Kps…',`<p>Diríamos que el cromato (Kps menor) es menos soluble. <b>Error</b>: son de distinto tipo.</p>`)+
- step('Calculando s',chain(R`\mathrm{AgCl}:\ s=\sqrt{1{,}8\times10^{-10}}=1{,}3\times10^{-5}\ \mathrm{M}`,R`\mathrm{Ag_2CrO_4}:\ s=\sqrt[3]{\frac{1{,}1\times10^{-12}}{4}}=6{,}5\times10^{-5}\ \mathrm{M}`)),
+ step('Calculando s',chain(R`\mathrm{AgCl}:\ s=\sqrt{1{,}8\times10^{-10}}=1{,}3\times10^{-5}\ \mathrm{M}`,R`\mathrm{Ag_2CrO_4}:\ s=\sqrt[3]{\frac{1{,}1\times10^{-12}}{4}}=6{,}5\times10^{-5}\ \mathrm{M}`))+A.jus('<p>Los Kps sólo se comparan directamente entre sales del mismo tipo (misma relación de iones): si los exponentes son distintos, hay que calcular s.</p>'),
  'El Ag₂CrO₄ es ~5 veces MÁS soluble que el AgCl, aunque su Kps sea menor')}
 ${idea('Por qué pasa','<p>En el Ag₂CrO₄ la s está elevada al cubo (4s³) y en el AgCl al cuadrado (s²). Con exponentes distintos, un número más chico de Kps puede venir de una s más grande. Esto se usa en el <b>método de Mohr</b> (titulación de cloruros): primero precipita todo el AgCl blanco y recién después el Ag₂CrO₄ rojo ladrillo, que marca el punto final.</p>')}
 `);
@@ -118,7 +118,7 @@ ${flow([
 ])}
 ${example('Dos mezclas: una precipita y otra no','<p>a) 50 mL de Pb(NO₃)₂ 0,010 M + 50 mL de KI 0,010 M (Kps PbI₂ = 7,1·10⁻⁹). b) 10 mL de AgNO₃ 1,0·10⁻⁴ M + 90 mL de NaCl 1,0·10⁻⁵ M (Kps AgCl = 1,8·10⁻¹⁰).</p>',
  step('a) Concentraciones en 100 mL',chain(R`[\mathrm{Pb^{2+}}]=\frac{0{,}010\cdot50}{100}=0{,}0050\qquad[\mathrm{I^-}]=0{,}0050`,R`Q=[\mathrm{Pb^{2+}}][\mathrm{I^-}]^2=0{,}0050\cdot(0{,}0050)^2=1{,}25\times10^{-7}`,[R`Q=1{,}25\times10^{-7}>K_{ps}=7{,}1\times10^{-9}`,'precipita PbI₂ (amarillo)']))+
- step('b) Concentraciones en 100 mL',chain(R`[\mathrm{Ag^+}]=\frac{10^{-4}\cdot10}{100}=1{,}0\times10^{-5}\qquad[\mathrm{Cl^-}]=\frac{10^{-5}\cdot90}{100}=9{,}0\times10^{-6}`,R`Q=1{,}0\times10^{-5}\cdot9{,}0\times10^{-6}=9{,}0\times10^{-11}`,[R`Q<K_{ps}=1{,}8\times10^{-10}`,'no precipita'])),
+ step('b) Concentraciones en 100 mL',chain(R`[\mathrm{Ag^+}]=\frac{10^{-4}\cdot10}{100}=1{,}0\times10^{-5}\qquad[\mathrm{Cl^-}]=\frac{10^{-5}\cdot90}{100}=9{,}0\times10^{-6}`,R`Q=1{,}0\times10^{-5}\cdot9{,}0\times10^{-6}=9{,}0\times10^{-11}`,[R`Q<K_{ps}=1{,}8\times10^{-10}`,'no precipita']))+A.jus('<p>Se compara el producto iónico Q, calculado con las concentraciones de este momento (ya diluidas por la mezcla), con Kps: si Q &gt; Kps la solución está sobresaturada y precipita hasta que Q = Kps.</p>'),
  'a) precipita PbI₂ · b) no precipita (queda solución no saturada)')}
 ${key(R`\text{Precipitación completa (criterio práctico): }[\text{ion}]_{\text{que queda}}\le10^{-5}\ \mathrm{M}\ \ (\text{o}\ \ge99{,}9\,\%\ \text{precipitado})`,'Cuándo decimos que “precipitó todo”')}
 ${example('¿Cuánta plata queda en solución?','<p>Se mezclan 50 mL de AgNO₃ 0,020 M con 50 mL de NaCl 0,030 M. Calcular [Ag⁺] que queda y decidir si la precipitación es completa.</p>',
@@ -144,11 +144,11 @@ ${example('Cloruro y cromato con Ag⁺ (método de Mohr)','<p>Una solución es 0
  step('1. Ag⁺ necesaria para cada uno',chain([R`\mathrm{AgCl}:\ [\mathrm{Ag^+}]=\frac{1{,}8\times10^{-10}}{0{,}10}=1{,}8\times10^{-9}\ \mathrm{M}`,''],[R`\mathrm{Ag_2CrO_4}:\ [\mathrm{Ag^+}]=\sqrt{\frac{1{,}1\times10^{-12}}{0{,}010}}=1{,}05\times10^{-5}\ \mathrm{M}`,'raíz: la Ag⁺ va al cuadrado']))+
  step('2. Primero el AgCl',`<p>Necesita 1,8·10⁻⁹ M, miles de veces menos plata: precipita primero el AgCl (blanco).</p>`)+
  step('3. Cuando empieza el cromato',chain(R`[\mathrm{Ag^+}]=1{,}05\times10^{-5}\ \mathrm{M}`,R`[\mathrm{Cl^-}]_{\text{queda}}=\frac{1{,}8\times10^{-10}}{1{,}05\times10^{-5}}=1{,}7\times10^{-5}\ \mathrm{M}`,R`\%\ \text{que queda}=\frac{1{,}7\times10^{-5}}{0{,}10}\cdot100=0{,}017\,\%`))+
- step('4. Conclusión',`<p>Cuando aparece el color rojo ladrillo del Ag₂CrO₄ ya precipitó el 99,98 % del cloruro: la separación (y la titulación) funciona.</p>${vira('AgCl blanco','#f4f4f4','Ag₂CrO₄ rojo ladrillo','#b5462d')}`),
+ step('4. Conclusión',`<p>Cuando aparece el color rojo ladrillo del Ag₂CrO₄ ya precipitó el 99,98 % del cloruro: la separación (y la titulación) funciona.</p>${vira('AgCl blanco','#f4f4f4','Ag₂CrO₄ rojo ladrillo','#b5462d')}`)+A.jus('<p>Precipita primero la sal que alcanza antes su Kps, es decir la que necesita menos Ag⁺. Cuando empieza la segunda, [Ag⁺] es la que fija su Kps y con ella se calcula cuánto quedó de la primera (ion común).</p>'),
  'Primero AgCl · cuando empieza el Ag₂CrO₄ queda 0,017 % del Cl⁻')}
 ${example('Yoduro y cloruro','<p>Solución 0,010 M en I⁻ y 0,010 M en Cl⁻, se agrega Ag⁺. ¿Se pueden separar?</p>',
  step('Ag⁺ para empezar',chain(R`\mathrm{AgI}:\ \frac{8{,}3\times10^{-17}}{0{,}010}=8{,}3\times10^{-15}\ \mathrm{M}\qquad\mathrm{AgCl}:\ \frac{1{,}8\times10^{-10}}{0{,}010}=1{,}8\times10^{-8}\ \mathrm{M}`))+
- step('I⁻ que queda cuando empieza el AgCl',chain(R`[\mathrm{I^-}]=\frac{8{,}3\times10^{-17}}{1{,}8\times10^{-8}}=4{,}6\times10^{-9}\ \mathrm{M}\ \ (0{,}00005\,\%)`)),
+ step('I⁻ que queda cuando empieza el AgCl',chain(R`[\mathrm{I^-}]=\frac{8{,}3\times10^{-17}}{1{,}8\times10^{-8}}=4{,}6\times10^{-9}\ \mathrm{M}\ \ (0{,}00005\,\%)`))+A.jus('<p>Precipita primero el AgI porque necesita una [Ag⁺] muchísimo menor para llegar a su Kps; cuando empieza el AgCl, el I⁻ que queda es despreciable respecto del inicial: la separación es completa.</p>'),
  'Separación excelente: precipita todo el AgI antes de que empiece el AgCl')}
 `);
 
@@ -179,11 +179,11 @@ ${example('Separar Fe³⁺ de Mg²⁺ ajustando el pH','<p>Una solución es 0,01
  step('Fe(OH)₃: completa',chain(R`[\mathrm{OH^-}]=\sqrt[3]{\frac{4\times10^{-38}}{10^{-5}}}=1{,}6\times10^{-11}\ \Rightarrow\ \mathrm{pH}=3{,}2`))+
  step('Mg(OH)₂: empieza',chain(R`[\mathrm{OH^-}]=\sqrt{\frac{1{,}8\times10^{-11}}{0{,}010}}=4{,}2\times10^{-5}\ \Rightarrow\ \mathrm{pH}=9{,}6`))+
  step('Mg(OH)₂: completa',chain(R`[\mathrm{OH^-}]=\sqrt{\frac{1{,}8\times10^{-11}}{10^{-5}}}=1{,}3\times10^{-3}\ \Rightarrow\ \mathrm{pH}=11{,}1`))+
- step('Ventana de separación',`<p>Entre pH 3,2 y 9,6 el hierro está todo precipitado y el magnesio todavía no empezó. Cualquier pH en ese rango los separa.</p>`),
+ step('Ventana de separación',`<p>Entre pH 3,2 y 9,6 el hierro está todo precipitado y el magnesio todavía no empezó. Cualquier pH en ese rango los separa.</p>`)+A.jus('<p>La [HO⁻] la fija el pH: cada hidróxido empieza a precipitar cuando Q = Kps. Se toma como precipitación completa que el catión quede en ≤ 10⁻⁵ M. Como los Kps son muy distintos, hay un rango de pH donde sólo uno precipita.</p>'),
  'Fe³⁺: pH 2,2 → 3,2 · Mg²⁺: pH 9,6 → 11,1 · separar entre 3,2 y 9,6')}
 ${example('El papel del NH₄Cl en el grupo III','<p>A la solución anterior se le agrega a) NH₃ 0,10 M solo; b) NH₃ 0,10 M + NH₄Cl 1,0 M. ¿Precipita Mg(OH)₂ en cada caso? (Kb = 1,8·10⁻⁵)</p>',
  step('a) Sólo amoníaco',chain(R`[\mathrm{OH^-}]=\sqrt{1{,}8\times10^{-5}\cdot0{,}10}=1{,}3\times10^{-3}\ \mathrm{M}`,[R`Q_{\mathrm{Mg}}=0{,}010\cdot(1{,}3\times10^{-3})^2=1{,}8\times10^{-8}>K_{ps}`,'precipita: ¡se pierde el Mg en el grupo III!']))+
- step('b) Buffer amoniacal (ion común NH₄⁺)',chain(R`[\mathrm{OH^-}]=K_b\frac{[\mathrm{NH_3}]}{[\mathrm{NH_4^+}]}=1{,}8\times10^{-5}\cdot\frac{0{,}10}{1{,}0}=1{,}8\times10^{-6}\ \mathrm{M}\ (\mathrm{pH}\ 8{,}3)`,[R`Q_{\mathrm{Mg}}=0{,}010\cdot(1{,}8\times10^{-6})^2=3{,}2\times10^{-14}<K_{ps}`,'no precipita ✔'],[R`Q_{\mathrm{Fe}}=0{,}010\cdot(1{,}8\times10^{-6})^3=5{,}8\times10^{-20}\gg K_{ps}`,'el Fe(OH)₃ sí'])),
+ step('b) Buffer amoniacal (ion común NH₄⁺)',chain(R`[\mathrm{OH^-}]=K_b\frac{[\mathrm{NH_3}]}{[\mathrm{NH_4^+}]}=1{,}8\times10^{-5}\cdot\frac{0{,}10}{1{,}0}=1{,}8\times10^{-6}\ \mathrm{M}\ (\mathrm{pH}\ 8{,}3)`,[R`Q_{\mathrm{Mg}}=0{,}010\cdot(1{,}8\times10^{-6})^2=3{,}2\times10^{-14}<K_{ps}`,'no precipita ✔'],[R`Q_{\mathrm{Fe}}=0{,}010\cdot(1{,}8\times10^{-6})^3=5{,}8\times10^{-20}\gg K_{ps}`,'el Fe(OH)₃ sí']))+A.jus('<p>Con NH₃ solo, [HO⁻] alcanza para superar el Kps del Mg(OH)₂. El NH₄⁺ agregado es ion común del equilibrio del NH₃: lo desplaza hacia los reactivos (Le Châtelier), baja [HO⁻] y Q del Mg(OH)₂ queda por debajo de su Kps, mientras el Fe(OH)₃ (Kps muchísimo menor) sigue precipitando.</p>'),
  'El NH₄Cl reprime la ionización del NH₃ (ion común), baja [OH⁻] y evita que el Mg²⁺ precipite')}
 <h3>Sulfuros: [S²⁻] se regula con [H⁺]</h3>
 <p>Del capítulo de polipróticos, con H₂S saturado (0,10 M):</p>
@@ -203,7 +203,7 @@ ${rxs(['CaCO3(s) + 2 H^+ -> Ca^2+ + CO2(g)↑ + H2O','se disuelve con efervescen
 ${example('¿Se disuelve el CaCO₃ en ácido? (con K global)','<p>Kps CaCO₃ = 4,5·10⁻⁹ · Ka₁ = 4,3·10⁻⁷ · Ka₂ = 5,6·10⁻¹¹ del H₂CO₃.</p>',
  step('1. Reacción global y su descomposición',rxs(['CaCO3(s) <=> Ca^2+ + CO3^2-','Kps'],['CO3^2- + H^+ <=> HCO3^-','1/Ka₂'],['HCO3^- + H^+ <=> H2CO3','1/Ka₁'],['CaCO3(s) + 2 H^+ <=> Ca^2+ + H2CO3','suma']))+
  step('2. K global',chain(R`K=\frac{K_{ps}}{K_{a1}K_{a2}}=\frac{4{,}5\times10^{-9}}{4{,}3\times10^{-7}\cdot5{,}6\times10^{-11}}=1{,}9\times10^{8}`))+
- step('3. Interpretar',`<p>K ≫ 1: el carbonato se disuelve en ácido. Además el H₂CO₃ se descompone en CO₂ + H₂O y el gas se escapa, lo que tira todavía más el equilibrio hacia la derecha.</p>`),
+ step('3. Interpretar',`<p>K ≫ 1: el carbonato se disuelve en ácido. Además el H₂CO₃ se descompone en CO₂ + H₂O y el gas se escapa, lo que tira todavía más el equilibrio hacia la derecha.</p>`)+A.jus('<p>El CO₃²⁻ es base conjugada de un ácido débil: el H₃O⁺ lo protona, baja su concentración libre, Q &lt; Kps y por Le Châtelier se disuelve más sólido. Sumar reacciones equivale a multiplicar sus constantes.</p>'),
  'K = 1,9·10⁸: el CaCO₃ se disuelve en ácidos (con efervescencia)')}
 ${example('Solubilidad del CaF₂ en una solución regulada a pH 2,00','<p>Kps CaF₂ = 3,9·10⁻¹¹ · Ka HF = 6,8·10⁻⁴. Comparar con la solubilidad en agua (2,1·10⁻⁴ M).</p>',
  step('1. Qué cambia respecto del agua',`<p>El F⁻ que se disuelve se reparte entre F⁻ y HF. Sólo el F⁻ libre entra en el Kps. Usamos la fracción del diagrama de especiación.</p>`)+
@@ -212,7 +212,7 @@ ${example('Solubilidad del CaF₂ en una solución regulada a pH 2,00','<p>Kps C
  step('4. Balance de masa y Kps',chain([R`[\mathrm{Ca^{2+}}]=s\qquad[\mathrm{F^-}]+[\mathrm{HF}]=2s\ \Rightarrow\ [\mathrm{F^-}]=2s\,\alpha_{\mathrm{F^-}}`,''],R`K_{ps}=s\,(2s\,\alpha)^2=4\alpha^2s^3`,R`s=\sqrt[3]{\frac{3{,}9\times10^{-11}}{4\cdot(0{,}064)^2}}=1{,}3\times10^{-3}\ \mathrm{M}`)),
  's = 1,3·10⁻³ M: unas 6 veces más soluble que en agua')}
 ${example('Mg(OH)₂ a pH 9,00 (regulado)','<p>¿Cuánto Mg²⁺ puede quedar en solución a pH 9 sin que precipite? Kps = 1,8·10⁻¹¹.</p>',
- step('Con el pH fijo, [OH⁻] es dato',chain(R`[\mathrm{OH^-}]=10^{-5}\ \mathrm{M}`,R`[\mathrm{Mg^{2+}}]_{\text{máx}}=\frac{1{,}8\times10^{-11}}{(10^{-5})^2}=0{,}18\ \mathrm{M}`)),
+ step('Con el pH fijo, [OH⁻] es dato',chain(R`[\mathrm{OH^-}]=10^{-5}\ \mathrm{M}`,R`[\mathrm{Mg^{2+}}]_{\text{máx}}=\frac{1{,}8\times10^{-11}}{(10^{-5})^2}=0{,}18\ \mathrm{M}`))+A.jus('<p>En un medio regulado el pH, y por lo tanto [HO⁻], se mantiene fijo aunque se consuma HO⁻: el máximo de Mg²⁺ sale directamente de Kps.</p>'),
  'Hasta 0,18 M de Mg²⁺ a pH 9: por eso en el buffer amoniacal el Mg no precipita')}
 ${idea('Regla cualitativa para el laboratorio','<ul><li>Se disuelven en ácidos: carbonatos, sulfitos, sulfuros (los más solubles), fosfatos, fluoruros, oxalatos, cromatos, hidróxidos.</li><li>No se disuelven en ácidos (sus aniones vienen de ácidos fuertes): cloruros, bromuros, yoduros, sulfatos.</li></ul>')}
 `);
@@ -235,5 +235,5 @@ ${cards([
 ])}
 `);
 
-  window.ET27_QAC5.units.push({id:'precipitacion',n:3,title:'Equilibrio heterogéneo o de precipitación',short:'Precipitación',lead:'Solubilidad, Kps y producto iónico, comparación de Kps, ion común, ¿precipita o no?, precipitación fraccionada, agentes precipitantes de la marcha de cationes y el control con el pH (solubilidad con equilibrios ácido-base). Con la Guía 4, la guía 2024 y evaluaciones.',sections:s});
+  window.ET27_QAC5.units.push({id:'precipitacion',n:4,title:'Equilibrio heterogéneo o de precipitación',short:'Precipitación',lead:'Solubilidad, Kps y producto iónico, comparación de Kps, ion común, ¿precipita o no?, precipitación fraccionada, agentes precipitantes de la marcha de cationes y el control con el pH (solubilidad con equilibrios ácido-base). Con la Guía 4, la guía 2024 y evaluaciones.',sections:s});
 })();

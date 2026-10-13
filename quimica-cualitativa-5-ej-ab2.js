@@ -76,7 +76,7 @@
    chain([R`K_{a1}=\frac{\alpha^2C}{1-\alpha}\Rightarrow C=\frac{0{,}0245\cdot0{,}82}{0{,}18^2}=0{,}621\ \mathrm{M}`,'Ostwald'],R`[\mathrm{H_3O^+}]=\alpha C=0{,}112\ \mathrm{M}\Rightarrow\mathrm{pH}=0{,}95`)+jus('<p>La segunda disociación (Ka₂ = 4,7·10⁻⁷) está reprimida por 0,11 M de H₃O⁺: despreciable.</p>'),
    'pH = 0,95','GUÍA 3 · EJERCITACIÓN EXTRA');
 
-  A.addEx('acido-base',{group:'g3p',label:'Guía 3 · polipróticos y problemas desafío'},gp);
+  A.addEx('acido-base-2',{group:'g3p',label:'Guía 3 · polipróticos y problemas desafío'},gp);
 
   // =====================================================================
   const gs=[];const es=(n,title,statement,solution,answer,tag)=>gs.push({id:`g3s-${n}`,tag:tag||`GUÍA 3 · SALES · ${n}`,title,statement,solution,answer});
@@ -92,25 +92,25 @@
    chain(R`K_b=5{,}56\times10^{-10}`,R`0{,}2\ \mathrm{M}:\ [\mathrm{HO^-}]=\sqrt{K_b\cdot0{,}2}=1{,}05\times10^{-5}\Rightarrow\mathrm{pH}=9{,}02`,R`0{,}02\ \mathrm{M}:\ [\mathrm{HO^-}]=3{,}33\times10^{-6}\Rightarrow\mathrm{pH}=8{,}52`)+jus('<p>Para una base débil [HO⁻] ∝ √C: diluir 10 veces baja el pH sólo ½·log 10 = 0,5. En las dos el agua sigue siendo despreciable (HO⁻ ≥ 3·10⁻⁶ ≫ 10⁻⁷).</p>'),
    'ΔpH = −0,50');
   es(4,'KNO₂ 0,2 M',st('Calcule [HO⁻] y pH de KNO₂ 0,2 M. Ka (HNO₂) = 4,5·10⁻⁴.'),
-   chain(R`K_b=\frac{10^{-14}}{4{,}5\times10^{-4}}=2{,}2\times10^{-11}`,R`[\mathrm{HO^-}]=\sqrt{2{,}2\times10^{-11}\cdot0{,}2}=2{,}1\times10^{-6}\ \mathrm{M}\Rightarrow\mathrm{pH}=8{,}32`)+ver('<p>x ≪ 0,2 ✔ · el agua aporta ≈ 5·10⁻⁹ M de HO⁻ (Kw/[HO⁻]): despreciable ✔</p>'),
+   chain(R`K_b=\frac{10^{-14}}{4{,}5\times10^{-4}}=2{,}2\times10^{-11}`,R`[\mathrm{HO^-}]=\sqrt{2{,}2\times10^{-11}\cdot0{,}2}=2{,}1\times10^{-6}\ \mathrm{M}\Rightarrow\mathrm{pH}=8{,}32`)+ver('<p>x ≪ 0,2 ✔ · el agua aporta ≈ 5·10⁻⁹ M de HO⁻ (Kw/[HO⁻]): despreciable ✔</p>')+jus('<p>K⁺ viene del KOH (fuerte) y queda inalterado; NO₂⁻ es base conjugada de un ácido débil y genera HO⁻: solución básica. Es razonable suponer [H₃O⁺] baja respecto de [HNO₂] en el BC (medio básico) y [HNO₂] baja respecto de C en el BM (Kb muy chica).</p>'),
    '[HO⁻] = 2,1·10⁻⁶ M · pH 8,32');
   es(5,'Porcentaje de hidrólisis de NaCN 0,1 M',st('Calcule el porcentaje de hidrólisis de NaCN 0,1 M. Ka = 7,2·10⁻¹⁰.'),
-   chain(R`[\mathrm{HO^-}]=[\mathrm{HCN}]=\sqrt{1{,}39\times10^{-5}\cdot0{,}1}=1{,}18\times10^{-3}`,R`\%\,h=\frac{1{,}18\times10^{-3}}{0{,}1}\cdot100=1{,}18\,\%`),
+   chain(R`[\mathrm{HO^-}]=[\mathrm{HCN}]=\sqrt{1{,}39\times10^{-5}\cdot0{,}1}=1{,}18\times10^{-3}`,R`\%\,h=\frac{1{,}18\times10^{-3}}{0{,}1}\cdot100=1{,}18\,\%`)+jus('<p>Na⁺ inalterado (de NaOH, fuerte); el CN⁻ hidroliza. Es razonable suponer [HCN] baja respecto de C (C/Kb &gt; 100) y [H₃O⁺] baja respecto de [HCN] (medio básico).</p>'),
    '1,18 %');
   es(6,'NaAc de pH 9,3',st('Calcule la concentración de una solución de acetato de sodio de pH 9,3.'),
-   chain(R`[\mathrm{HO^-}]=10^{-4{,}7}=2{,}0\times10^{-5}=[\mathrm{HAc}]`,R`C=[\mathrm{Ac^-}]+[\mathrm{HAc}]=\frac{(2{,}0\times10^{-5})^2}{5{,}56\times10^{-10}}+2{,}0\times10^{-5}=0{,}717\ \mathrm{M}`),
+   chain(R`[\mathrm{HO^-}]=10^{-4{,}7}=2{,}0\times10^{-5}=[\mathrm{HAc}]`,R`C=[\mathrm{Ac^-}]+[\mathrm{HAc}]=\frac{(2{,}0\times10^{-5})^2}{5{,}56\times10^{-10}}+2{,}0\times10^{-5}=0{,}717\ \mathrm{M}`)+jus('<p>Del pH se conoce [HO⁻]; en el BC, [HAc] ≈ [HO⁻] porque es razonable suponer [H₃O⁺] baja respecto de [HAc] (medio básico). La concentración pedida sale del BM con Kb.</p>'),
    'C ≈ 0,72 M');
   es(7,'Ka de HA a partir del pH de KA',st('KA 0,15 M tiene pH 8,5. ¿Cuál es Ka de HA?'),
-   chain(R`[\mathrm{HO^-}]=[\mathrm{HA}]=10^{-5{,}5}=3{,}16\times10^{-6}`,R`K_b=\frac{(3{,}16\times10^{-6})^2}{0{,}15}=6{,}7\times10^{-11}\Rightarrow K_a=\frac{K_w}{K_b}=1{,}5\times10^{-4}`),
+   chain(R`[\mathrm{HO^-}]=[\mathrm{HA}]=10^{-5{,}5}=3{,}16\times10^{-6}`,R`K_b=\frac{(3{,}16\times10^{-6})^2}{0{,}15}=6{,}7\times10^{-11}\Rightarrow K_a=\frac{K_w}{K_b}=1{,}5\times10^{-4}`)+jus('<p>El K⁺ viene de una base fuerte, así que la basicidad viene sólo del A⁻: [HA] = [HO⁻] (despreciando [H₃O⁺] respecto de [HA], medio básico). Con Kb y Ka·Kb = Kw se obtiene Ka.</p>'),
    'Ka = 1,5·10⁻⁴');
   es(8,'Kb del amoníaco desde el % de hidrólisis',st('NH₄Cl 10⁻³ M está hidrolizado un 0,074 %. ¿Kb del NH₃?'),
-   chain(R`[\mathrm{H_3O^+}]=[\mathrm{NH_3}]=7{,}4\times10^{-7}`,R`K_a=\frac{(7{,}4\times10^{-7})^2}{10^{-3}}=5{,}5\times10^{-10}\Rightarrow K_b=1{,}8\times10^{-5}`)+note('Detalle fino','<p>7,4·10⁻⁷ no es ≫ 10⁻⁷: el agua aporta algo de H₃O⁺. Para obtener Ka se usa el NH₃ formado (dato), que sólo viene de la hidrólisis, así que la cuenta es correcta.</p>'),
+   chain(R`[\mathrm{H_3O^+}]=[\mathrm{NH_3}]=7{,}4\times10^{-7}`,R`K_a=\frac{(7{,}4\times10^{-7})^2}{10^{-3}}=5{,}5\times10^{-10}\Rightarrow K_b=1{,}8\times10^{-5}`)+note('Detalle fino','<p>7,4·10⁻⁷ no es ≫ 10⁻⁷: el agua aporta algo de H₃O⁺. Para obtener Ka se usa el NH₃ formado (dato), que sólo viene de la hidrólisis, así que la cuenta es correcta.</p>')+jus('<p>El porcentaje de hidrólisis es la fracción del NH₄⁺ que reaccionó con el agua: [NH₃] = 0,074 %·C. Con Ka del NH₄⁺ y Ka·Kb = Kw se obtiene Kb.</p>'),
    'Kb = 1,8·10⁻⁵');
   es(9,'Cloruro de metilamonio 2,0 M',st('Calcule el pH de CH₃NH₃Cl 2,0 M. pKb (metilamina) = 3,36.'),
    chain(R`K_a=10^{-(14-3{,}36)}=2{,}29\times10^{-11}`,R`[\mathrm{H_3O^+}]=\sqrt{2{,}29\times10^{-11}\cdot2{,}0}=6{,}8\times10^{-6}\Rightarrow\mathrm{pH}=5{,}17`)+jus('<p>Cl⁻ inalterado (de HCl fuerte); CH₃NH₃⁺ ácido conjugado de una base débil → ácida.</p>'),
    'pH = 5,17');
   es(10,'Masa de NH₄NO₃ para pH 5,4',st('¿Cuántos gramos de NH₄NO₃ hay que agregar a 1 L de agua para tener pH 5,4?'),
-   chain(R`[\mathrm{H_3O^+}]=[\mathrm{NH_3}]=3{,}98\times10^{-6}`,R`C=\frac{(3{,}98\times10^{-6})^2}{5{,}56\times10^{-10}}+3{,}98\times10^{-6}=0{,}0285\ \mathrm{M}\to2{,}28\ \mathrm{g}`),
+   chain(R`[\mathrm{H_3O^+}]=[\mathrm{NH_3}]=3{,}98\times10^{-6}`,R`C=\frac{(3{,}98\times10^{-6})^2}{5{,}56\times10^{-10}}+3{,}98\times10^{-6}=0{,}0285\ \mathrm{M}\to2{,}28\ \mathrm{g}`)+jus('<p>El NO₃⁻ no tiene comportamiento ácido-base; el NH₄⁺ fija la acidez. Del BC, [NH₃] ≈ [H₃O⁺] (despreciando [HO⁻] respecto de [NH₃], medio ácido), y del BM y Ka se obtiene C.</p>'),
    '≈ 2,3 g');
   const benzoato=desc(rxs(['NH4C7H5O2 -> NH4^+ + C7H5O2^-','total'],['NH4^+ + H2O <=> NH3 + H3O^+','Ka = Kw/Kb = 5,6·10⁻¹⁰'],['C7H5O2^- + H2O <=> C7H5O2H + HO^-','Kb = Kw/Ka = 1,6·10⁻¹⁰'])+W)+
    jus('<p>Los dos iones vienen de electrolitos débiles: los dos reaccionan con el agua. Como Ka(NH₄⁺) &gt; Kb(benzoato), la solución será levemente ácida. Si los dos se hidrolizan poco y en igual medida, el H₃O⁺ de uno se combina con el HO⁻ del otro y el pH no depende de C:</p>')+
@@ -130,5 +130,5 @@
    'A pH 7,4: HFol⁻ 89 % y Fol²⁻ 11 %; en el estómago el folato es despreciable','GUÍA 3 · DESAFÍO ÁCIDO FÓLICO');
 
   window.ET27_QAC5.shared=Object.assign(window.ET27_QAC5.shared||{},{kcn,benzoato});
-  A.addEx('acido-base',{group:'g3s',label:'Guía 3 · sales (hidrólisis) y desafío del ácido fólico'},gs);
+  A.addEx('acido-base-2',{group:'g3s',label:'Guía 3 · sales (hidrólisis) y desafío del ácido fólico'},gs);
 })();

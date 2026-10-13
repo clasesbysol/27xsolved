@@ -166,7 +166,7 @@ ${idea('Esto se usa en la marcha','<p>Con NH₃ se disuelve el AgCl del grupo I 
 ${example('¿Cuánto amoníaco hace falta para disolver un precipitado?','<p>¿Qué concentración total de NH₃ se necesita para disolver 0,010 mol de AgCl en 1,0 L?</p>',
  step('1. Si se disuelve todo',chain(R`[\mathrm{Ag(NH_3)_2^+}]=[\mathrm{Cl^-}]=0{,}010\ \mathrm{M}`))+
  step('2. NH₃ libre necesario',chain(R`[\mathrm{NH_3}]=\frac{0{,}010}{\sqrt{3{,}06\times10^{-3}}}=0{,}18\ \mathrm{M}`))+
- step('3. Total',chain([R`C_{\mathrm{NH_3}}=0{,}18+2\cdot0{,}010=0{,}20\ \mathrm{M}`,'libre + el que está en el complejo'])),
+ step('3. Total',chain([R`C_{\mathrm{NH_3}}=0{,}18+2\cdot0{,}010=0{,}20\ \mathrm{M}`,'libre + el que está en el complejo']))+A.jus('<p>Es razonable suponer que toda la plata disuelta está como complejo (Kf grande y NH₃ en exceso). El NH₃ total es el libre que pide la K global más el que queda unido al complejo (dos por cada plata).</p>'),
  'Hace falta NH₃ 0,20 M en total (el mismo patrón que en la Unidad 3)')}
 `);
 
@@ -184,7 +184,7 @@ ${chain([R`K=\frac{K_i}{K_a^2}=\frac{5{,}9\times10^{-8}}{(5{,}6\times10^{-10})^2
 ${example('La prueba confirmatoria de la plata','<p>Al acidificar con HNO₃ la solución amoniacal del grupo I (que tiene [Ag(NH₃)₂]⁺ y Cl⁻), reaparece un precipitado blanco. Justificar con la constante global.</p>',
  step('1. Reacción global',rx('[Ag(NH3)2]^+ + Cl^- + 2 H^+ -> AgCl(s)↓ + 2 NH4^+'))+
  step('2. Descomposición',rxs(['[Ag(NH3)2]^+ + 2 H^+ <=> Ag^+ + 2 NH4^+','1,9·10¹¹'],['Ag^+ + Cl^- <=> AgCl(s)','1/Kps = 5,6·10⁹']))+
- step('3. K global',chain(R`K=\frac{1{,}9\times10^{11}}{1{,}8\times10^{-10}}=1{,}1\times10^{21}`)),
+ step('3. K global',chain(R`K=\frac{1{,}9\times10^{11}}{1{,}8\times10^{-10}}=1{,}1\times10^{21}`))+A.jus('<p>El H₃O⁺ protona el NH₃ libre (NH₄⁺ ya no tiene par libre para unirse a la plata): por Le Châtelier el complejo se disocia, aumenta la Ag⁺ libre y con el Cl⁻ presente Q supera el Kps del AgCl. La K global (producto de constantes) es enorme.</p>'),
  'K ≈ 10²¹: la reprecipitación del AgCl es prácticamente completa — confirma la plata')}
 ${idea('Anfóteros: el otro lado de la misma idea','<p>Al(OH)₃, Zn(OH)₂, Pb(OH)₂ y Sn(OH)₂ se disuelven en exceso de OH⁻ porque forman hidroxocomplejos ('+f('[Al(OH)4]^-')+', '+f('[Zn(OH)4]^2-')+'). Con ácido se redisuelven como cationes. El Fe(OH)₃ no forma ese complejo: así se separa Fe de Al y Zn con NaOH en exceso.</p>')}
 `);
@@ -205,5 +205,5 @@ ${cards([
 ])}
 `);
 
-  window.ET27_QAC5.units.push({id:'complejos',n:5,title:'Equilibrio de complejación',short:'Complejos',lead:'Ion central y ligandos, constantes de formación, inestabilidad y disociación, y el patrón que se repite en todos los ejercicios: despreciar el catión libre, reemplazar en K y verificar. Ligando limitante y equilibrios combinados con precipitación y ácido-base, con todas las guías resueltas.',sections:s});
+  window.ET27_QAC5.units.push({id:'complejos',n:6,title:'Equilibrio de complejación',short:'Complejos',lead:'Ion central y ligandos, constantes de formación, inestabilidad y disociación, y el patrón que se repite en todos los ejercicios: despreciar el catión libre, reemplazar en K y verificar. Ligando limitante y equilibrios combinados con precipitación y ácido-base, con todas las guías resueltas.',sections:s});
 })();
