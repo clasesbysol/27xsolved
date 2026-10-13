@@ -26,7 +26,7 @@ ${table(['Cuándo','Qué se mira','Criterio'],[
  ['<b>Antes</b> de calcular (para justificar el desprecio)','cociente entre la concentración inicial y la constante',m(R`\frac{C_{\text{inicial}}}{K}>100\ \Rightarrow`)+' se disocia poco: x se desprecia frente a C'],
  ['<b>Después</b> de calcular (verificación)','lo despreciado frente a aquello de lo que se restó o sumó',m(R`\frac{x}{C}\cdot100\le5\,\%`)+' ✔ (si no, cuadrática o planteo completo)']
 ])}
-${note('Ojo con el número','<p>Algunos docentes verifican pidiendo que lo despreciado sea 100 veces menor (1 %) y otros aceptan 5 %. Escribí siempre la verificación con el número que usa tu profe; lo que no puede faltar es <b>hacerla</b>.</p>')}
+${punch('Criterio de la cátedra: para JUSTIFICAR el desprecio, C/K > 100. Para VERIFICARLO al final, lo despreciado ≤ 5 % de aquello frente a lo que se despreció.')}
 ${warn('El error que más puntos cuesta','<p>Usar una fórmula de memoria (por ejemplo '+m(R`[\mathrm{H^+}]=\sqrt{K_aC}`)+') <b>sin decir qué se supuso, por qué, ni verificarlo</b>. En todos los ejemplos de esta materia vas a ver las cajas <b>Suponemos</b> y <b>Verificamos</b>: así se escribe en el parcial.</p>')}
 ${deep('Balance de masa y balance de carga, con calma',`
 <p><b>BM.</b> La materia no se crea ni se destruye: si disolvemos 0,1 mol/L de acético, todo ese acético está en alguna forma: ${m(R`C_a=[\mathrm{HAc}]+[\mathrm{Ac^-}]`)}.</p>
