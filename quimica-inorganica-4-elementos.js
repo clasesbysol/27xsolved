@@ -1,5 +1,5 @@
 // 27xSOLved · Química Inorgánica 4.º · FICHAS DE ELEMENTOS
-// Cada elemento que aparece en los TP 4 y 5: datos, propiedades físicas y químicas, obtención,
+// Cada elemento que aparece en los TP 4, 5 y 6: datos, propiedades físicas y químicas, obtención,
 // compuestos importantes y lo que se vio en el laboratorio.
 (function(){
   'use strict';
@@ -207,29 +207,37 @@ ${rxs(['N2(g) + 3 H2(g) <=[Fe, 450 °C, 200 atm]=> 2 NH3(g)','Haber'],['N2(g) + 
   // =====================================================================
   // ELEMENTOS DE REPARTO
   // =====================================================================
-  ficha({sym:'S',name:'Azufre',Z:16,M:'32,06',fam:'nm',gp:'16 · 3',cfg:'[Ne] 3s² 3p⁴',en:'2,58',ox:'−2 · +4 · +6',nat:'volcanes, yacimientos, sulfuros, sulfatos',kicker:'DE REPARTO',
+  ficha({sym:'S',name:'Azufre',Z:16,M:'32,06',fam:'nm',gp:'16 · 3',cfg:'[Ne] 3s² 3p⁴',en:'2,58',ox:'−2 · +4 · +6',nat:'volcanes, yacimientos, sulfuros, sulfatos',kicker:'TP 6',
    punch:'Sólido amarillo que arde con llama azul y da un óxido ácido.',
-   general:`<p>No metal del grupo del oxígeno. Forma anillos S₈. Su compuesto estrella es el <b>ácido sulfúrico</b>, el reactivo industrial más fabricado del mundo y presente en casi todos los ensayos.</p>`,
-   fis:[['Aspecto','sólido amarillo, quebradizo'],['Fusión','115 °C'],['Solubilidad','insoluble en agua']],
-   quim:rxs(['S(s) + O2(g) -> SO2(g)','llama azul'],['SO2(g) + H2O(l) <=> H2SO3(ac)','óxido ácido'],['S(s) + 6 HNO3(c) -> H2SO4(ac) + 6 NO2(g) + 2 H2O(l)','lo oxida el HNO₃']),
+   general:`<p>No metal del grupo del oxígeno (calcógeno). Forma anillos S₈ y, a diferencia del oxígeno, puede encadenarse con enlaces simples S–S. Tiene alótropos: <b>rómbico</b>, <b>monoclínico</b> y <b>plástico</b>. Su compuesto estrella es el <b>ácido sulfúrico</b>, el reactivo industrial más fabricado del mundo.</p>`,
+   fis:[['Aspecto','sólido amarillo, quebradizo'],['Fusión','115 °C'],['Solubilidad','insoluble en agua; soluble en CS₂']],
+   quim:rxs(['S(s) + O2(g) -> SO2(g)','llama azul'],['SO2(g) + H2O(l) <=> HSO3^-(ac) + H^+(ac)','óxido ácido: agua sulfurosa'],['SO2 + 2 H2S -> 3 S + 2 H2O','comproporción'],['S(s) + 6 HNO3(c) -> H2SO4(ac) + 6 NO2(g) + 2 H2O(l)','lo oxida el HNO₃']),
    comp:[['H₂SO₄','ácido fuerte; concentrado, deshidratante y poco volátil'],['SO₂','gas sofocante, óxido ácido'],['H₂S','olor a huevo podrido'],['Sulfatos','CuSO₄, FeSO₄, BaSO₄']],
-   labs:[lab('tp4','qi-tp4-c1-oxigeno','Azufre ardiendo en O₂ (TP 4)'),lab('tp5','qi-tp5-c1-hno3','H₂SO₄ concentrado para obtener HNO₃ (TP 5)')]});
+   labs:[lab('tp4','qi-tp4-c1-oxigeno','Azufre ardiendo en O₂ (TP 4)'),lab('tp5','qi-tp5-c1-hno3','H₂SO₄ concentrado para obtener HNO₃ (TP 5)'),lab('tp6','qi-tp6-c1-so2','Obtención del SO₂ y sus cinco tubos (TP 6)'),lab('tp6','qi-tp6-c2-h2s','H₂S reductor y precipitación de sulfuros (TP 6)'),lab('tp6','qi-tp6-c2-h2so4','H₂SO₄ concentrado vs. diluido y deshidratante (TP 6)')]});
 
-  ficha({sym:'Cl',name:'Cloro',Z:17,M:'35,45',fam:'nm',gp:'17 · 3',cfg:'[Ne] 3s² 3p⁵',en:'3,16',ox:'−1 (y +1 a +7)',nat:'NaCl del mar y salinas',kicker:'DE REPARTO',
+  ficha({sym:'Cl',name:'Cloro',Z:17,M:'35,45',fam:'nm',gp:'17 · 3',cfg:'[Ne] 3s² 3p⁵',en:'3,16',ox:'−1 (y +1 a +7)',nat:'NaCl del mar y salinas',kicker:'TP 6',
    punch:'En los TP casi siempre aparece como Cl⁻: en el HCl, en los cloruros y como ligando.',
    general:`<p>Halógeno: le falta un electrón para completar su capa, así que tiende a formar Cl⁻. El Cl₂ es un gas amarillo verdoso, tóxico, usado para potabilizar el agua (lavandina = hipoclorito).</p>`,
    fis:[['Cl₂','gas amarillo verdoso, olor irritante'],['Ebullición','−34 °C'],['HCl','gas muy soluble; su solución es el ácido clorhídrico']],
-   quim:rxs(['Ag^+(ac) + Cl^-(ac) -> AgCl(s)↓','precipitado blanco'],['Cu^2+(ac) + 4 Cl^-(ac) -> [CuCl4]^2-(ac)','Cl⁻ como ligando'],['NH3(g) + HCl(g) -> NH4Cl(s)','humo blanco']),
+   quim:rxs(['NaClO + 2 HCl -> Cl2 + NaCl + H2O','obtención: comproporción'],['Cl2 + 2 Br^- -> 2 Cl^- + Br2','oxida al bromuro y al ioduro'],['Ag^+(ac) + Cl^-(ac) -> AgCl(s)↓','precipitado blanco'],['Cu^2+(ac) + 4 Cl^-(ac) -> [CuCl4]^2-(ac)','Cl⁻ como ligando'],['NH3(g) + HCl(g) -> NH4Cl(s)','humo blanco']),
    comp:[['HCl','ácido fuerte no oxidante: libera H₂ con metales activos'],['NaCl, KCl, LiCl, SrCl₂','sales de los ensayos a la llama'],['NH₄Cl','fuente de NH₃ y de N₂'],['AgCl','insoluble, blanco']],
-   labs:[lab('tp4','qi-tp4-c1-hidrogeno','HCl con Zn (TP 4)'),lab('tp4','qi-tp4-c2-oxigeno-agua','CuSO₄ en HCl concentrado (TP 4)'),lab('tp5','qi-tp5-c1-nh3','Humo blanco de NH₄Cl (TP 5)')]});
+   labs:[lab('tp4','qi-tp4-c1-hidrogeno','HCl con Zn (TP 4)'),lab('tp4','qi-tp4-c2-oxigeno-agua','CuSO₄ en HCl concentrado (TP 4)'),lab('tp5','qi-tp5-c1-nh3','Humo blanco de NH₄Cl (TP 5)'),lab('tp6','qi-tp6-c1-hcl','Obtención del HCl y reconocimiento de cloruros (TP 6)'),lab('tp6','qi-tp6-c2-cloro','Obtención del Cl₂ con lavandina y HCl (TP 6)'),lab('tp6','qi-tp6-c2-hcl','HCl reductor con KMnO₄ y oxidante con Fe (TP 6)')]});
 
-  ficha({sym:'I',name:'Iodo',Z:53,M:'126,9',fam:'nm',gp:'17 · 5',cfg:'[Kr] 4d¹⁰ 5s² 5p⁵',en:'2,66',ox:'−1 · 0 (y +5)',nat:'algas, salitres, sal yodada',kicker:'DE REPARTO',
+  ficha({sym:'I',name:'Iodo',Z:53,M:'126,9',fam:'nm',gp:'17 · 5',cfg:'[Kr] 4d¹⁰ 5s² 5p⁵',en:'2,66',ox:'−1 · 0 (y +5)',nat:'algas, salitres, sal yodada',kicker:'TP 6',
    punch:'El I⁻ es el reductor “testigo”: cuando se oxida aparece el I₂, pardo en agua y violeta en cloroformo.',
    general:`<p>Halógeno sólido: forma cristales violeta-negros que subliman con vapores violetas. Es esencial para la tiroides (por eso la sal es yodada). En los TP se usa el KI como reductor para demostrar que algo es <b>oxidante</b>.</p>`,
-   fis:[['I₂','sólido violeta-negro; sublima'],['En agua','poco soluble: pardo amarillento'],['En CHCl₃ o CCl₄','muy soluble: violeta']],
+   fis:[['I₂','sólido violeta-negro; sublima'],['En agua','poco soluble: pardo amarillento'],['En CHCl₃ o CCl₄','muy soluble: violeta'],['En KI','muy soluble (I₃⁻): pardo rojizo'],['Con almidón','azul intenso']],
    quim:rxs(['2 I^- -> I2 + 2 e^-','reductor'],['4 I^- + O2 + 4 H^+ -> 2 I2 + 2 H2O','con O₂'],['H2O2 + 2 I^- + 2 H^+ -> I2 + 2 H2O','con agua oxigenada'],['Pb^2+ + 2 I^- -> PbI2(s)↓','amarillo']),
    comp:[['KI','ioduro de potasio'],['I₂','yodo'],['PbI₂','precipitado amarillo']],
-   labs:[lab('tp4','qi-tp4-c1-oxigeno','KI + O₂ y extracción con cloroformo (TP 4)'),lab('tp4','qi-tp4-c2-oxigeno-agua','KI + H₂O₂ (TP 4)'),lab('tp5','qi-tp5-c2-adsorcion','KI para detectar Pb²⁺ (TP 5)')]});
+   labs:[lab('tp4','qi-tp4-c1-oxigeno','KI + O₂ y extracción con cloroformo (TP 4)'),lab('tp4','qi-tp4-c2-oxigeno-agua','KI + H₂O₂ (TP 4)'),lab('tp5','qi-tp5-c2-adsorcion','KI para detectar Pb²⁺ (TP 5)'),lab('tp6','qi-tp6-c1-iodo','Obtención por sublimación, solubilidad, almidón y tiosulfato (TP 6)')]});
+
+  ficha({sym:'Br',name:'Bromo',Z:35,M:'79,90',fam:'nm',gp:'17 · 4',cfg:'[Ar] 3d¹⁰ 4s² 4p⁵',en:'2,96',ox:'−1 · 0 (y +1, +5)',nat:'bromuros del agua de mar y salmueras',kicker:'TP 6',
+   punch:'El único no metal líquido: rojo pardo, con vapores naranjas. Más oxidante que el iodo, menos que el cloro.',
+   general:`<p>Halógeno del período 4. Como Br₂ es un líquido denso y <b>fumante</b> (se evapora fácil), tóxico y corrosivo. En agua da soluciones <b>amarillo-naranjas</b> y en cloroformo, naranja-rojizas.</p>`,
+   fis:[['Estado (25 °C)','líquido rojo pardo'],['Ebullición','59 °C'],['En agua','poco soluble: amarillo-naranja'],['En CHCl₃','muy soluble: naranja-rojizo']],
+   quim:rxs(['Cl2 + 2 Br^- -> 2 Cl^- + Br2','se obtiene oxidando bromuros con cloro'],['Br2 + 2 I^- -> 2 Br^- + I2','oxida al ioduro'],['3 Br2 + 6 OH^- -> 5 Br^- + BrO3^- + 3 H2O','dismuta en medio básico'],['5 Br^- + BrO3^- + 6 H^+ -> 3 Br2 + 3 H2O','comproporciona en medio ácido']),
+   comp:[['KBr, NaBr','bromuros solubles'],['AgBr','precipitado amarillo pálido, sensible a la luz (fotografía)'],['NaBrO, NaBrO₃','hipobromito y bromato']],
+   labs:[lab('tp6','qi-tp6-c2-cloro','Cl₂ + KBr, extracción con cloroformo y NaOH/HCl (TP 6)')]});
 
   ficha({sym:'Mn',name:'Manganeso',Z:25,M:'54,94',fam:'tr',gp:'7 · 4',cfg:'[Ar] 3d⁵ 4s²',en:'1,55',ox:'+2 · +4 · +6 · +7',nat:'pirolusita (MnO₂)',kicker:'DE REPARTO',
    punch:'El camaleón: su color dice en qué estado de oxidación está.',
@@ -279,10 +287,10 @@ ${rxs(['N2(g) + 3 H2(g) <=[Fe, 450 °C, 200 atm]=> 2 NH3(g)','Haber'],['N2(g) + 
   // =====================================================================
   // MAPA INICIAL Y REPASO
   // =====================================================================
-  const groups=[['Protagonistas',['H','O','C','N']],['Metales alcalinos',['Li','Na','K']],['Alcalinotérreos',['Mg','Ca','Sr','Ba']],['Bloque p',['B','Al','Si','Sn','Pb']],['De reparto (reactivos de los TP)',['S','Cl','I','Mn','Fe','Ni','Cu','Zn','Ag']]];
+  const groups=[['Protagonistas',['H','O','C','N']],['Metales alcalinos',['Li','Na','K']],['Alcalinotérreos',['Mg','Ca','Sr','Ba']],['Bloque p',['B','Al','Si','Sn','Pb']],['Calcógenos y halógenos (TP 6)',['S','Cl','Br','I']],['De reparto (reactivos de los TP)',['Mn','Fe','Ni','Cu','Zn','Ag']]];
   const bySym=Object.fromEntries(sections.map(s=>[s.el.sym,s]));
   const chip=sym=>{const s=bySym[sym],e=s.el;return `<button type="button" class="qiElChip" style="--fam:${FAM[e.fam][1]}" data-scroll="${s.key}"><small>${e.Z}</small><b>${e.sym}</b><span>${e.name}</span></button>`};
-  const mapa=`<p>Todos los elementos que aparecen en los TP 4 y 5, cada uno con su ficha: datos de la tabla, propiedades físicas y químicas, cómo se obtiene, sus compuestos importantes y <b>qué hicimos con él en el laboratorio</b>. Tocá un casillero para ir a su ficha.</p>
+  const mapa=`<p>Todos los elementos que aparecen en los TP 4, 5 y 6, cada uno con su ficha: datos de la tabla, propiedades físicas y químicas, cómo se obtiene, sus compuestos importantes y <b>qué hicimos con él en el laboratorio</b>. Tocá un casillero para ir a su ficha.</p>
 ${groups.map(([t,list])=>`<h3>${t}</h3><div class="qiElGrid">${list.map(chip).join('')}</div>`).join('')}
 <div class="qiLegend">${Object.values(FAM).map(([n,c])=>`<span><i style="background:${c}"></i>${n}</span>`).join('')}</div>
 ${idea('Cómo usar las fichas en clase','<p>Para cada elemento, el recorrido es siempre el mismo: <b>dónde está en la tabla → cómo es → qué hace → cómo se obtiene → qué compuestos importan → qué vimos en el TP</b>. Al final hay un repaso para jugar a “¿quién es quién?”.</p>')}`;
@@ -304,8 +312,12 @@ ${idea('Cómo usar las fichas en clase','<p>Para cada elemento, el recorrido es 
    ['Adiviná','Prefiere +2 por el par inerte; su ioduro es amarillo.','Plomo.'],
    ['Adiviná','Su catión forma un complejo azul intenso con NH₃ y no reacciona con HCl.','Cobre.'],
    ['Adiviná','Violeta como +7, pardo como +4, casi incoloro como +2.','Manganeso.'],
-   ['Adiviná','Con KSCN da rojo sangre.','Hierro (como Fe³⁺).']
+   ['Adiviná','Con KSCN da rojo sangre.','Hierro (como Fe³⁺).'],
+   ['Adiviná','Sólido amarillo; su dióxido decolora el permanganato.','Azufre.'],
+   ['Adiviná','Gas amarillo verdoso que sale de mezclar lavandina con ácido.','Cloro.'],
+   ['Adiviná','El único no metal líquido; naranja en cloroformo.','Bromo.'],
+   ['Adiviná','Sublima con vapores violetas y se pone azul con almidón.','Iodo.']
   ])});
 
-  window.ET27_QI4.units.push({id:'elementos',part:'elementos',n:1,title:'Fichas de elementos',short:'Fichas de elementos',lead:'Cada elemento de los TP 4 y 5 en una ficha: datos de tabla, propiedades físicas y químicas, obtención, compuestos importantes y lo que aprendimos con él en el laboratorio.',sections});
+  window.ET27_QI4.units.push({id:'elementos',part:'elementos',n:1,title:'Fichas de elementos',short:'Fichas de elementos',lead:'Cada elemento de los TP 4, 5 y 6 en una ficha: datos de tabla, propiedades físicas y químicas, obtención, compuestos importantes y lo que aprendimos con él en el laboratorio.',sections});
 })();
