@@ -178,6 +178,268 @@
   </svg>`;
 
   // =====================================================================
+  // MÉTODO DEL ION-ELECTRÓN PASO A PASO (sección desplegable)
+  // Cada hemirreacción se escribe una sola vez, ya balanceada; de ella se derivan los pasos
+  // (esqueleto → otros átomos → O → H → carga), la igualación de electrones, la suma con lo que
+  // se cancela y el control de átomos y cargas. Así los pasos no pueden contradecirse entre sí.
+  // =====================================================================
+  const ieErr=window.ET27_QI4.ieErrors||(window.ET27_QI4.ieErrors=[]);
+  const AUX=['H2O','H^+','OH^-','e^-'];
+  const STATE=/^(s|l|g|ac|am|c|d|v|conc\.?|dil\.?|\d+(?:,\d+)?\s*%)$/;
+  const ARW=/\s*(<=>|->|<?=\[[^\]]*\]=>)\s*/;
+  const term=raw=>{let s=String(raw).trim().replace(/[↓↑]$/,'').trim(),coef=1;const m=s.match(/^(\d+)\s+(.+)$/);if(m){coef=+m[1];s=m[2]}
+    const st=s.match(/^(.*\S)\s*\(([^()]*)\)$/);if(st&&STATE.test(st[2].trim()))s=st[1];return {coef,f:s}};
+  const sideP=t=>t&&t.trim()?t.split(/\s\+\s/).map(term):[];
+  const parse=t=>{const p=String(t).split(ARW);return {L:sideP(p[0]),R:sideP(p[2]),arrow:p[1]||'->'}};
+  const group=s=>{const stack=[{}];let i=0;
+    while(i<s.length){const ch=s[i];
+      if(ch==='('||ch==='['){stack.push({});i++}
+      else if(ch===')'||ch===']'){i++;let n='';while(/\d/.test(s[i]||''))n+=s[i++];const g=stack.pop(),top=stack[stack.length-1];for(const e in g)top[e]=(top[e]||0)+g[e]*(n?+n:1)}
+      else{const m=s.slice(i).match(/^([A-Z][a-z]?)(\d*)/);if(!m)throw new Error('Fórmula no reconocida: '+s);const top=stack[stack.length-1];top[m[1]]=(top[m[1]]||0)+(m[2]?+m[2]:1);i+=m[0].length}}
+    return stack[0]};
+  const comp=f=>{let s=f,q=0;const c=s.match(/^(.*)\^(\d*)([+\-−])$/);if(c){s=c[1];q=(c[2]?+c[2]:1)*(c[3]==='+'?1:-1)}
+    const atoms={};if(s!=='e')s.split('·').forEach(p=>{let k=1;const m=p.match(/^(\d+)(?=[A-Z(\[])/);if(m){k=+m[1];p=p.slice(m[1].length)}const g=group(p);for(const e in g)atoms[e]=(atoms[e]||0)+g[e]*k});
+    return {atoms,q}};
+  const tally=list=>{const a={};let q=0;list.forEach(({coef,f})=>{const c=comp(f);for(const e in c.atoms)a[e]=(a[e]||0)+coef*c.atoms[e];q+=coef*c.q});return {a,q}};
+  const ser=list=>list.map(({coef,f})=>(coef===1?'':coef+' ')+f).join(' + ');
+  const toEq=(L,R,arrow='->')=>`${ser(L)} ${arrow} ${ser(R)}`;
+  const sgn=q=>q>0?'+'+q:q<0?'−'+(-q):'0';
+  const elOrder=keys=>[...keys].sort((x,y)=>((x==='O')+2*(x==='H'))-((y==='O')+2*(y==='H')));
+  const eName={'H2O':'H₂O','H^+':'H⁺','OH^-':'OH⁻','e^-':'e⁻'};
+  const nice=f=>{if(eName[f])return eName[f];const c=f.match(/^(.*)\^(\d*)([+\-])$/),b=c?c[1]:f;
+    return b.replace(/\d/g,d=>'₀₁₂₃₄₅₆₇₈₉'[d])+(c?[...c[2]].map(d=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[d]).join('')+(c[3]==='+'?'⁺':'⁻'):'')};
+  // Control de átomos y cargas de una ecuación (devuelve el texto y si cierra).
+  const control=(t,where)=>{const {L,R}=parse(t);const l=tally(L),r=tally(R);
+    const els=elOrder(new Set([...Object.keys(l.a),...Object.keys(r.a)]));
+    let ok=l.q===r.q;const parts=els.map(e=>{const a=l.a[e]||0,b=r.a[e]||0;if(a!==b)ok=false;return `${e}: ${a} = ${b}`});
+    parts.push(`carga: ${sgn(l.q)} = ${sgn(r.q)}`);
+    if(!ok)ieErr.push(`${where||''} · no cierra: ${t}`);
+    return {ok,html:`<p class="ieCheck">${parts.join(' · ')} ${ok?'✓':'✗'}</p>`}};
+  const block=items=>`<div class="rxBlock">${items.map(it=>typeof it==='string'?`<p class="ieSkip">${it}</p>`:rx(it[0],it[1])).join('')}</div>`;
+  const scale=(list,k)=>list.map(x=>({coef:x.coef*k,f:x.f}));
+  const merge=list=>{const out=[];list.forEach(x=>{const y=out.find(z=>z.f===x.f);y?y.coef+=x.coef:out.push({...x})});return out};
+  const gcd=(a,b)=>b?gcd(b,a%b):a;
+  const lado=s=>s==='L'?'izquierda':'derecha';
+  const otro=s=>s==='L'?'R':'L';
+  // Hemirreacción: H('ecuación balanceada',{sp:'especie',eo:'Cr: +6 → +3',keep:['H2O'] si el agua es la especie que cambia, stages: pasos a mano})
+  const H=(eq,o={})=>({eq,...o});
+  const stagesOf=(h,medio)=>{
+    if(h.stages)return h.stages;
+    const {L,R}=parse(h.eq),keep=h.keep||[];
+    const strip=(list,set)=>list.filter(x=>!(set.includes(x.f)&&!keep.includes(x.f)));
+    const out=[];
+    const A0=strip(L,AUX),B0=strip(R,AUX);
+    const skL=A0.map(x=>({coef:1,f:x.f})),skR=B0.map(x=>({coef:1,f:x.f}));
+    out.push([toEq(skL,skR),'esqueleto · '+h.eo]);
+    const t0=tally(A0),t1=tally(B0);
+    const ek=String(h.eo).split(':')[0].trim(),elTxt=`${ek}: ${t0.a[ek]||0} = ${t1.a[ek]||0}`;
+    if(ser(skL)+ser(skR)!==ser(A0)+ser(B0))out.push([toEq(A0,B0),`igualamos el elemento que cambia · ${elTxt}`]);
+    else out.push(`El elemento que cambia (${ek}) ya está igualado · ${elTxt}.`);
+    const count=(list,f)=>list.filter(x=>x.f===f&&!keep.includes(x.f)).reduce((s,x)=>s+x.coef,0);
+    const wL=count(L,'H2O'),wR=count(R,'H2O'),hL=count(L,'H^+'),hR=count(R,'H^+'),oL=count(L,'OH^-'),oR=count(R,'OH^-');
+    let prev;
+    if(medio==='básico'){
+      const A1=strip(L,['H^+','e^-']),B1=strip(R,['H^+','e^-']);prev=[A1,B1];
+      if(wL+wR+oL+oR===0)out.push('Oxígeno e hidrógeno: no hay que agregar OH⁻ ni H₂O.');
+      else{const sOH=oL?'L':'R',n=oL||oR,w=sOH==='L'?wR:wL;
+        out.push([toEq(A1,B1),n===2*w?`faltan ${w} O a la ${lado(sOH)} → + ${n} OH⁻ a la ${lado(sOH)} y + ${w} H₂O a la ${lado(otro(sOH))} (cada 2 OH⁻ aportan 1 O neto)`:`se agregan OH⁻ y H₂O para igualar O e H`])}
+    }else if(medio==='neutro'&&wL+wR+hL+hR===0){
+      prev=[strip(L,['e^-']),strip(R,['e^-'])];
+      out.push('Oxígeno e hidrógeno: no intervienen H₂O ni H⁺, no hay que agregarlos.');
+    }else if(wL+wR+hL+hR===0&&!t0.a.O&&!t1.a.O&&!t0.a.H&&!t1.a.H){
+      prev=[strip(L,['e^-']),strip(R,['e^-'])];
+      out.push('Oxígeno e hidrógeno: no hay O ni H que igualar.');
+    }else{
+      const A1=strip(L,['H^+','OH^-','e^-']),B1=strip(R,['H^+','OH^-','e^-']);
+      if(wL+wR===0)out.push(t0.a.O||t1.a.O?'Oxígeno: los O ya están igualados, no hace falta H₂O.':'Oxígeno: no hay O que igualar.');
+      else out.push([toEq(A1,B1),`faltan ${wL||wR} O a la ${lado(wL?'L':'R')} → + ${wL||wR} H₂O a la ${lado(wL?'L':'R')}`]);
+      const A2=strip(L,['OH^-','e^-']),B2=strip(R,['OH^-','e^-']);prev=[A2,B2];
+      if(hL+hR===0)out.push('Hidrógeno: los H ya están igualados, no hace falta H⁺.');
+      else out.push([toEq(A2,B2),`faltan ${hL||hR} H a la ${lado(hL?'L':'R')} → + ${hL||hR} H⁺ a la ${lado(hL?'L':'R')}`]);
+    }
+    const q0=tally(prev[0]).q,q1=tally(prev[1]).q,ne=Math.abs(q0-q1),sE=q0>q1?'L':'R';
+    out.push([h.eq,`carga: ${sgn(q0)} a la izquierda y ${sgn(q1)} a la derecha → + ${ne} e⁻ a la ${lado(sE)} (${sE==='L'?'gana electrones: reducción':'pierde electrones: oxidación'})`]);
+    return out};
+  const medioTxt={'ácido':'medio ácido','básico':'medio básico','neutro':'solución (no intervienen H⁺ ni OH⁻)'};
+  const tipoTxt={
+    dism:'<p><b>Dismutación:</b> la misma especie se reduce y se oxida a la vez, así que las dos hemirreacciones parten de ella.</p>',
+    comp:'<p><b>Comproporción:</b> dos especies del mismo elemento, con números de oxidación distintos, terminan en el mismo producto, con un número de oxidación intermedio.</p>',
+    interna:'<p><b>Redox interna:</b> el oxidante y el reductor son átomos de la misma sustancia.</p>',
+    formal:'<p><b>Reacción en estado sólido (por calentamiento):</b> no hay solución, pero el método funciona igual usando H₂O, H⁺ u OH⁻ como “comodines” formales: al sumar se cancelan o se recombinan.</p>'};
+  // IE({title, medio, halves:[H(...),…], mult?, multNote?, ionic? (orden preferido), enun?, tipo?, nota?, mol?:[[ec,nota],…], molNote?, halfOnly?})
+  const IE=o=>{
+    const medio=o.medio||'ácido',where=o.title;
+    const hs=o.halves.map(h=>{const {L,R}=parse(h.eq);const eL=L.find(x=>x.f==='e^-'),eR=R.find(x=>x.f==='e^-');
+      control(h.eq,where+' (hemirreacción)');return {...h,L,R,red:!!eL,ne:(eL||eR||{coef:0}).coef}});
+    let body='';
+    // 1. Números de oxidación
+    body+=step('1. Números de oxidación: quién se oxida y quién se reduce',
+      table(['Especie','Cambio','Qué le pasa'],hs.map(h=>[h.sp,h.eo,h.red?'se <b>reduce</b> (gana e⁻) → es el <b>oxidante</b>':'se <b>oxida</b> (pierde e⁻) → es el <b>reductor</b>']))+
+      (o.tipo?[].concat(o.tipo).map(t=>tipoTxt[t]).join(''):'')+(o.nota||''));
+    // 2. Hemirreacciones paso a paso
+    const rule=medio==='básico'?'Orden: esqueleto → átomos que no son O ni H → O e H con OH⁻ y H₂O → carga con e⁻.':medio==='neutro'?'Orden: esqueleto → átomos → carga con e⁻.':'Orden: esqueleto → átomos que no son O ni H → O con H₂O → H con H⁺ → carga con e⁻.';
+    hs.forEach((h,i)=>{body+=step(`${i+2}. Hemirreacción de ${h.red?'reducción':'oxidación'} · ${h.sp}`,(i===0?`<p class="ieRule">${rule}</p>`:'')+block(stagesOf(h,medio)))});
+    let n=hs.length+2;
+    if(o.halfOnly){
+      return `<details class="kitExample qiIE"><summary><span>⚖️ ION-ELECTRÓN · PASO A PASO</span><b>${o.title}</b></summary><div class="kitExampleBody">${o.enun?`<div class="kitStatement"><p>${o.enun}</p></div>`:''}${body}${o.after||''}</div></details>`}
+    // 3. Igualar electrones
+    let mult=o.mult;
+    if(!mult){if(hs.length!==2)ieErr.push(where+' · faltan multiplicadores');const l=hs[0].ne*hs[1].ne/gcd(hs[0].ne,hs[1].ne);mult=hs.map(h=>l/h.ne)}
+    const tot=hs.reduce((s,h,i)=>s+(h.red?h.ne*mult[i]:0),0),tot2=hs.reduce((s,h,i)=>s+(h.red?0:h.ne*mult[i]),0);
+    if(tot!==tot2)ieErr.push(where+' · los electrones no se igualan');
+    const r0=hs.find(h=>h.red),x0=hs.find(h=>!h.red);
+    const desc=o.multNote||(mult.every(m=>m===1)?`<p>Las dos hemirreacciones intercambian <b>${r0.ne} e⁻</b>: no hace falta multiplicar.</p>`:
+      `<p>La reducción gana <b>${r0.ne} e⁻</b> y la oxidación pierde <b>${x0.ne} e⁻</b>. Mínimo común múltiplo: <b>${tot}</b> → reducción × ${mult[hs.indexOf(r0)]} y oxidación × ${mult[hs.indexOf(x0)]}.</p>`);
+    const sc=hs.map((h,i)=>({L:scale(h.L,mult[i]),R:scale(h.R,mult[i]),k:mult[i]}));
+    body+=step(`${n++}. Igualar los electrones (cedidos = ganados)`,desc+block(sc.map((s,i)=>[toEq(s.L,s.R),`× ${s.k} · ${hs[i].red?'reducción':'oxidación'}`])));
+    // 4. Sumar y simplificar
+    const rawL=merge(sc.flatMap(s=>s.L)),rawR=merge(sc.flatMap(s=>s.R));
+    const net={};rawL.forEach(x=>net[x.f]=(net[x.f]||0)+x.coef);rawR.forEach(x=>net[x.f]=(net[x.f]||0)-x.coef);
+    if(net['e^-'])ieErr.push(where+' · sobran electrones');
+    const canc=Object.keys(net).filter(f=>rawL.some(x=>x.f===f)&&rawR.some(x=>x.f===f)).map(f=>{const a=rawL.find(x=>x.f===f).coef,b=rawR.find(x=>x.f===f).coef;return `${Math.min(a,b)} ${nice(f)}`});
+    const rank=f=>AUX.includes(f)?['H^+','OH^-','H2O','e^-'].indexOf(f)+1:0;
+    const ordered=list=>list.map((x,i)=>[x,i]).sort((a,b)=>rank(a[0].f)-rank(b[0].f)||a[1]-b[1]).map(a=>a[0]);
+    let NL=ordered(rawL.filter(x=>net[x.f]>0).map(x=>({coef:net[x.f],f:x.f}))),NR=ordered(rawR.filter(x=>net[x.f]<0).map(x=>({coef:-net[x.f],f:x.f})));
+    const sumItems=[[toEq(rawL,rawR),'suma de las dos hemirreacciones (juntando lo repetido de cada lado)'],[toEq(NL,NR),'se cancelan '+canc.join(', ')+' (lo que está de los dos lados)']];
+    const g=[...NL,...NR].reduce((s,x)=>gcd(s,x.coef),0);
+    if(g>1){NL=scale(NL,1/g);NR=scale(NR,1/g);sumItems.push([toEq(NL,NR),`todos los coeficientes son divisibles por ${g}: se simplifica ÷ ${g}`])}
+    let ionic=toEq(NL,NR);
+    if(o.ionic){const p=parse(o.ionic),key=(L,R)=>[...L.map(x=>'L'+x.coef+x.f),...R.map(x=>'R'+x.coef+x.f)].sort().join('|');
+      if(key(p.L,p.R)!==key(NL,NR))ieErr.push(where+' · la iónica declarada no coincide con la suma: '+ionic);
+      else if(o.ionic!==ionic){sumItems.push([o.ionic,'la misma ecuación, ordenada']);ionic=o.ionic}}
+    body+=step(`${n++}. Sumar y simplificar`,block(sumItems));
+    // 5. Control
+    body+=step(`${n++}. Control: átomos y cargas`,control(ionic,where).html);
+    // 6. Molecular
+    const mols=o.mol?o.mol.map(m=>Array.isArray(m)?m:[m]):null,molMain=mols?mols[o.molMain??mols.length-1][0]:null;
+    if(mols){mols.forEach(m=>control(m[0],where+' (molecular)'));
+      body+=step(`${n++}. Ecuación molecular`,block(mols)+(o.molNote||'')+control(molMain,where).html)}
+    const keepAll=hs.flatMap(h=>h.keep||[]),pI=parse(ionic),sk=list=>list.filter(x=>!AUX.includes(x.f)||keepAll.includes(x.f)).map(x=>({coef:1,f:x.f}));
+    const stmt=o.enun?rx(o.enun):rx(toEq(sk(pI.L),sk(pI.R)));
+    return `<details class="kitExample qiIE"><summary><span>⚖️ ION-ELECTRÓN · PASO A PASO</span><b>${o.title}</b></summary><div class="kitExampleBody"><div class="kitStatement"><p>Balancear en <b>${medioTxt[medio]}</b>:</p>${stmt}</div>${body}<div class="finalAnswer"><b>Resultado</b> ${Q.eq(ionic)}${molMain?`<br>${Q.eq(molMain)}`:''}</div></div></details>`};
+
+  // ---------- Catálogo de redox del TP 6 (cada una se escribe una vez y se usa donde aparezca) ----------
+  const X=(()=>{
+    const SO4red=()=>H('SO4^2- + 4 H^+ + 2 e^- -> SO2 + 2 H2O',{sp:'SO₄²⁻ (del H₂SO₄ concentrado)',eo:'S: +6 → +4'});
+    const SO2ox=()=>H('SO2 + 2 H2O -> SO4^2- + 4 H^+ + 2 e^-',{sp:'SO₂',eo:'S: +4 → +6'});
+    const MnO4red=()=>H('MnO4^- + 8 H^+ + 5 e^- -> Mn^2+ + 4 H2O',{sp:'MnO₄⁻',eo:'Mn: +7 → +2'});
+    const Hred=()=>H('2 H^+ + 2 e^- -> H2',{sp:'H⁺',eo:'H: +1 → 0',keep:['H^+']});
+    const metal=(M,n)=>H(`${M} -> ${M}^2+ + 2 e^-`,{sp:n,eo:`${M}: 0 → +2`});
+    const OfromH2O=sp=>H('2 H2O -> O2 + 4 H^+ + 4 e^-',{sp,eo:'O: −2 → 0',keep:['H2O']});
+    const N={Cl:{x2:'Cl₂',xm:'Cl⁻',n:'cloro',xo:'ClO⁻',ho:'HClO',xo3:'ClO₃⁻',o1:'hipoclorito',o5:'clorato'},
+             Br:{x2:'Br₂',xm:'Br⁻',n:'bromo',xo:'BrO⁻',ho:'HBrO',xo3:'BrO₃⁻',o1:'hipobromito',o5:'bromato'},
+             I:{x2:'I₂',xm:'I⁻',n:'iodo',xo:'IO⁻',ho:'HIO',xo3:'IO₃⁻',o1:'hipoiodito',o5:'iodato'}};
+    const Xred=E=>H(`${E}2 + 2 e^- -> 2 ${E}^-`,{sp:N[E].x2,eo:`${E}: 0 → −1`});
+    const Xox=E=>H(`2 ${E}^- -> ${E}2 + 2 e^-`,{sp:N[E].xm,eo:`${E}: −1 → 0`});
+    const r={};
+    // --- Azufre y oxígeno ---
+    r.kclo3=IE({title:'Descomposición del clorato de potasio: 2 KClO₃ → 2 KCl + 3 O₂',tipo:['interna','formal'],
+      halves:[H('ClO3^- + 6 H^+ + 6 e^- -> Cl^- + 3 H2O',{sp:'ClO₃⁻',eo:'Cl: +5 → −1'}),OfromH2O('O del clorato')],
+      mol:[['2 KClO3 -> 2 KCl + 3 O2','los K⁺ acompañan al clorato y al cloruro (el MnO₂ es catalizador: no aparece)']]});
+    r.kmno4a=IE({title:'Descomposición del permanganato: 4 KMnO₄ → 2 K₂O + 4 MnO₂ + 3 O₂',medio:'básico',tipo:['interna','formal'],
+      halves:[H('MnO4^- + 2 H2O + 3 e^- -> MnO2 + 4 OH^-',{sp:'MnO₄⁻',eo:'Mn: +7 → +4'}),
+        H('4 OH^- -> O2 + 2 H2O + 4 e^-',{sp:'O del permanganato',eo:'O: −2 → 0',stages:[['OH^- -> O2','esqueleto · O: −2 → 0'],['4 OH^- -> O2 + 2 H2O','O: 4 = 2 + 2 · H: 4 = 4 (el H sobrante sale como agua)'],['4 OH^- -> O2 + 2 H2O + 4 e^-','carga: −4 a la izquierda y 0 a la derecha → + 4 e⁻ a la derecha (pierde electrones: oxidación)']]})],
+      mol:[['4 KMnO4 + 2 H2O -> 4 MnO2 + 3 O2 + 4 KOH','con los 4 K⁺'],['4 KOH -> 2 K2O + 2 H2O','en seco, el KOH queda como K₂O'],['4 KMnO4 -> 2 K2O + 4 MnO2 + 3 O2','sumando: el agua formal se cancela']]});
+    r.kmno4b=IE({title:'La otra versión: 2 KMnO₄ → K₂MnO₄ + MnO₂ + O₂',medio:'básico',tipo:['interna','formal'],
+      halves:[H('MnO4^- + e^- -> MnO4^2-',{sp:'MnO₄⁻ (una parte)',eo:'Mn: +7 → +6'}),H('MnO4^- + 2 H2O + 3 e^- -> MnO2 + 4 OH^-',{sp:'MnO₄⁻ (otra parte)',eo:'Mn: +7 → +4'}),
+        H('4 OH^- -> O2 + 2 H2O + 4 e^-',{sp:'O del permanganato',eo:'O: −2 → 0',stages:[['OH^- -> O2','esqueleto · O: −2 → 0'],['4 OH^- -> O2 + 2 H2O','O: 4 = 2 + 2 · H: 4 = 4'],['4 OH^- -> O2 + 2 H2O + 4 e^-','carga: −4 → 0: + 4 e⁻ a la derecha (oxidación)']]})],
+      mult:[1,1,1],multNote:'<p>Hay <b>dos reducciones</b>: juntas ganan 1 + 3 = <b>4 e⁻</b>, justo los que pierde la oxidación. Van × 1 las tres.</p>',
+      mol:[['2 KMnO4 -> K2MnO4 + MnO2 + O2','manganato de potasio (verde)']]});
+    r.hgo=IE({title:'Descomposición del óxido de mercurio(II): 2 HgO → 2 Hg + O₂',tipo:['interna','formal'],
+      halves:[H('HgO + 2 H^+ + 2 e^- -> Hg + H2O',{sp:'HgO',eo:'Hg: +2 → 0'}),OfromH2O('O del HgO')],
+      mol:[['2 HgO -> 2 Hg + O2']]});
+    r.h2o2=IE({title:'Descomposición del agua oxigenada: 2 H₂O₂ → 2 H₂O + O₂',tipo:'dism',
+      halves:[H('H2O2 + 2 H^+ + 2 e^- -> 2 H2O',{sp:'H₂O₂',eo:'O: −1 → −2',keep:['H2O']}),H('H2O2 -> O2 + 2 H^+ + 2 e^-',{sp:'H₂O₂',eo:'O: −1 → 0'})]});
+    r.so2h2o2=IE({title:'SO₂ + H₂O₂ → H₂SO₄',
+      halves:[H('H2O2 + 2 H^+ + 2 e^- -> 2 H2O',{sp:'H₂O₂',eo:'O: −1 → −2',keep:['H2O']}),SO2ox()],
+      ionic:'SO2 + H2O2 -> SO4^2- + 2 H^+',mol:[['SO2 + H2O2 -> H2SO4','2 H⁺ + SO₄²⁻ = H₂SO₄']]});
+    r.mno4h2s=IE({title:'Permanganato + H₂S (medio ácido)',
+      halves:[MnO4red(),H('H2S -> S + 2 H^+ + 2 e^-',{sp:'H₂S',eo:'S: −2 → 0'})],
+      mol:[['2 KMnO4 + 5 H2S + 3 H2SO4 -> K2SO4 + 2 MnSO4 + 5 S + 8 H2O','acidificado con H₂SO₄: los 6 H⁺ vienen de 3 H₂SO₄'],['2 KMnO4 + 5 H2S + 6 HCl -> 2 KCl + 2 MnCl2 + 5 S + 8 H2O','acidificado con HCl']],molMain:0});
+    r.mno4so2=IE({title:'Permanganato + SO₂',
+      halves:[MnO4red(),SO2ox()],
+      mol:[['2 KMnO4 + 5 SO2 + 2 H2O -> K2SO4 + 2 MnSO4 + 2 H2SO4']],
+      molNote:'<p>Fijate que al final <b>sobran H⁺</b> del lado de los productos: no hace falta acidificar, el medio se acidifica solo (se forma H₂SO₄).</p>'});
+    r.dicrso2=IE({title:'Dicromato + SO₂ (medio ácido)',
+      halves:[H('Cr2O7^2- + 14 H^+ + 6 e^- -> 2 Cr^3+ + 7 H2O',{sp:'Cr₂O₇²⁻',eo:'Cr: +6 → +3'}),SO2ox()],
+      mol:[['K2Cr2O7 + 3 SO2 + H2SO4 -> Cr2(SO4)3 + K2SO4 + H2O','los 2 H⁺ los aporta 1 H₂SO₄']]});
+    r.i2so2=IE({title:'Iodo + SO₂',
+      halves:[Xred('I'),SO2ox()],
+      mol:[['I2 + SO2 + 2 H2O -> 2 HI + H2SO4','escrita con ácidos: 2 H⁺ + 2 I⁻ = 2 HI y 2 H⁺ + SO₄²⁻ = H₂SO₄']]});
+    r.so2h2s=IE({title:'SO₂ + H₂S → S (comproporción)',tipo:'comp',
+      halves:[H('SO2 + 4 H^+ + 4 e^- -> S + 2 H2O',{sp:'SO₂',eo:'S: +4 → 0'}),H('H2S -> S + 2 H^+ + 2 e^-',{sp:'H₂S',eo:'S: −2 → 0'})]});
+    r.zndil=IE({title:'Zn + H₂SO₄ diluido → H₂',
+      halves:[Hred(),metal('Zn','Zn')],ionic:'Zn + 2 H^+ -> Zn^2+ + H2',
+      mol:[['Zn + H2SO4 -> ZnSO4 + H2','el sulfato es espectador']]});
+    r.znconc=IE({title:'Zn + H₂SO₄ concentrado → SO₂',
+      halves:[SO4red(),metal('Zn','Zn')],ionic:'Zn + SO4^2- + 4 H^+ -> Zn^2+ + SO2 + 2 H2O',
+      mol:[['Zn + 2 H2SO4 -> ZnSO4 + SO2 + 2 H2O','2 H₂SO₄ aportan 4 H⁺ y 2 SO₄²⁻: uno se reduce y el otro queda con el Zn²⁺']]});
+    r.cuconc=IE({title:'Cu + H₂SO₄ concentrado → SO₂',
+      halves:[SO4red(),metal('Cu','Cu')],ionic:'Cu + SO4^2- + 4 H^+ -> Cu^2+ + SO2 + 2 H2O',
+      mol:[['Cu + 2 H2SO4 -> CuSO4 + SO2 + 2 H2O','2 H₂SO₄ aportan 4 H⁺ y 2 SO₄²⁻: uno se reduce y el otro queda con el Cu²⁺']],
+      molNote:'<p>¿Y con el diluido? Ahí el oxidante sería el H⁺ (2 H⁺ + 2 e⁻ → H₂), que no alcanza para oxidar al cobre: el Cu está por debajo del H en la serie de actividad. Por eso <b>no reacciona</b>.</p>'});
+    const kxh2so4=(E,nm)=>IE({title:`${'K'+nm} + H₂SO₄ concentrado → ${N[E].x2} + SO₂`,
+      halves:[SO4red(),Xox(E)],ionic:`2 ${E}^- + SO4^2- + 4 H^+ -> ${E}2 + SO2 + 2 H2O`,
+      mol:[[`2 K${E} + 2 H2SO4 -> K2SO4 + SO2 + ${E}2 + 2 H2O`,'con la cantidad justa de ácido'],[`2 K${E} + 3 H2SO4 -> 2 KHSO4 + SO2 + ${E}2 + 2 H2O`,'con ácido en exceso: el sulfato sobrante queda como bisulfato (la del material)']],
+      molNote:'<p>Con 3 H₂SO₄ hay 6 H⁺ y 3 SO₄²⁻: 4 H⁺ y 1 SO₄²⁻ reaccionan; los 2 H⁺ y 2 SO₄²⁻ restantes quedan con los 2 K⁺ como 2 KHSO₄.</p>'});
+    r.kih2so4=kxh2so4('I','I');r.kbrh2so4=kxh2so4('Br','Br');
+    r.ch2so4=IE({title:'C + H₂SO₄ concentrado → CO₂ + SO₂',
+      halves:[SO4red(),H('C + 2 H2O -> CO2 + 4 H^+ + 4 e^-',{sp:'C',eo:'C: 0 → +4'})],ionic:'C + 2 SO4^2- + 4 H^+ -> CO2 + 2 SO2 + 2 H2O',
+      mol:[['C + 2 H2SO4 -> CO2 + 2 SO2 + 2 H2O']]});
+    r.so2semi=IE({title:'Las dos hemirreacciones del SO₂',halfOnly:true,enun:'El S del SO₂ (+4) puede subir a +6 (reductor) o bajar a 0 (oxidante). Así se arma cada hemirreacción en medio ácido:',
+      halves:[SO2ox(),H('SO2 + 4 H^+ + 4 e^- -> S + 2 H2O',{sp:'SO₂',eo:'S: +4 → 0'})],
+      after:'<p>Para la reacción completa con cada compañero, abrí los desplegables de abajo.</p>'});
+    // --- Halógenos ---
+    r.f2h2o=IE({title:'El flúor oxida al agua: 2 F₂ + 2 H₂O → 4 HF + O₂',
+      halves:[H('F2 + 2 H^+ + 2 e^- -> 2 HF',{sp:'F₂',eo:'F: 0 → −1'}),OfromH2O('H₂O')],
+      nota:'<p>El HF es un ácido débil: se escribe sin disociar, por eso la reducción da HF y no F⁻.</p>'});
+    const desp=(A,B,mol)=>IE({title:`${N[A].x2} + ${N[B].xm} → ${N[A].xm} + ${N[B].x2}`,medio:'neutro',
+      halves:[Xred(A),Xox(B)],ionic:`${A}2 + 2 ${B}^- -> 2 ${A}^- + ${B}2`,mol:mol?[[mol,'con las sales de potasio (K⁺ espectador)']]:null,
+      nota:`<p>El ${N[A].n} está más arriba en la escala de poder oxidante: le saca los electrones al ${N[B].xm}.</p>`});
+    r.cl2br=desp('Cl','Br','Cl2 + 2 KBr -> 2 KCl + Br2');r.cl2i=desp('Cl','I','Cl2 + 2 KI -> 2 KCl + I2');r.br2i=desp('Br','I','Br2 + 2 KI -> 2 KBr + I2');
+    r.cl2h2o=IE({title:'Cloro en agua: Cl₂ + H₂O ⇌ HCl + HClO',tipo:'dism',
+      halves:[Xred('Cl'),H('Cl2 + 2 H2O -> 2 HClO + 2 H^+ + 2 e^-',{sp:'Cl₂',eo:'Cl: 0 → +1'})],
+      nota:'<p>El HClO es un ácido débil: se escribe sin disociar.</p>',mol:[['Cl2 + H2O <=> HCl + HClO','H⁺ + Cl⁻ = HCl']]});
+    const dism1=(E,mol)=>IE({title:`Dismutación del ${N[E].n} en frío: ${N[E].x2} → ${N[E].xm} + ${N[E].xo}`,medio:'básico',tipo:'dism',
+      halves:[Xred(E),H(`${E}2 + 4 OH^- -> 2 ${E}O^- + 2 H2O + 2 e^-`,{sp:N[E].x2,eo:`${E}: 0 → +1 (${N[E].o1})`})],
+      ionic:`${E}2 + 2 OH^- -> ${E}^- + ${E}O^- + H2O`,mol:mol?[[mol,'con NaOH (Na⁺ espectador)']]:null});
+    const dism5=(E,mol)=>IE({title:`Dismutación del ${N[E].n} a ${N[E].o5}: ${N[E].x2} → ${N[E].xm} + ${N[E].xo3}`,medio:'básico',tipo:'dism',
+      halves:[Xred(E),H(`${E}2 + 12 OH^- -> 2 ${E}O3^- + 6 H2O + 10 e^-`,{sp:N[E].x2,eo:`${E}: 0 → +5 (${N[E].o5})`})],
+      ionic:`3 ${E}2 + 6 OH^- -> 5 ${E}^- + ${E}O3^- + 3 H2O`,mol:mol?[[mol,'con NaOH (Na⁺ espectador)']]:null});
+    const compHO=E=>IE({title:`Comproporción: ${N[E].ho} + ${N[E].xm} + H⁺ → ${N[E].x2}`,tipo:'comp',
+      halves:[H(`2 H${E}O + 2 H^+ + 2 e^- -> ${E}2 + 2 H2O`,{sp:N[E].ho,eo:`${E}: +1 → 0`}),Xox(E)],ionic:`H${E}O + ${E}^- + H^+ -> ${E}2 + H2O`});
+    const compO=(E,mol)=>IE({title:`Comproporción: ${N[E].xo} + ${N[E].xm} en medio ácido → ${N[E].x2}`,tipo:'comp',
+      halves:[H(`2 ${E}O^- + 4 H^+ + 2 e^- -> ${E}2 + 2 H2O`,{sp:N[E].xo,eo:`${E}: +1 → 0`}),Xox(E)],ionic:`${E}O^- + ${E}^- + 2 H^+ -> ${E}2 + H2O`,mol:mol?[mol]:null});
+    const comp5=E=>IE({title:`Comproporción: ${N[E].xo3} + ${N[E].xm} en medio ácido → ${N[E].x2}`,tipo:'comp',
+      halves:[H(`2 ${E}O3^- + 12 H^+ + 10 e^- -> ${E}2 + 6 H2O`,{sp:N[E].xo3,eo:`${E}: +5 → 0`}),Xox(E)],ionic:`5 ${E}^- + ${E}O3^- + 6 H^+ -> 3 ${E}2 + 3 H2O`});
+    r.dismCl1=dism1('Cl','Cl2 + 2 NaOH -> NaCl + NaClO + H2O');r.dismCl5=dism5('Cl','3 Cl2 + 6 NaOH -> 5 NaCl + NaClO3 + 3 H2O');
+    r.dismBr1=dism1('Br','Br2 + 2 NaOH -> NaBr + NaBrO + H2O');r.dismBr5=dism5('Br','3 Br2 + 6 NaOH -> 5 NaBr + NaBrO3 + 3 H2O');
+    r.dismI5=dism5('I','3 I2 + 6 NaOH -> 5 NaI + NaIO3 + 3 H2O');
+    r.compHClO=compHO('Cl');r.compCl5=comp5('Cl');r.compBr5=comp5('Br');r.compI5=comp5('I');r.compBr1=compO('Br');
+    r.lavandina=compO('Cl',['NaClO + 2 HCl -> Cl2 + NaCl + H2O','con lavandina y HCl concentrado (Na⁺ y un Cl⁻ espectadores)']);
+    r.mno2ki=IE({title:'Obtención del iodo: MnO₂ + KI + H₂SO₄',
+      halves:[H('MnO2 + 4 H^+ + 2 e^- -> Mn^2+ + 2 H2O',{sp:'MnO₂',eo:'Mn: +4 → +2'}),Xox('I')],ionic:'MnO2 + 2 I^- + 4 H^+ -> Mn^2+ + I2 + 2 H2O',
+      enun:'MnO2 + KI + H2SO4 -> MnSO4 + I2 + K2SO4 + H2O',
+      mol:[['MnO2 + 2 KI + 2 H2SO4 -> MnSO4 + I2 + K2SO4 + 2 H2O','los 4 H⁺ vienen de 2 H₂SO₄; los dos sulfatos quedan con el Mn²⁺ y con los 2 K⁺']]});
+    r.tiosulf=IE({title:'Iodo + tiosulfato → ioduro + tetrationato',medio:'neutro',
+      halves:[Xred('I'),H('2 S2O3^2- -> S4O6^2- + 2 e^-',{sp:'S₂O₃²⁻',eo:'S: +2 → +2,5 (promedio)'})],
+      nota:'<p>En el tetrationato el S queda con un número de oxidación <b>promedio</b> de +2,5: cada tiosulfato pierde 1 e⁻, y hacen falta dos.</p>',
+      mol:[['I2 + 2 Na2S2O3 -> 2 NaI + Na2S4O6','con tiosulfato de sodio']]});
+    r.i3tiosulf=IE({title:'Triyoduro + tiosulfato',medio:'neutro',
+      halves:[H('I3^- + 2 e^- -> 3 I^-',{sp:'I₃⁻',eo:'I: −⅓ → −1 (promedio)'}),H('2 S2O3^2- -> S4O6^2- + 2 e^-',{sp:'S₂O₃²⁻',eo:'S: +2 → +2,5 (promedio)'})],
+      nota:'<p>El I₃⁻ es el I₂ “disuelto” en I⁻ (I₂ + I⁻): en promedio cada I tiene −⅓. Lo que se reduce es el I₂ que lleva adentro.</p>'});
+    r.kmno4hcl=IE({title:'KMnO₄ + HCl concentrado → Cl₂',
+      halves:[MnO4red(),Xox('Cl')],ionic:'2 MnO4^- + 10 Cl^- + 16 H^+ -> 2 Mn^2+ + 5 Cl2 + 8 H2O',
+      mol:[['2 KMnO4 + 16 HCl -> 2 KCl + 2 MnCl2 + 5 Cl2 + 8 H2O']],
+      molNote:'<p>El HCl aporta los 16 H⁺ y 16 Cl⁻: <b>10 Cl⁻ se oxidan</b> a 5 Cl₂ y <b>6 quedan como espectadores</b> (2 en KCl y 4 en 2 MnCl₂).</p>'});
+    r.fehcl=IE({title:'Fe + HCl → FeCl₂ + H₂',
+      halves:[Hred(),metal('Fe','Fe')],ionic:'Fe + 2 H^+ -> Fe^2+ + H2',mol:[['Fe + 2 HCl -> FeCl2 + H2','el Cl⁻ es espectador']]});
+    return r})();
+  const ies=(...keys)=>keys.map(k=>{if(!X[k])throw new Error('IE sin definir: '+k);return X[k]}).join('');
+  const ieLead='<p class="ieLead">⚖️ <b>Balanceo por ion-electrón, paso a paso</b>: tocá cada desplegable.</p>';
+  const noRedox=t=>`<p class="ieLead">ℹ️ ${t}</p>`;
+
+  // =====================================================================
   // MATERIAL TEÓRICO · AZUFRE Y CALCÓGENOS
   // =====================================================================
   const sS=[];const aS=(k,l,kk,h)=>sS.push({key:`qi-s-${k}`,label:l,kicker:`CALCÓGENOS · ${kk}`,html:h});
@@ -216,6 +478,7 @@ ${punch('Por eso el agua oxigenada (H–O–O–H) se descompone fácil, y el az
 <p>El oxígeno se obtiene por <b>descomposición</b> de sustancias oxigenadas, por vía térmica o electroquímica:</p>
 ${rxs(['2 KClO3(s) =[MnO2, Δ]=> 2 KCl(s) + 3 O2(g)','el MnO₂ es catalizador'],['4 KMnO4(s) =[Δ]=> 2 K2O(s) + 4 MnO2(s) + 3 O2(g)','como aparece en la diapositiva'],['2 HgO(s) =[Δ]=> 2 Hg(g) + O2(g)'],['2 H2O2(ac) -> 2 H2O(l) + O2(g)'])}
 ${note('Cotejo con la diapositiva','<p>Estas ecuaciones estaban como imagen en el material. Están balanceadas; los estados de agregación se normalizaron (en la diapositiva el clorato aparece como “(l)”). Para el permanganato, muchos libros escriben <span class="rxInline">2 KMnO₄ → K₂MnO₄ + MnO₂ + O₂</span>; las dos ecuaciones están balanceadas.</p>')}
+${ieLead}${ies('kclo3','kmno4a','kmno4b','hgo','h2o2')}
 ${verT('hidrogeno-oxigeno:qi-ho-oxigeno','El oxígeno (material del TP 4)')}
 `);
 
@@ -242,6 +505,8 @@ ${rx('Na2SO3(s) + 2 HCl(ac) -> 2 NaCl(ac) + SO2(g)↑ + H2O(l)')}
 <h3>Ácido sulfúrico</h3>
 <p>Se obtiene “limpio” oxidando el SO₂ con agua oxigenada:</p>
 ${rx('SO2(g) + H2O2(ac) -> H2SO4(ac)')}
+${ieLead}${ies('so2h2o2')}
+${noRedox('Las otras ecuaciones de esta sección (FeS + HCl, tioacetamida + agua, Na₂SO₃ + HCl) <b>no son redox</b>: ningún elemento cambia su número de oxidación; son reacciones ácido-base o de desplazamiento de un ácido volátil.')}
 ${verG('qi-tp6-c1-so2','Obtención del SO₂ en el TP')}
 `);
 
@@ -254,6 +519,7 @@ ${table(['Lo que se observa','Interpretación','Ecuación'],[
  ['El H₂S y el agua sulfurosa se mezclan y dan un <b>precipitado amarillo</b>','el SO₂ es oxidante y el H₂S reductor: <b>comproporcionan</b> a azufre',rx('SO2 + 2 H2S -> 3 S↓ + 2 H2O')],
  ['El H₂SO₄ diluido con Zn libera un gas incoloro e insípido; el concentrado, un gas de olor picante que vira el tornasol a rosa','en ambos casos es <b>oxidante</b>: el diluido libera H₂ y el concentrado, SO₂',rx('Zn + H2SO4(d) -> ZnSO4 + H2↑')+rx('Zn + 2 H2SO4(c) -> ZnSO4 + SO2↑ + 2 H2O')]
 ])}
+${ieLead}${ies('mno4h2s','mno4so2','so2h2s','zndil','znconc')}
 ${idea('Comproporción','<p>Dos especies del mismo elemento con estados de oxidación distintos (−2 y +4) se encuentran en uno intermedio (0). Es lo contrario de la <b>dismutación</b>, que vamos a ver con los halógenos.</p>')}
 `);
 
@@ -283,6 +549,8 @@ ${table(['Papel','Con quién','Ecuación'],[
  ['<b>Reductor</b>','KMnO₄, K₂Cr₂O₇, I₂, H₂O₂',rx('SO2 + 2 H2O -> SO4^2- + 4 H^+ + 2 e^-')],
  ['<b>Oxidante</b>','H₂S (un reductor más fuerte)',rx('SO2 + 4 H^+ + 4 e^- -> S + 2 H2O')]
 ])}
+${X.so2semi}
+${ieLead}${ies('dicrso2','mno4so2','i2so2','so2h2o2','so2h2s')}
 ${figure(svg.estadosS,'')}
 ${verG('qi-tp6-c1-so2','Los cinco tubos con SO₂')}
 `);
@@ -299,10 +567,12 @@ ${table(['','Diluido','Concentrado (y caliente)'],[
 ])}
 ${rxs(['Zn(s) + H2SO4(d) -> ZnSO4(ac) + H2(g)↑','diluido: oxida el H⁺'],['Cu(s) + 2 H2SO4(c) -> CuSO4(ac) + SO2(g)↑ + 2 H2O(l)','concentrado: oxida el sulfato'],['2 KI(s) + 3 H2SO4(c) -> 2 KHSO4 + SO2(g)↑ + I2(s) + 2 H2O','oxida al ioduro'],['2 KBr(s) + 3 H2SO4(c) -> 2 KHSO4 + SO2(g)↑ + Br2 + 2 H2O','oxida al bromuro'],['C(s) + 2 H2SO4(c) -> CO2(g)↑ + 2 SO2(g)↑ + 2 H2O','oxida al carbono'])}
 ${fix('Corrección respecto del archivo de ecuaciones','<p>En la transcripción auxiliar, las ecuaciones con KI y KBr figuraban con <b>3 H₂O</b>; contando átomos, el balance correcto es con <b>2 H₂O</b> (H: 6 = 2 + 4; O: 12 = 8 + 2 + 2).</p>')}
+${ieLead}${ies('zndil','cuconc','kih2so4','kbrh2so4','ch2so4')}
 <h3>Un ácido “fijo”: desplaza a otros ácidos de sus sales</h3>
 <p>El H₂SO₄ casi no es volátil: calentado con sales de ácidos volátiles, los desplaza. (Por eso no se puede obtener el H₂SO₄ por este método.)</p>
 ${rxs(['NaCl(s) + H2SO4(c) -> NaHSO4(ac) + HCl(g)↑','así se obtiene el HCl en el TP 6'],['NaNO3(s) + H2SO4(c) -> NaHSO4(ac) + HNO3(g)↑','así se obtuvo el HNO₃ en el TP 5'])}
-${deep('Acción deshidratante '+amp(),'<p>El ácido concentrado tiene tanta afinidad por el agua que se la “roba” a otras sustancias: deshidrata el CuSO₄·5H₂O (azul → blanco) y carboniza el papel, el azúcar y la madera, dejando carbono negro.</p>'+rxs(['CuSO4·5H2O(s) =[H2SO4 (c)]=> CuSO4(s) + 5 H2O','se pierde el color azul'],['C12H22O11(s) =[H2SO4 (c)]=> 12 C(s) + 11 H2O','sacarosa → carbón']))}
+${noRedox('Estas dos no son redox: el H₂SO₄ actúa como ácido fijo, no como oxidante (el S sigue en +6 y el Cl o el N no cambian).')}
+${deep('Acción deshidratante '+amp(),'<p>El ácido concentrado tiene tanta afinidad por el agua que se la “roba” a otras sustancias: deshidrata el CuSO₄·5H₂O (azul → blanco) y carboniza el papel, el azúcar y la madera, dejando carbono negro. No es una redox: en la sacarosa el C ya tiene número de oxidación promedio 0, y el H y el O salen como agua.</p>'+rxs(['CuSO4·5H2O(s) =[H2SO4 (c)]=> CuSO4(s) + 5 H2O','se pierde el color azul'],['C12H22O11(s) =[H2SO4 (c)]=> 12 C(s) + 11 H2O','sacarosa → carbón']))}
 ${verG('qi-tp6-c2-h2so4','Propiedades del H₂SO₄ en el TP')}
 `);
 
@@ -338,6 +608,7 @@ ${figure(svg.solubilidadI,'El iodo en distintos solventes (esquema).')}
 ${deep('¿Por qué el iodo se disuelve tanto en KI? '+amp(),'<p>El I₂ se une al I⁻ formando el ion <b>triyoduro</b>, I₃⁻, que es iónico y muy soluble en agua (color pardo rojizo). Así se preparan las “soluciones de iodo” del laboratorio.</p>'+rx('I2(s) + I^-(ac) <=> I3^-(ac)'))}
 <p>Todos los halógenos forman <b>soluciones acuosas ácidas</b>; con el cloro, por ejemplo:</p>
 ${rx('Cl2(g) + H2O(l) <=> HCl(ac) + HClO(ac)','el HClO (hipocloroso) es decolorante '+'· ampliación')}
+${ieLead}${ies('cl2h2o')}
 `);
 
   aX('oxidantes','Poder oxidante y poder reductor','03',`
@@ -346,9 +617,11 @@ ${figure(svg.oxidante,'')}
 ${punch('Poder oxidante de los X₂: F₂ > Cl₂ > Br₂ > I₂ · Poder reductor de los X⁻: F⁻ < Cl⁻ < Br⁻ < I⁻')}
 <p>El <b>flúor</b> es la sustancia más oxidante que existe: oxida al agua en cualquier medio.</p>
 ${rx('2 F2(g) + 2 H2O(l) -> 4 HF(ac) + O2(g)')}
+${ieLead}${ies('f2h2o')}
 <h3>¿Quién desplaza a quién?</h3>
 ${table(['','F⁻','Cl⁻','Br⁻','I⁻'],[['F₂','—','✔','✔','✔'],['Cl₂','✘','—','✔','✔'],['Br₂','✘','✘','—','✔'],['I₂','✘','✘','✘','—']])}
 ${rxs(['Cl2 + 2 Br^- -> 2 Cl^- + Br2','aparece el color naranja del bromo'],['Cl2 + 2 I^- -> 2 Cl^- + I2'],['Br2 + 2 I^- -> 2 Br^- + I2'])}
+${ieLead}${ies('cl2br','cl2i','br2i')}
 ${fix('Erratas de la diapositiva','<p>Donde dice “redactor” debe leerse <b>reductor</b>: el fluoruro es el halogenuro <b>menos reductor</b> y el ioduro el <b>más reductor</b>.</p>')}
 ${verG('qi-tp6-c2-cloro','Cloro y bromo en el TP')}
 `);
@@ -357,31 +630,30 @@ ${verG('qi-tp6-c2-cloro','Cloro y bromo en el TP')}
 <p>Los halógenos <b>dismutan en medio básico</b> (el X₂ se reduce y se oxida a la vez), mientras que sus iones <b>comproporcionan en medio ácido</b> (vuelven a X₂).</p>
 <h3>Dismutación (medio básico)</h3>
 ${rxs(['Cl2(ac) + 2 OH^-(ac) -> Cl^-(ac) + ClO^-(ac) + H2O(l)','en frío: hipoclorito (la lavandina)'],['3 Cl2(ac) + 6 OH^-(ac) -> 5 Cl^-(ac) + ClO3^-(ac) + 3 H2O(l)','en caliente: clorato'],['3 Br2(ac) + 6 OH^-(ac) -> 5 Br^-(ac) + BrO3^-(ac) + 3 H2O(l)'],['3 I2(ac) + 6 OH^-(ac) -> 5 I^-(ac) + IO3^-(ac) + 3 H2O(l)'])}
+${ieLead}${ies('dismCl1','dismCl5','dismBr5','dismI5')}
 <h3>Comproporción (medio ácido)</h3>
 ${rxs(['HClO(ac) + Cl^-(ac) + H^+(ac) -> Cl2(g) + H2O(l)'],['5 Cl^-(ac) + ClO3^-(ac) + 6 H^+(ac) -> 3 Cl2(g) + 3 H2O(l)'],['5 Br^- + BrO3^- + 6 H^+ -> 3 Br2 + 3 H2O'],['5 I^- + IO3^- + 6 H^+ -> 3 I2 + 3 H2O'])}
+${ieLead}${ies('compHClO','compCl5','compBr5','compI5')}
 ${note('Cotejo con la diapositiva','<p>En la diapositiva la comproporción del hipocloroso aparece sin el H⁺ (así no queda balanceada en cargas) y el Cl₂ de la última ecuación figura como “(l)”. Acá se escriben balanceadas y con el Cl₂ gaseoso.</p>')}
 ${idea('La lavandina y el ácido','<p>Por esto <b>nunca hay que mezclar lavandina con ácido</b> (por ejemplo, limpiadores con HCl): el hipoclorito y el cloruro comproporcionan y se libera <b>cloro gaseoso</b>, tóxico. Es justamente lo que se hace, controlado, en el TP.</p>')}
+${ies('lavandina')}
 ${verG('qi-tp6-c2-cloro','Ensayo con hipoclorito, bromuro, NaOH y HCl')}
 `);
 
   aX('iodo','Obtención e identificación del iodo','05',`
 ${rx('MnO2(s) + 2 H2SO4(ac) + 2 KI(ac) -> MnSO4(ac) + I2(s) + K2SO4(ac) + 2 H2O(l)')}
-${example('Balanceo por ion-electrón','',
- step('Reducción',rx('MnO2 + 4 H^+ + 2 e^- -> Mn^2+ + 2 H2O','Mn: +4 → +2'))+
- step('Oxidación',rx('2 I^- -> I2 + 2 e^-','I: −1 → 0'))+
- step('Suma (ya tienen 2 e⁻ cada una)',rx('MnO2 + 4 H^+ + 2 I^- -> I2 + Mn^2+ + 2 H2O'))+
- step('Molecular','<p>Los 4 H⁺ los aportan 2 H₂SO₄; los K⁺ y el sulfato sobrante quedan como K₂SO₄ y MnSO₄.</p>'),
- 'MnO₂ + 2 H₂SO₄ + 2 KI → MnSO₄ + I₂ + K₂SO₄ + 2 H₂O')}
+${X.mno2ki}
 ${figure(svg.iodo,'Esquema del aparato.')}
 <p>El iodo formado en el vaso se separa por calentamiento: <b>se volatiliza</b> y, al tocar la base fría del erlenmeyer, <b>sublima</b> (pasa de gas a sólido) formando cristales.</p>
 <p>Se identifica fácilmente porque con <b>almidón</b> forma soluciones de color <b>azul</b>.</p>
-${deep('El tiosulfato: la “goma de borrar” del iodo '+amp(),'<p>El tiosulfato de sodio reduce el I₂ a I⁻ (incoloro). Si había azul de almidón, desaparece. Es la base de las titulaciones iodométricas.</p>'+rx('I2 + 2 S2O3^2- -> 2 I^- + S4O6^2-','tiosulfato → tetrationato'))}
+${deep('El tiosulfato: la “goma de borrar” del iodo '+amp(),'<p>El tiosulfato de sodio reduce el I₂ a I⁻ (incoloro). Si había azul de almidón, desaparece. Es la base de las titulaciones iodométricas.</p>'+rx('I2 + 2 S2O3^2- -> 2 I^- + S4O6^2-','tiosulfato → tetrationato')+X.tiosulf)}
 ${verG('qi-tp6-c1-iodo','Obtención y propiedades del iodo en el TP')}
 `);
 
   aX('hcl','Ácido clorhídrico: obtención y reconocimiento','06',`
 <p>Se obtiene haciendo reaccionar <b>cloruro de sodio</b> con <b>ácido sulfúrico concentrado</b>: se forma cloruro de hidrógeno gaseoso, que al disolverse en agua da el ácido clorhídrico.</p>
 ${rxs(['NaCl(s) + H2SO4(c) -> NaHSO4(ac) + HCl(g)↑'],['HCl(g) =[H2O]=> HCl(ac)'])}
+${noRedox('Esta sección no tiene redox: la obtención del HCl es un desplazamiento (ácido fijo → ácido volátil) y el reconocimiento del Cl⁻ es una precipitación.')}
 <p>El gas se reconoce con <b>papel tornasol</b> por su carácter ácido:</p>
 ${rx('HCl(ac) -> H^+(ac) + Cl^-(ac)')}
 <p>Y el ácido clorhídrico (en realidad, el Cl⁻) se reconoce porque forma un <b>precipitado blanco de cloruro de plata</b>:</p>
@@ -420,6 +692,26 @@ ${ver('calcogenos:qi-s-compuestos','Los compuestos del azufre de un vistazo')}
 ${ver('halogenos:qi-x-oxidantes','Poder oxidante de los halógenos')}
 `);
 
+  add('metodo','Método del ion-electrón: cómo se balancean las redox del TP','TP 6 · MÉTODO',`
+<p>Todas las redox de este TP (en la teoría, en los ensayos y en las preguntas) tienen un desplegable <b>⚖️ ION-ELECTRÓN · PASO A PASO</b> con el balanceo completo. Siempre se siguen los mismos pasos:</p>
+${table(['Paso','Medio ácido','Medio básico'],[
+ ['1. Números de oxidación','ver qué elemento sube (se oxida: es el <b>reductor</b>) y cuál baja (se reduce: es el <b>oxidante</b>)','igual'],
+ ['2. Hemirreacciones','escribir por separado la oxidación y la reducción, con las especies como están en solución (iones; los ácidos débiles, gases y sólidos sin disociar)','igual'],
+ ['3. Átomos que cambian','igualar el elemento que cambia de número de oxidación','igual'],
+ ['4. Oxígeno','agregar <b>H₂O</b> del lado que falta O','por cada O que falta en un lado: <b>2 OH⁻</b> en ese lado y <b>1 H₂O</b> del otro'],
+ ['5. Hidrógeno','agregar <b>H⁺</b> del lado que falta H','(ya quedó igualado en el paso 4)'],
+ ['6. Carga','agregar <b>e⁻</b> del lado más positivo hasta igualar cargas','igual'],
+ ['7. Igualar electrones','multiplicar cada hemirreacción para que los e⁻ ganados = e⁻ cedidos (mínimo común múltiplo)','igual'],
+ ['8. Sumar y simplificar','cancelar e⁻, H₂O y H⁺ que estén de los dos lados; si todos los coeficientes tienen un divisor común, dividir','igual (cancelar OH⁻ y H₂O)'],
+ ['9. Control','contar átomos de cada elemento y la carga total a cada lado','igual'],
+ ['10. Molecular','agregar los iones espectadores (K⁺, Na⁺, SO₄²⁻, Cl⁻…) de los reactivos que se usaron','igual']
+])}
+${warn('Errores típicos','<ul><li>Escribir KMnO₄ o K₂Cr₂O₇ en la hemirreacción: va el ion que reacciona (MnO₄⁻, Cr₂O₇²⁻).</li><li>Dejar H⁺ en una ecuación de medio básico (dismutación de los halógenos con NaOH).</li><li>Olvidar que en la comproporción y la dismutación las dos hemirreacciones tienen al mismo elemento.</li><li>No controlar la carga al final: es el control que detecta casi todos los errores.</li></ul>')}
+${idea('Tres casos especiales del TP','<ul><li><b>Dismutación</b> (halógenos en NaOH, H₂O₂, Cl₂ en agua): la misma especie es oxidante y reductora; las dos hemirreacciones parten de ella.</li><li><b>Comproporción</b> (SO₂ + H₂S, lavandina + HCl, bromato + bromuro en ácido): dos especies del mismo elemento terminan en el mismo producto.</li><li><b>Descomposiciones en seco</b> (KClO₃, KMnO₄, HgO): se usan H₂O y H⁺ (u OH⁻) como comodines formales que al final se cancelan.</li></ul>')}
+<h3>Ejemplo completo</h3>
+${X.dicrso2}
+`);
+
   // ---------------- CLASE 1 ----------------
   add('c1-so2','Clase 1 · Obtención y propiedades del dióxido de azufre','TP 6 · CLASE 1 · 01',`
 ${ver('calcogenos:qi-s-so2','Dióxido de azufre')}
@@ -432,27 +724,27 @@ ${figure(svg.so2,'Lo esperable en cada tubo (esquema).')}
 ${ensayo({n:'1',tag:'TUBO',title:'Agua: carácter ácido y reacción con H₂S',
  hacemos:`<p>Con la solución obtenida (<b>agua sulfurosa</b>): se prueba con papel tornasol. Al resto se le agrega <b>1 mL de tioacetamida y 5 gotas de HCl 6 M</b>; si no hay cambios, a baño María.</p>`,
  vemos:`<ul><li>Tornasol ${vira('azul','#2f6fd1','rojo','#d6332a')}.</li><li>Con tioacetamida: <b>turbidez amarilla</b> de azufre.</li></ul>`,
- pasa:rxs(['SO2(g) + H2O(l) <=> HSO3^-(ac) + H^+(ac)','agua sulfurosa: ácida'],['SO2(ac) + 2 H2S(ac) -> 3 S(s)↓ + 2 H2O(l)','comproporción: S +4 y −2 → 0']),
+ pasa:rxs(['SO2(g) + H2O(l) <=> HSO3^-(ac) + H^+(ac)','agua sulfurosa: ácida'],['SO2(ac) + 2 H2S(ac) -> 3 S(s)↓ + 2 H2O(l)','comproporción: S +4 y −2 → 0'])+X.so2h2s,
  demuestra:'el SO₂ es un óxido ácido y, frente al H₂S, actúa como oxidante.'})}
 ${ensayo({n:'2',tag:'TUBO',title:'Dicromato de potasio acidificado',
  hacemos:`<p>Se burbujea SO₂ en 3 mL de K₂Cr₂O₇ con gotas de ácido.</p>`,
  vemos:`<p>${vira('naranja',C.dicr,'verde',C.cr3)}</p>`,
- pasa:rxs(['Cr2O7^2- + 3 SO2 + 2 H^+ -> 2 Cr^3+ + 3 SO4^2- + H2O','Cr: +6 → +3 · S: +4 → +6'],['K2Cr2O7 + 3 SO2 + H2SO4 -> Cr2(SO4)3 + K2SO4 + H2O','molecular (acidificado con H₂SO₄)']),
+ pasa:rxs(['Cr2O7^2- + 3 SO2 + 2 H^+ -> 2 Cr^3+ + 3 SO4^2- + H2O','Cr: +6 → +3 · S: +4 → +6'],['K2Cr2O7 + 3 SO2 + H2SO4 -> Cr2(SO4)3 + K2SO4 + H2O','molecular (acidificado con H₂SO₄)'])+X.dicrso2,
  demuestra:'el SO₂ es reductor.'})}
 ${ensayo({n:'3',tag:'TUBO',title:'Permanganato de potasio',
  hacemos:`<p>Se burbujea SO₂ en 3 mL de KMnO₄.</p>`,
  vemos:`<p>${vira('violeta',C.mno4,'incoloro','transparent')}</p>`,
- pasa:rxs(['2 MnO4^- + 5 SO2 + 2 H2O -> 2 Mn^2+ + 5 SO4^2- + 4 H^+','Mn: +7 → +2'],['2 KMnO4 + 5 SO2 + 2 H2O -> K2SO4 + 2 MnSO4 + 2 H2SO4','molecular']),
+ pasa:rxs(['2 MnO4^- + 5 SO2 + 2 H2O -> 2 Mn^2+ + 5 SO4^2- + 4 H^+','Mn: +7 → +2'],['2 KMnO4 + 5 SO2 + 2 H2O -> K2SO4 + 2 MnSO4 + 2 H2SO4','molecular'])+X.mno4so2,
  demuestra:'el SO₂ es reductor (y el medio se acidifica solo).'})}
 ${ensayo({n:'4',tag:'TUBO',title:'Iodo',
  hacemos:`<p>Se burbujea SO₂ en 3 mL de solución de iodo.</p>`,
  vemos:`<p>${vira('pardo',C.iodo,'incoloro','transparent')}</p>`,
- pasa:rx('I2 + SO2 + 2 H2O -> 2 I^- + SO4^2- + 4 H^+','I: 0 → −1'),
+ pasa:rx('I2 + SO2 + 2 H2O -> 2 I^- + SO4^2- + 4 H^+','I: 0 → −1')+X.i2so2,
  demuestra:'el SO₂ es reductor: reduce el I₂ a I⁻.'})}
 ${ensayo({n:'5',tag:'TUBO',title:'Peróxido de hidrógeno',
  hacemos:`<p>Se burbujea SO₂ en 3 mL de H₂O₂.</p>`,
  vemos:`<p>No hay un cambio de color visible: el cambio se descubre con BaCl₂.</p>`,
- pasa:rx('SO2(g) + H2O2(ac) -> H2SO4(ac)','O: −1 → −2 · S: +4 → +6'),
+ pasa:rx('SO2(g) + H2O2(ac) -> H2SO4(ac)','O: −1 → −2 · S: +4 → +6')+X.so2h2o2,
  demuestra:'el SO₂ se oxida a sulfato (obtención “limpia” de H₂SO₄).'})}
 ${ensayo({tag:'TUBOS',title:'Reconocimiento del sulfato con cloruro de bario',
  hacemos:`<p>La guía indica agregar gotas de <b>cloruro de bario</b> a los tubos “3 a 6”.</p>`,
@@ -474,7 +766,7 @@ ${figure(svg.iodo,'Imagen 1 de la guía: esquema del aparato empleado en la obte
 ${ensayo({n:'2',title:'Obtención de iodo por sublimación',
  hacemos:`<p>Un solo equipo. En un vaso de 50 mL: <b>1,5 g de KI, 1,5 g de MnO₂ y 5 mL de H₂SO₄ diluido</b>; se mezcla agitando el vaso. Sobre la boca se coloca un <b>erlenmeyer lleno de agua fría</b>. Se calienta lentamente para que los vapores alcancen el fondo del erlenmeyer. Cuando hay suficiente depósito, se retira el mechero y se deja <b>enfriar sin destapar</b>. Los cristales se recogen con espátula plástica sobre un vidrio de reloj.</p>`,
  vemos:`<ul><li>Vapores ${swatch(C.violeta,'violetas')} dentro del vaso.</li><li>En la base fría del erlenmeyer se forman <b>cristales negro-violáceos brillantes</b>.</li></ul>`,
- pasa:rxs(['MnO2(s) + 2 H2SO4(ac) + 2 KI(ac) -> MnSO4(ac) + I2(s) + K2SO4(ac) + 2 H2O(l)'],['MnO2 + 4 H^+ + 2 I^- -> I2 + Mn^2+ + 2 H2O','iónica: el MnO₂ oxida al I⁻'],['I2(s) -> I2(g) -> I2(s)','se volatiliza y vuelve a sólido en la superficie fría']),
+ pasa:rxs(['MnO2(s) + 2 H2SO4(ac) + 2 KI(ac) -> MnSO4(ac) + I2(s) + K2SO4(ac) + 2 H2O(l)'],['MnO2 + 4 H^+ + 2 I^- -> I2 + Mn^2+ + 2 H2O','iónica: el MnO₂ oxida al I⁻'],['I2(s) -> I2(g) -> I2(s)','se volatiliza y vuelve a sólido en la superficie fría'])+X.mno2ki,
  demuestra:'el I⁻ es reductor (lo oxida el MnO₂ en medio ácido) y el iodo se separa por sublimación.',
  extra:warn('Cuidados de la guía','<ul><li>No tocar el iodo: mancha, tanto el sólido como sus vapores.</li><li>Dejar enfriar antes de retirar el erlenmeyer para que sublime todo el iodo volatilizado.</li><li>Recoger los cristales con varilla de vidrio o plástico.</li></ul>')+example('¿Cuánto iodo se puede obtener como máximo?','<p>1,5 g de KI (166 g/mol) y 1,5 g de MnO₂ (86,9 g/mol); el ácido en exceso.</p>',step('Limitante',chain(R`n_{\mathrm{KI}}=\frac{1{,}5}{166}=9{,}04\cdot10^{-3}\ \mathrm{mol}`,R`n_{\mathrm{MnO_2}}=\frac{1{,}5}{86{,}9}=1{,}73\cdot10^{-2}\ \mathrm{mol}`,['\\text{el KI necesita sólo }4{,}52\\cdot10^{-3}\\ \\mathrm{mol\\ de\\ MnO_2}','limitante: KI']))+step('Iodo',chain(R`n_{\mathrm{I_2}}=\frac{9{,}04\cdot10^{-3}}{2}=4{,}52\cdot10^{-3}\ \mathrm{mol}`,R`m=4{,}52\cdot10^{-3}\cdot253{,}8=1{,}15\ \mathrm{g}`)),'≈ 1,15 g de I₂ (el MnO₂ sobra)')})}
 <h3>Propiedades del iodo: cinco tubos con unos pocos cristales</h3>
@@ -487,17 +779,17 @@ ${ensayo({n:'1 y 2',tag:'TUBOS',title:'Solubilidad en agua y en cloroformo',
 ${ensayo({n:'3',tag:'TUBO',title:'Almidón y tiosulfato',
  hacemos:`<p>5 mL de agua, tapar y agitar. Si no se disolvió todo, decantar unos mililitros a otro tubo, agregar <b>dispersión de almidón</b> y luego gotas de <b>tiosulfato de sodio</b> agitando hasta ver cambios.</p>`,
  vemos:`<ul><li>Con almidón: ${swatch(C.almidon,'azul intenso')}.</li><li>Con tiosulfato: ${vira('azul',C.almidon,'incoloro','transparent')}.</li></ul>`,
- pasa:`<p>El almidón forma con el iodo un <b>complejo azul</b> intenso: es la prueba más sensible del I₂.</p>`+rx('I2(ac) + 2 S2O3^2-(ac) -> 2 I^-(ac) + S4O6^2-(ac)','el tiosulfato reduce el I₂ a I⁻: se va el azul'),
+ pasa:`<p>El almidón forma con el iodo un <b>complejo azul</b> intenso: es la prueba más sensible del I₂.</p>`+rx('I2(ac) + 2 S2O3^2-(ac) -> 2 I^-(ac) + S4O6^2-(ac)','el tiosulfato reduce el I₂ a I⁻: se va el azul')+X.tiosulf,
  demuestra:'el almidón reconoce al iodo (aun en trazas) y el tiosulfato lo reduce a ioduro.'})}
 ${ensayo({n:'4',tag:'TUBO',title:'Solubilidad en ioduro de potasio',
  hacemos:`<p>5 mL de KI, tapar y agitar. Pasar una pequeña gota a otro tubo, agregar agua hasta que casi no tenga color y luego gotas de almidón. Finalmente, a <b>ambos</b> tubos, tiosulfato gota a gota hasta ver cambios.</p>`,
  vemos:`<ul><li>El iodo se disuelve mucho más que en agua: solución ${swatch(C.i3,'pardo rojiza')}.</li><li>La gota diluida, casi incolora, con almidón se pone ${swatch(C.almidon,'azul')}.</li><li>Con tiosulfato, los dos tubos se <b>decoloran</b>.</li></ul>`,
- pasa:rxs(['I2(s) + I^-(ac) <=> I3^-(ac)','triyoduro: soluble'],['I3^- + 2 S2O3^2- -> 3 I^- + S4O6^2-']),
+ pasa:rxs(['I2(s) + I^-(ac) <=> I3^-(ac)','triyoduro: soluble (no es redox: el I₂ sólo se asocia al I⁻)'],['I3^- + 2 S2O3^2- -> 3 I^- + S4O6^2-'])+X.i3tiosulf,
  demuestra:'el I₂ es muy soluble en KI (forma I₃⁻) y el almidón detecta cantidades muy pequeñas de iodo.'})}
 ${ensayo({n:'5',tag:'TUBO',title:'Hidróxido de sodio y después ácido',
  hacemos:`<p>5 mL de agua, tapar y agitar. Decantar unos mililitros a otro tubo y agregar gotas de <b>NaOH</b> hasta ver cambios. Luego, HCl o H₂SO₄ diluido hasta volver a ver cambios.</p>`,
  vemos:`<ul><li>Con NaOH: ${vira('amarillo',`#e8c77a`,'incoloro','transparent')}.</li><li>Con el ácido: <b>vuelve el color</b> pardo-amarillento del iodo.</li></ul>`,
- pasa:rxs(['3 I2 + 6 OH^- -> 5 I^- + IO3^- + 3 H2O','dismutación en medio básico'],['5 I^- + IO3^- + 6 H^+ -> 3 I2 + 3 H2O','comproporción en medio ácido']),
+ pasa:rxs(['3 I2 + 6 OH^- -> 5 I^- + IO3^- + 3 H2O','dismutación en medio básico'],['5 I^- + IO3^- + 6 H^+ -> 3 I2 + 3 H2O','comproporción en medio ácido'])+ies('dismI5','compI5'),
  demuestra:'los halógenos dismutan en medio básico y se regeneran por comproporción en medio ácido.'})}
 `);
 
@@ -531,7 +823,7 @@ ${rx('CH3CSNH2 + H2O =[Δ]=> CH3CONH2 + H2S')}
 ${ensayo({n:'1.1',title:'Propiedades reductoras',
  hacemos:`<p>En un tubo de hemólisis, <b>20 gotas de KMnO₄</b>, <b>5 gotas de HCl o H₂SO₄</b> y gotas de tioacetamida hasta ver cambios (si no, baño María).</p>`,
  vemos:`<p>${vira('violeta',C.mno4,'incoloro','transparent')} y aparece una <b>turbidez amarilla</b>.</p>`,
- pasa:rxs(['2 MnO4^- + 5 H2S + 6 H^+ -> 2 Mn^2+ + 5 S(s)↓ + 8 H2O','Mn: +7 → +2 · S: −2 → 0'],['2 KMnO4 + 5 H2S + 3 H2SO4 -> K2SO4 + 2 MnSO4 + 5 S↓ + 8 H2O','molecular con H₂SO₄']),
+ pasa:rxs(['2 MnO4^- + 5 H2S + 6 H^+ -> 2 Mn^2+ + 5 S(s)↓ + 8 H2O','Mn: +7 → +2 · S: −2 → 0'],['2 KMnO4 + 5 H2S + 3 H2SO4 -> K2SO4 + 2 MnSO4 + 5 S↓ + 8 H2O','molecular con H₂SO₄'])+X.mno4h2s,
  demuestra:'el H₂S es reductor: se oxida a azufre.'})}
 ${figure(svg.sulfuros,'Lo esperable con cada catión (esquema).')}
 ${ensayo({n:'1.2',title:'Precipitación y solubilidad de sulfuros metálicos',
@@ -551,7 +843,7 @@ ${warn('Con extremo cuidado','<p>El H₂SO₄ concentrado es muy corrosivo y pro
 ${ensayo({n:'2.1',title:'Propiedades redox: cobre con ácido concentrado y diluido',
  hacemos:`<p>Dos tubos de hemólisis, cada uno con un <b>alambre de cobre</b>. Al primero, <b>2 mL de H₂SO₄ concentrado</b>; al segundo, H₂SO₄ <b>diluido</b>. Se calienta a baño María y se coloca en la boca de los tubos un <b>papel de filtro embebido en dicromato de potasio</b>.</p>`,
  vemos:`<ul><li><b>Concentrado:</b> se desprende un gas; el papel con dicromato ${vira('naranja',C.dicr,'verde',C.cr3)}. El cobre se ataca (puede quedar un sólido blanco-grisáceo o un tono azulado).</li><li><b>Diluido:</b> no se observa reacción.</li></ul>`,
- pasa:rxs(['Cu(s) + 2 H2SO4(c) =[Δ]=> CuSO4 + SO2(g)↑ + 2 H2O','el sulfato oxida al cobre'],['Cu(s) + H2SO4(d) -> no reacciona','el H⁺ no alcanza para oxidar al Cu'],['K2Cr2O7 + 3 SO2 + H2SO4 -> Cr2(SO4)3 + K2SO4 + H2O','en el papel: reconoce el SO₂'])+`<p>En el ácido concentrado el CuSO₄ casi no tiene agua para disolverse: por eso puede verse blanco (anhidro) en lugar de azul. Al diluir con cuidado aparece el azul.</p>`,
+ pasa:rxs(['Cu(s) + 2 H2SO4(c) =[Δ]=> CuSO4 + SO2(g)↑ + 2 H2O','el sulfato oxida al cobre'],['Cu(s) + H2SO4(d) -> no reacciona','el H⁺ no alcanza para oxidar al Cu'],['K2Cr2O7 + 3 SO2 + H2SO4 -> Cr2(SO4)3 + K2SO4 + H2O','en el papel: reconoce el SO₂'])+ies('cuconc','dicrso2')+`<p>En el ácido concentrado el CuSO₄ casi no tiene agua para disolverse: por eso puede verse blanco (anhidro) en lugar de azul. Al diluir con cuidado aparece el azul.</p>`,
  demuestra:'el H₂SO₄ concentrado y caliente es un oxidante más fuerte que el diluido: el sulfato se reduce a SO₂.'})}
 ${ensayo({n:'2.2',title:'Acción deshidratante',
  hacemos:`<p>Dos tubos: 1) una punta de espátula de <b>CuSO₄·5H₂O</b>; 2) un <b>trozo de papel</b>. A ambos, <b>1 mL de H₂SO₄ concentrado</b>; si no hay cambios, calentar suave a baño María.</p>`,
@@ -567,12 +859,12 @@ ${figure(svg.cloro,'La secuencia completa del ensayo (esquema).')}
 ${ensayo({n:'i–ii',title:'Obtención del cloro (tubo A)',
  hacemos:`<p>En un tubo rotulado <b>A</b>: <b>2 mL de hipoclorito de sodio</b> y HCl concentrado gota a gota hasta que se desprenda un gas. Acercar un papel con KI y un papel tornasol.</p>`,
  vemos:`<ul><li>Gas ${swatch(C.cl,'amarillo verdoso')} de olor irritante (no olerlo directamente).</li><li>Papel con KI: ${vira('blanco','#f4f4f4','pardo',C.iodo)}.</li><li>Tornasol azul: se pone <b>rojo</b> y después se <b>blanquea</b>.</li></ul>`,
- pasa:rxs(['NaClO(ac) + 2 HCl(ac) -> Cl2(g)↑ + NaCl(ac) + H2O(l)','comproporción: Cl +1 y −1 → 0'],['Cl2 + 2 KI -> 2 KCl + I2','el papel se pone pardo'],['Cl2 + H2O <=> HCl + HClO','ácido (rojo) y decolorante (blanquea)']),
+ pasa:rxs(['NaClO(ac) + 2 HCl(ac) -> Cl2(g)↑ + NaCl(ac) + H2O(l)','comproporción: Cl +1 y −1 → 0'],['Cl2 + 2 KI -> 2 KCl + I2','el papel se pone pardo'],['Cl2 + H2O <=> HCl + HClO','ácido (rojo) y decolorante (blanquea)'])+ies('lavandina','cl2i','cl2h2o'),
  demuestra:'obtención de Cl₂ por comproporción en medio ácido; el cloro es oxidante, ácido y decolorante.'})}
 ${ensayo({n:'iii–iv',title:'Cloro con bromuro (tubo B)',
  hacemos:`<p>Volcar rápidamente el contenido de A en B. Acercar a B un papel con KI y un tornasol azul humedecido.</p>`,
  vemos:`<ul><li>La solución de B se pone ${swatch(C.br,'amarillo-naranja')}.</li><li>Papel con KI: <b>pardo</b>. Tornasol: <b>rojo</b>.</li></ul>`,
- pasa:rxs(['Cl2(ac) + 2 KBr(ac) -> 2 KCl(ac) + Br2(ac)','el Cl₂ oxida al Br⁻'],['Br2 + 2 KI -> 2 KBr + I2','el bromo (y el cloro que quede) oxidan al I⁻']),
+ pasa:rxs(['Cl2(ac) + 2 KBr(ac) -> 2 KCl(ac) + Br2(ac)','el Cl₂ oxida al Br⁻'],['Br2 + 2 KI -> 2 KBr + I2','el bromo (y el cloro que quede) oxidan al I⁻'])+ies('cl2br','br2i'),
  demuestra:'poder oxidante: Cl₂ > Br₂ > I₂.'})}
 ${ensayo({n:'v–vi',tag:'TUBO I',title:'Extracción con cloroformo',
  hacemos:`<p>Dividir el contenido de B en dos tubos (<b>I</b> y <b>II</b>). Al tubo I agregar <b>3 mL de cloroformo</b> y agitar con tapón.</p>`,
@@ -582,7 +874,7 @@ ${ensayo({n:'v–vi',tag:'TUBO I',title:'Extracción con cloroformo',
 ${ensayo({n:'vii',tag:'TUBO II',title:'Hidróxido de sodio y después HCl',
  hacemos:`<p>Al tubo II agregar NaOH hasta ver cambios; luego, HCl.</p>`,
  vemos:`<ul><li>Con NaOH: ${vira('naranja',C.br,'incoloro','transparent')}.</li><li>Con HCl: <b>vuelve el color</b> naranja.</li></ul>`,
- pasa:rxs(['3 Br2 + 6 OH^- -> 5 Br^- + BrO3^- + 3 H2O','dismutación (en frío también Br₂ + 2 OH⁻ → Br⁻ + BrO⁻ + H₂O)'],['5 Br^- + BrO3^- + 6 H^+ -> 3 Br2 + 3 H2O','comproporción en medio ácido']),
+ pasa:rxs(['3 Br2 + 6 OH^- -> 5 Br^- + BrO3^- + 3 H2O','dismutación (en frío también Br₂ + 2 OH⁻ → Br⁻ + BrO⁻ + H₂O)'],['5 Br^- + BrO3^- + 6 H^+ -> 3 Br2 + 3 H2O','comproporción en medio ácido'])+ies('dismBr5','dismBr1','compBr5','compBr1'),
  demuestra:'el bromo dismuta en medio básico y se regenera en medio ácido.'})}
 `);
 
@@ -590,7 +882,7 @@ ${ensayo({n:'vii',tag:'TUBO II',title:'Hidróxido de sodio y después HCl',
 ${ensayo({n:'4',title:'HCl concentrado con permanganato y con hierro',
  hacemos:`<p>Dos tubos con <b>3 mL de HCl concentrado</b> (I y II). <b>Tubo I:</b> una punta de espátula de KMnO₄ y acercar un papel con KI. <b>Tubo II:</b> un clavo de hierro. Si no hay cambios, baño María.</p>`,
  vemos:`<ul><li><b>Tubo I:</b> gas ${swatch(C.cl,'amarillo verdoso')} de olor irritante; el violeta se va; papel con KI <b>pardo</b>.</li><li><b>Tubo II:</b> burbujeo de un gas <b>incoloro</b>; la solución toma color ${swatch('#a8d08d','verde claro')}.</li></ul>`,
- pasa:rxs(['2 KMnO4 + 16 HCl -> 2 KCl + 2 MnCl2 + 5 Cl2↑ + 8 H2O','el Cl⁻ es reductor: −1 → 0'],['2 MnO4^- + 16 H^+ + 10 Cl^- -> 2 Mn^2+ + 5 Cl2 + 8 H2O','iónica'],['Fe(s) + 2 HCl(ac) -> FeCl2(ac) + H2(g)↑','el H⁺ es oxidante: +1 → 0']),
+ pasa:rxs(['2 KMnO4 + 16 HCl -> 2 KCl + 2 MnCl2 + 5 Cl2↑ + 8 H2O','el Cl⁻ es reductor: −1 → 0'],['2 MnO4^- + 16 H^+ + 10 Cl^- -> 2 Mn^2+ + 5 Cl2 + 8 H2O','iónica'],['Fe(s) + 2 HCl(ac) -> FeCl2(ac) + H2(g)↑','el H⁺ es oxidante: +1 → 0'])+ies('kmno4hcl','fehcl'),
  demuestra:'el HCl puede ser reductor (por su Cl⁻, frente a oxidantes fuertes) u oxidante (por su H⁺, frente a metales activos).'})}
 ${idea('El HCl, con dos caras','<p>En el tubo I el que trabaja es el <b>Cl⁻</b> (se oxida a Cl₂); en el tubo II, el <b>H⁺</b> (se reduce a H₂). Misma sustancia, distinto “compañero”.</p>')}
 `);
@@ -640,15 +932,15 @@ ${table(['Ensayo','Lo que se ve','Lo que demuestra'],[
    {n:2,title:'El SO₂ como reductor y como oxidante',
     statement:'Escribí, balanceadas por ion-electrón, las reacciones del SO₂ con: a) K₂Cr₂O₇ en medio ácido; b) KMnO₄; c) I₂; d) H₂O₂; e) H₂S. Indicá en cada caso si el SO₂ actúa como oxidante o reductor y qué se observa.',
     solution:note('Hemirreacción del SO₂ como reductor',rx('SO2 + 2 H2O -> SO4^2- + 4 H^+ + 2 e^-','S: +4 → +6'))+
-     step('a) Dicromato · reductor',rxs(['Cr2O7^2- + 14 H^+ + 6 e^- -> 2 Cr^3+ + 7 H2O'],['3 SO2 + 6 H2O -> 3 SO4^2- + 12 H^+ + 6 e^-','× 3'],['Cr2O7^2- + 3 SO2 + 2 H^+ -> 2 Cr^3+ + 3 SO4^2- + H2O','naranja → verde']))+
-     step('b) Permanganato · reductor',rxs(['2 MnO4^- + 16 H^+ + 10 e^- -> 2 Mn^2+ + 8 H2O','× 2'],['5 SO2 + 10 H2O -> 5 SO4^2- + 20 H^+ + 10 e^-','× 5'],['2 MnO4^- + 5 SO2 + 2 H2O -> 2 Mn^2+ + 5 SO4^2- + 4 H^+','violeta → incoloro']))+
-     step('c) Iodo · reductor',rxs(['I2 + 2 e^- -> 2 I^-'],['I2 + SO2 + 2 H2O -> 2 I^- + SO4^2- + 4 H^+','pardo → incoloro']))+
-     step('d) Agua oxigenada · reductor',rxs(['H2O2 + 2 H^+ + 2 e^- -> 2 H2O'],['SO2 + H2O2 -> SO4^2- + 2 H^+','sin cambio visible; con BaCl₂, precipitado blanco']))+
-     step('e) Sulfuro de hidrógeno · oxidante',rxs(['SO2 + 4 H^+ + 4 e^- -> S + 2 H2O','S: +4 → 0'],['2 H2S -> 2 S + 4 H^+ + 4 e^-','S: −2 → 0'],['SO2 + 2 H2S -> 3 S + 2 H2O','turbidez amarilla (comproporción)'])),
+     step('a) Dicromato · reductor',rxs(['Cr2O7^2- + 14 H^+ + 6 e^- -> 2 Cr^3+ + 7 H2O'],['3 SO2 + 6 H2O -> 3 SO4^2- + 12 H^+ + 6 e^-','× 3'],['Cr2O7^2- + 3 SO2 + 2 H^+ -> 2 Cr^3+ + 3 SO4^2- + H2O','naranja → verde'])+X.dicrso2)+
+     step('b) Permanganato · reductor',rxs(['2 MnO4^- + 16 H^+ + 10 e^- -> 2 Mn^2+ + 8 H2O','× 2'],['5 SO2 + 10 H2O -> 5 SO4^2- + 20 H^+ + 10 e^-','× 5'],['2 MnO4^- + 5 SO2 + 2 H2O -> 2 Mn^2+ + 5 SO4^2- + 4 H^+','violeta → incoloro'])+X.mno4so2)+
+     step('c) Iodo · reductor',rxs(['I2 + 2 e^- -> 2 I^-'],['I2 + SO2 + 2 H2O -> 2 I^- + SO4^2- + 4 H^+','pardo → incoloro'])+X.i2so2)+
+     step('d) Agua oxigenada · reductor',rxs(['H2O2 + 2 H^+ + 2 e^- -> 2 H2O'],['SO2 + H2O2 -> SO4^2- + 2 H^+','sin cambio visible; con BaCl₂, precipitado blanco'])+X.so2h2o2)+
+     step('e) Sulfuro de hidrógeno · oxidante',rxs(['SO2 + 4 H^+ + 4 e^- -> S + 2 H2O','S: +4 → 0'],['2 H2S -> 2 S + 4 H^+ + 4 e^-','S: −2 → 0'],['SO2 + 2 H2S -> 3 S + 2 H2O','turbidez amarilla (comproporción)'])+X.so2h2s),
     answer:'Reductor frente a Cr₂O₇²⁻, MnO₄⁻, I₂ y H₂O₂ (se oxida a SO₄²⁻); oxidante frente al H₂S (se reduce a S).'},
    {n:3,title:'Obtención del iodo',
     statement:'a) Escribí la ecuación de obtención del iodo y balanceala por ion-electrón. b) ¿Cuál es el reactivo limitante con 1,5 g de KI y 1,5 g de MnO₂? ¿Cuánto iodo se obtiene como máximo? c) ¿Por qué se coloca un erlenmeyer con agua fría sobre el vaso? ¿Qué cambio de estado ocurre?',
-    solution:step('a) Ion-electrón',rxs(['MnO2 + 4 H^+ + 2 e^- -> Mn^2+ + 2 H2O','reducción'],['2 I^- -> I2 + 2 e^-','oxidación'],['MnO2 + 4 H^+ + 2 I^- -> I2 + Mn^2+ + 2 H2O'],['MnO2 + 2 H2SO4 + 2 KI -> MnSO4 + I2 + K2SO4 + 2 H2O','molecular']))+
+    solution:step('a) Ion-electrón',rxs(['MnO2 + 4 H^+ + 2 e^- -> Mn^2+ + 2 H2O','reducción'],['2 I^- -> I2 + 2 e^-','oxidación'],['MnO2 + 4 H^+ + 2 I^- -> I2 + Mn^2+ + 2 H2O'],['MnO2 + 2 H2SO4 + 2 KI -> MnSO4 + I2 + K2SO4 + 2 H2O','molecular'])+X.mno2ki)+
      step('b) Limitante y masa',chain(R`n_{\mathrm{KI}}=9{,}04\cdot10^{-3}\ \mathrm{mol}\quad n_{\mathrm{MnO_2}}=1{,}73\cdot10^{-2}\ \mathrm{mol}`,['\\text{relación 1 MnO}_2:2\\text{ KI}\\Rightarrow\\text{limita el KI}','el MnO₂ sobra'],R`m_{\mathrm{I_2}}=\frac{9{,}04\cdot10^{-3}}{2}\cdot253{,}8=1{,}15\ \mathrm{g}`))+
      step('c) Sublimación','<p>Al calentar, el I₂ pasa a vapor (violeta). Al tocar la superficie fría del erlenmeyer, vuelve directamente a <b>sólido</b>: cristales. (Estrictamente, gas → sólido es <b>sublimación inversa</b> o deposición; en el material se la llama sublimación.) Así el iodo queda separado de la mezcla del vaso.</p>'),
     answer:'a) MnO₂ + 4 H⁺ + 2 I⁻ → I₂ + Mn²⁺ + 2 H₂O · b) limita el KI: ≈ 1,15 g de I₂ · c) para que el vapor se deposite como cristales'},
@@ -656,8 +948,8 @@ ${table(['Ensayo','Lo que se ve','Lo que demuestra'],[
     statement:'Interpretá con ecuaciones lo que ocurre con el iodo en: a) agua y cloroformo (y al mezclarlos); b) KI; c) almidón y luego tiosulfato; d) NaOH y luego ácido.',
     solution:step('a) Agua y cloroformo','<p>El I₂ es no polar: muy poco soluble en agua (amarillo pálido) y muy soluble en cloroformo (violeta). Al mezclar, el iodo pasa a la fase orgánica (abajo): <b>extracción</b>.</p>')+
      step('b) KI',rx('I2 + I^- <=> I3^-','triyoduro: soluble, pardo rojizo'))+
-     step('c) Almidón y tiosulfato','<p>Con almidón: azul intenso (reconocimiento). El tiosulfato reduce el iodo y el azul desaparece:</p>'+rx('I2 + 2 S2O3^2- -> 2 I^- + S4O6^2-'))+
-     step('d) NaOH y ácido',rxs(['3 I2 + 6 OH^- -> 5 I^- + IO3^- + 3 H2O','dismutación: se decolora'],['5 I^- + IO3^- + 6 H^+ -> 3 I2 + 3 H2O','comproporción: vuelve el color'])),
+     step('c) Almidón y tiosulfato','<p>Con almidón: azul intenso (reconocimiento). El tiosulfato reduce el iodo y el azul desaparece:</p>'+rx('I2 + 2 S2O3^2- -> 2 I^- + S4O6^2-')+X.tiosulf)+
+     step('d) NaOH y ácido',rxs(['3 I2 + 6 OH^- -> 5 I^- + IO3^- + 3 H2O','dismutación: se decolora'],['5 I^- + IO3^- + 6 H^+ -> 3 I2 + 3 H2O','comproporción: vuelve el color'])+ies('dismI5','compI5')),
     answer:'No polar (extracción a CHCl₃) · I₃⁻ en KI · azul con almidón, decolorado por S₂O₃²⁻ · dismuta en base y se regenera en ácido'},
    {n:5,title:'Ácido clorhídrico y cloruros',
     statement:'a) Calculá el volumen de H₂SO₄ concentrado (98 % m/m, δ = 1,84 g/cm³) necesario para 1 g de NaCl. b) ¿Por qué el HCl se recoge en un tubo derecho? c) ¿Qué se observa al invertir el tubo en agua? ¿Qué propiedad demuestra? d) Escribí las reacciones con AgNO₃ y con Pb(NO₃)₂.',
@@ -668,28 +960,28 @@ ${table(['Ensayo','Lo que se ve','Lo que demuestra'],[
     answer:'a) ≈ 0,93 mL · b) es más denso que el aire · c) el agua sube: muy soluble · d) AgCl y PbCl₂ blancos'},
    {n:6,title:'El H₂S: reductor y precipitante',
     statement:'a) ¿Qué se observa al agregar tioacetamida a KMnO₄ acidificado? Escribí la ecuación por ion-electrón. b) Explicá los resultados con CuSO₄, NiCl₂ y SbCl₃ (con tioacetamida, NaOH 6 M y HCl 6 M) usando el principio de Le Chatelier.',
-    solution:step('a) Reductor',rxs(['MnO4^- + 8 H^+ + 5 e^- -> Mn^2+ + 4 H2O','× 2'],['H2S -> S + 2 H^+ + 2 e^-','× 5'],['2 MnO4^- + 5 H2S + 6 H^+ -> 2 Mn^2+ + 5 S↓ + 8 H2O','violeta → incoloro + turbidez amarilla']))+
+    solution:step('a) Reductor',rxs(['MnO4^- + 8 H^+ + 5 e^- -> Mn^2+ + 4 H2O','× 2'],['H2S -> S + 2 H^+ + 2 e^-','× 5'],['2 MnO4^- + 5 H2S + 6 H^+ -> 2 Mn^2+ + 5 S↓ + 8 H2O','violeta → incoloro + turbidez amarilla'])+X.mno4h2s)+
      step('b) Sulfuros',figure(svg.chatelier,'')+table(['Catión','Qué pasa','Por qué'],[['Cu²⁺','CuS negro con tioacetamida; no se disuelve en HCl','es tan insoluble que el poco S²⁻ del medio ácido alcanza'],['Ni²⁺','no precipita en ácido; con NaOH, NiS negro','el NaOH consume H⁺ → el H₂S se ioniza más → sube el S²⁻ y se supera la solubilidad'],['Sb³⁺','Sb₂S₃ naranja; se disuelve en HCl 6 M caliente','el H⁺ baja el S²⁻ y el Cl⁻ forma clorocomplejos']])+rxs(['Cu^2+ + H2S -> CuS↓ + 2 H^+'],['Ni^2+ + S^2- -> NiS↓'],['2 Sb^3+ + 3 H2S -> Sb2S3↓ + 6 H^+'])),
     answer:'a) 2 MnO₄⁻ + 5 H₂S + 6 H⁺ → 2 Mn²⁺ + 5 S + 8 H₂O · b) el pH controla el S²⁻: CuS precipita siempre, NiS sólo en básico, Sb₂S₃ se redisuelve en HCl'},
    {n:7,title:'Ácido sulfúrico concentrado y diluido',
     statement:'a) Compará lo que ocurre al calentar cobre con H₂SO₄ concentrado y con H₂SO₄ diluido. ¿Para qué sirve el papel con dicromato? b) ¿Qué gas libera el Zn con H₂SO₄ diluido y cuál con concentrado? c) ¿Qué se observa con CuSO₄·5H₂O y con papel? ¿Qué propiedad demuestra?',
-    solution:step('a) Cobre',rxs(['Cu + 2 H2SO4(c) -> CuSO4 + SO2↑ + 2 H2O','concentrado: el sulfato es el oxidante'],['Cu + H2SO4(d) -> no reacciona','el H⁺ no oxida al cobre'])+'<p>El papel con <b>dicromato</b> detecta el SO₂: pasa de naranja a verde (Cr⁶⁺ → Cr³⁺).</p>'+rx('K2Cr2O7 + 3 SO2 + H2SO4 -> Cr2(SO4)3 + K2SO4 + H2O'))+
-     step('b) Zinc',rxs(['Zn + H2SO4(d) -> ZnSO4 + H2↑','gas incoloro e insípido'],['Zn + 2 H2SO4(c) -> ZnSO4 + SO2↑ + 2 H2O','gas de olor picante; tornasol a rosa']))+
+    solution:step('a) Cobre',rxs(['Cu + 2 H2SO4(c) -> CuSO4 + SO2↑ + 2 H2O','concentrado: el sulfato es el oxidante'],['Cu + H2SO4(d) -> no reacciona','el H⁺ no oxida al cobre'])+'<p>El papel con <b>dicromato</b> detecta el SO₂: pasa de naranja a verde (Cr⁶⁺ → Cr³⁺).</p>'+rx('K2Cr2O7 + 3 SO2 + H2SO4 -> Cr2(SO4)3 + K2SO4 + H2O')+ies('cuconc','dicrso2'))+
+     step('b) Zinc',rxs(['Zn + H2SO4(d) -> ZnSO4 + H2↑','gas incoloro e insípido'],['Zn + 2 H2SO4(c) -> ZnSO4 + SO2↑ + 2 H2O','gas de olor picante; tornasol a rosa'])+ies('zndil','znconc'))+
      step('c) Deshidratante','<p>El CuSO₄·5H₂O pasa de <b>azul a blanco</b> (pierde el agua de cristalización) y el papel se <b>carboniza</b>: el H₂SO₄ concentrado es <b>deshidratante</b>.</p>'),
     answer:'a) concentrado: SO₂ (dicromato verde); diluido: nada · b) diluido H₂, concentrado SO₂ · c) deshidratante'},
    {n:8,title:'Cloro y bromo: la secuencia completa',
     statement:'Escribí las ecuaciones de cada paso del ensayo: a) NaClO + HCl; b) gas con papel de KI y tornasol; c) tubo A volcado en KBr; d) tubo I con cloroformo; e) tubo II con NaOH y luego HCl. ¿Qué orden de poder oxidante se deduce?',
-    solution:step('a) Obtención del Cl₂',rx('NaClO + 2 HCl -> Cl2↑ + NaCl + H2O','comproporción'))+
-     step('b) Papeles',rxs(['Cl2 + 2 KI -> 2 KCl + I2','KI pardo'],['Cl2 + H2O <=> HCl + HClO','tornasol rojo y luego blanqueado']))+
-     step('c) KBr',rx('Cl2 + 2 KBr -> 2 KCl + Br2','naranja'))+
+    solution:step('a) Obtención del Cl₂',rx('NaClO + 2 HCl -> Cl2↑ + NaCl + H2O','comproporción')+X.lavandina)+
+     step('b) Papeles',rxs(['Cl2 + 2 KI -> 2 KCl + I2','KI pardo'],['Cl2 + H2O <=> HCl + HClO','tornasol rojo y luego blanqueado'])+ies('cl2i','cl2h2o'))+
+     step('c) KBr',rx('Cl2 + 2 KBr -> 2 KCl + Br2','naranja')+X.cl2br)+
      step('d) Cloroformo','<p>El Br₂ (no polar) pasa a la fase orgánica: abajo, naranja-rojiza.</p>')+
-     step('e) NaOH y HCl',rxs(['3 Br2 + 6 OH^- -> 5 Br^- + BrO3^- + 3 H2O','se decolora'],['5 Br^- + BrO3^- + 6 H^+ -> 3 Br2 + 3 H2O','vuelve el naranja']))+
+     step('e) NaOH y HCl',rxs(['3 Br2 + 6 OH^- -> 5 Br^- + BrO3^- + 3 H2O','se decolora'],['5 Br^- + BrO3^- + 6 H^+ -> 3 Br2 + 3 H2O','vuelve el naranja'])+ies('dismBr5','compBr5'))+
      step('Conclusión','<p>El Cl₂ oxida al Br⁻ y al I⁻; el Br₂ oxida al I⁻: <b>Cl₂ &gt; Br₂ &gt; I₂</b>.</p>'),
     answer:'Cl₂ > Br₂ > I₂ (poder oxidante); el bromo dismuta en NaOH y se regenera con HCl'},
    {n:9,title:'El HCl: ¿oxidante o reductor?',
     statement:'Explicá con ecuaciones por qué el HCl concentrado libera Cl₂ con KMnO₄ y H₂ con un clavo de hierro. ¿Qué especie actúa en cada caso?',
-    solution:step('Con KMnO₄: el Cl⁻ es reductor',rxs(['MnO4^- + 8 H^+ + 5 e^- -> Mn^2+ + 4 H2O','× 2'],['2 Cl^- -> Cl2 + 2 e^-','× 5'],['2 MnO4^- + 16 H^+ + 10 Cl^- -> 2 Mn^2+ + 5 Cl2 + 8 H2O'],['2 KMnO4 + 16 HCl -> 2 KCl + 2 MnCl2 + 5 Cl2 + 8 H2O','molecular']))+
-     step('Con Fe: el H⁺ es oxidante',rxs(['Fe -> Fe^2+ + 2 e^-'],['2 H^+ + 2 e^- -> H2'],['Fe + 2 HCl -> FeCl2 + H2↑','solución verde clara']))+
+    solution:step('Con KMnO₄: el Cl⁻ es reductor',rxs(['MnO4^- + 8 H^+ + 5 e^- -> Mn^2+ + 4 H2O','× 2'],['2 Cl^- -> Cl2 + 2 e^-','× 5'],['2 MnO4^- + 16 H^+ + 10 Cl^- -> 2 Mn^2+ + 5 Cl2 + 8 H2O'],['2 KMnO4 + 16 HCl -> 2 KCl + 2 MnCl2 + 5 Cl2 + 8 H2O','molecular'])+X.kmno4hcl)+
+     step('Con Fe: el H⁺ es oxidante',rxs(['Fe -> Fe^2+ + 2 e^-'],['2 H^+ + 2 e^- -> H2'],['Fe + 2 HCl -> FeCl2 + H2↑','solución verde clara'])+X.fehcl)+
      note('Por qué Fe²⁺ y no Fe³⁺','<p>El H⁺ es un oxidante moderado: lleva al hierro sólo hasta Fe²⁺. Para llegar a Fe³⁺ hace falta un oxidante más fuerte (o el O₂ del aire, con el tiempo).</p>'),
     answer:'Con KMnO₄ actúa el Cl⁻ (reductor → Cl₂); con Fe actúa el H⁺ (oxidante → H₂)'}
   ];
@@ -697,8 +989,8 @@ ${table(['Ensayo','Lo que se ve','Lo que demuestra'],[
   // Las dos preguntas del material parcial «Halógenos y azufre», revisadas y unificadas acá.
   const ev=(n,title,statement,solution,answer)=>exercises.push({n,group:'eval',tag:`EVALUACIÓN · ${n}`,title,statement,solution,answer});
   ev('H1','Bromo con NaOH y luego HCl','Si a una solución acuosa de bromo (naranja) se le agrega NaOH, se decolora; al agregar HCl vuelve el color naranja. Indicá qué procesos ocurren y escribí las ecuaciones balanceadas.',
-    step('1. Con NaOH: dismutación','<p>El Br₂ (n.o. 0) se reduce a Br⁻ (−1) y al mismo tiempo se oxida a BrO⁻ (+1, hipobromito) o, en caliente o en reposo, a BrO₃⁻ (+5, bromato). Las especies formadas son incoloras: la solución se decolora.</p>'+rxs(['Br2 + 2 e^- -> 2 Br^-','reducción'],['Br2 + 4 OH^- -> 2 BrO^- + 2 H2O + 2 e^-','oxidación (medio básico)'],['Br2 + 2 OH^- -> Br^- + BrO^- + H2O','suma ÷ 2'],['Br2 + 2 NaOH -> NaBr + NaBrO + H2O','molecular'],['3 Br2 + 6 OH^- -> 5 Br^- + BrO3^- + 3 H2O','la versión del material del TP 6']))+
-    step('2. Con HCl: comproporción','<p>En medio ácido el proceso se invierte: el Br⁻ y el BrO⁻ (o BrO₃⁻) se encuentran en Br₂ (0) y vuelve el naranja.</p>'+rxs(['Br^- + BrO^- + 2 H^+ -> Br2 + H2O'],['5 Br^- + BrO3^- + 6 H^+ -> 3 Br2 + 3 H2O']))+
+    step('1. Con NaOH: dismutación','<p>El Br₂ (n.o. 0) se reduce a Br⁻ (−1) y al mismo tiempo se oxida a BrO⁻ (+1, hipobromito) o, en caliente o en reposo, a BrO₃⁻ (+5, bromato). Las especies formadas son incoloras: la solución se decolora.</p>'+rxs(['Br2 + 2 e^- -> 2 Br^-','reducción'],['Br2 + 4 OH^- -> 2 BrO^- + 2 H2O + 2 e^-','oxidación (medio básico)'],['Br2 + 2 OH^- -> Br^- + BrO^- + H2O','suma ÷ 2'],['Br2 + 2 NaOH -> NaBr + NaBrO + H2O','molecular'],['3 Br2 + 6 OH^- -> 5 Br^- + BrO3^- + 3 H2O','la versión del material del TP 6'])+ies('dismBr1','dismBr5'))+
+    step('2. Con HCl: comproporción','<p>En medio ácido el proceso se invierte: el Br⁻ y el BrO⁻ (o BrO₃⁻) se encuentran en Br₂ (0) y vuelve el naranja.</p>'+rxs(['Br^- + BrO^- + 2 H^+ -> Br2 + H2O'],['5 Br^- + BrO3^- + 6 H^+ -> 3 Br2 + 3 H2O'])+ies('compBr1','compBr5'))+
     idea('La clave','<p>El medio decide: en básico el bromo dismuta; en ácido se regenera. Es un equilibrio redox que se desplaza con el pH.</p>'),
     'NaOH: Br₂ + 2 OH⁻ → Br⁻ + BrO⁻ + H₂O (o 3 Br₂ + 6 OH⁻ → 5 Br⁻ + BrO₃⁻ + 3 H₂O) · HCl: la inversa, vuelve el naranja');
   ev('H2','Cationes con tioacetamida','Interpretá: Cu(NO₃)₂ + tioacetamida → precipitado negro (con NaOH y con HCl, sin cambios) · ZnSO₄ + tioacetamida → sin cambios; con NaOH, precipitado blanco; con HCl, se disuelve · SnCl₂ + tioacetamida → precipitado pardo; con HCl se disuelve.',
