@@ -120,32 +120,6 @@ ${fix('Correcciones a la lista de clase','<ul><li>“Fe²⁺ + 3 C₂O₄²⁻ �
   ];
   window.ET27_QI4.units.push({id:'tp2',part:'tp',kind:'tp',n:2,pending:true,title:'TP 2 · Complejos',short:'Complejos',lead:'Compuestos de coordinación: ion central, ligandos, número de coordinación, nomenclatura e intercambio de ligandos. Material parcial: falta la guía de laboratorio.',sections:s2,exercises:ex2});
 
-  // =====================================================================
-  // TP · HALÓGENOS Y AZUFRE (número a confirmar)
-  // =====================================================================
-  const s3=[];const a3=(k,l,kk,h)=>s3.push({key:`qi-tphs-${k}`,label:l,kicker:kk,html:h});
-  a3('intro','Halógenos y azufre: lo que tenemos','HALÓGENOS Y AZUFRE · 01',`
-${pend('dos preguntas de evaluación sobre halógenos y azufre (no sabemos todavía qué número de TP es)')}
-<h3>Halógenos (grupo 17)</h3>
-<p>F, Cl, Br, I: les falta <b>un electrón</b> para el octeto, así que son <b>oxidantes</b> (forman X⁻). El bromo es un líquido rojo-pardo y su solución acuosa es <b>naranja</b>.</p>
-<h3>El azufre y los sulfuros</h3>
-<p>Los sulfuros (S²⁻) de muchos metales son muy insolubles y de colores característicos: se usan para separar e identificar cationes. En el laboratorio, en vez de usar H₂S gaseoso (tóxico), se usa <b>tioacetamida</b>, que en solución caliente libera H₂S de a poco:</p>
-${rxs(['CH3CSNH2 + H2O =[Δ]=> CH3CONH2 + H2S','tioacetamida → acetamida + sulfuro de hidrógeno'],['H2S <=> 2 H^+ + S^2-','en medio ácido hay muy poco S²⁻; en medio básico, mucho'])}
-${table(['Sulfuro','Color','¿Se disuelve en HCl?'],[['CuS','negro','no'],['ZnS','blanco','sí'],['SnS','pardo','sí (en HCl concentrado)']])}
-<div data-qi-guide></div>
-`);
-  const ex3=[
-   {n:'H1',title:'Bromo con NaOH y luego HCl',statement:'Si a una solución acuosa de bromo (naranja) se le agrega NaOH, se decolora; al agregar HCl vuelve el color naranja. Indicá qué procesos ocurren y escribí las ecuaciones balanceadas.',
-    solution:step('1. Con NaOH: dismutación','<p>El Br₂ (n.o. 0) se reduce a Br⁻ (−1) y al mismo tiempo se oxida a BrO⁻ (+1, hipobromito). Las dos especies son incoloras: la solución se decolora.</p>'+rxs(['Br2 + 2 e^- -> 2 Br^-','reducción'],['Br2 + 4 OH^- -> 2 BrO^- + 2 H2O + 2 e^-','oxidación (medio básico)'],['Br2 + 2 OH^- -> Br^- + BrO^- + H2O','suma ÷ 2'],['Br2 + 2 NaOH -> NaBr + NaBrO + H2O','molecular']))+
-     step('2. Con HCl: comproporción','<p>En medio ácido el proceso se invierte: el Br⁻ (−1) y el BrO⁻ (+1) se encuentran en Br₂ (0) y vuelve el naranja.</p>'+rx('Br^- + BrO^- + 2 H^+ -> Br2 + H2O'))+
-     idea('La clave','<p>El medio decide: en básico el bromo dismuta; en ácido se regenera. Es un equilibrio redox que se desplaza con el pH.</p>'),
-    answer:'NaOH: Br₂ + 2 OH⁻ → Br⁻ + BrO⁻ + H₂O (incoloro) · HCl: Br⁻ + BrO⁻ + 2 H⁺ → Br₂ + H₂O (naranja)'},
-   {n:'H2',title:'Cationes con tioacetamida',statement:'Interpretá: Cu(NO₃)₂ + tioacetamida → precipitado negro (con NaOH y con HCl, sin cambios) · ZnSO₄ + tioacetamida → sin cambios; con NaOH, precipitado blanco; con HCl, se disuelve · SnCl₂ + tioacetamida → precipitado pardo; con HCl se disuelve.',
-    solution:step('Cobre','<p>El CuS es tan insoluble que precipita aun en medio ácido, y no se disuelve en HCl.</p>'+rx('Cu^2+ + H2S -> CuS(s)↓ + 2 H^+','negro'))+
-     step('Zinc','<p>El ZnS es más soluble: en el medio ácido no alcanza el S²⁻ y no precipita. Al agregar NaOH aumenta el S²⁻ y precipita ZnS blanco; con HCl se redisuelve.</p>'+rxs(['Zn^2+ + S^2- -> ZnS(s)↓','blanco, en medio básico'],['ZnS(s) + 2 H^+ -> Zn^2+ + H2S','se disuelve en HCl']))+note('Otra lectura posible','<p>El precipitado blanco también podría ser Zn(OH)₂ (Zn²⁺ + 2 OH⁻ → Zn(OH)₂), que igualmente se disuelve en HCl. Con tioacetamida presente, lo esperable es ZnS.</p>')+
-     step('Estaño','<p>Precipita SnS pardo, que se disuelve en HCl concentrado.</p>'+rxs(['Sn^2+ + H2S -> SnS(s)↓ + 2 H^+','pardo'],['SnS(s) + 2 H^+ -> Sn^2+ + H2S']))+
-     fix('Lo que circula','<p>Presenta la formación de CuS como redox (“Cu²⁺ + 2e⁻ → Cu; S²⁻ → S + 2e⁻”). <b>No es redox</b>: el Cu sigue siendo +2 y el S sigue siendo −2 en el CuS. Es una reacción de <b>precipitación</b>.</p>'),
-    answer:'CuS negro (insoluble en HCl) · ZnS blanco sólo en medio básico, soluble en HCl · SnS pardo, soluble en HCl. Son precipitaciones, no redox.'}
-  ];
-  window.ET27_QI4.units.push({id:'tp-halogenos',part:'tp',kind:'tp',n:3,numLabel:'TP ?',pending:true,title:'TP · Halógenos y azufre (n.º a confirmar)',short:'Halógenos y azufre',lead:'Bromo en medio básico y ácido, sulfuros con tioacetamida. Material parcial: falta la guía y el número de TP.',sections:s3,exercises:ex3});
+  // El material parcial «Halógenos y azufre» (n.º a confirmar) ahora está unificado en el TP 6
+  // (quimica-inorganica-4-tp6.js), con sus dos preguntas de evaluación.
 })();

@@ -1,5 +1,5 @@
 // 27xSOLved · Química Inorgánica 4.º · TEORÍA (materia teórica)
-// Unidad 1: Uniones químicas — enlace iónico, covalente y metálico, Lewis, carga formal, resonancia,
+// Unidad 4 (según el programa): Uniones químicas — enlace iónico, covalente y metálico, Lewis, carga formal, resonancia,
 // longitud y energía de enlace, polaridad, TREPEV e hibridación, redes iónicas. Con la ejercitación resuelta.
 (function(){
   'use strict';
@@ -175,5 +175,5 @@ ${cards([
      step('e · Ecuaciones',rxs(['Na2O(s) + H2O(l) -> 2 NaOH(ac)','muy soluble, solución muy básica'],['MgO(s) + H2O(l) -> Mg(OH)2(s)','hidróxido poco soluble'])),
     answer:'b) ambos iónicos; mayor carácter iónico el Na₂O (ΔEN 2,51 vs 2,13) · c) 2 y 4 · d) 2 y 4'}
   ];
-  window.ET27_QI4.units.push({id:'uniones',part:'teoria',n:1,title:'Uniones químicas',short:'Uniones químicas',lead:'Enlace iónico, covalente y metálico; estructuras de Lewis y carga formal; longitud, energía y resonancia; polaridad; TREPEV e hibridación; redes iónicas. Con la ejercitación resuelta.',sections:s,exercises:ex});
+  window.ET27_QI4.units.push({id:'uniones',part:'teoria',n:4,title:'Uniones químicas',short:'Uniones químicas',lead:'Enlace iónico, covalente y metálico; estructuras de Lewis y carga formal; longitud, energía y resonancia; polaridad; TREPEV e hibridación; redes iónicas. Con la ejercitación resuelta.',sections:s,exercises:ex});
 })();

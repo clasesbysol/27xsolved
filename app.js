@@ -21,7 +21,7 @@ const writeStore=(key,value)=>localStorage.setItem(STORE_PREFIX+key,JSON.stringi
 const SUBJECTS=[
   {id:'chemistry',name:'Química General',meta:'4.º año · Propiedades coligativas',letter:'Q',view:'chemistry',free:true},
   {id:'physics',name:'Física Aplicada',meta:'Tensión superficial · Circulación de fluidos',letter:'F',view:'physics',free:true},
-  {id:'inorganic',name:'Química Inorgánica',meta:'4.º año · Teoría · TP 4 y TP 5',letter:'QI',view:'inorganic',free:true},
+  {id:'inorganic',name:'Química Inorgánica',meta:'4.º año · Teoría · TP 4, 5 y 6',letter:'QI',view:'inorganic',free:true},
   {id:'cualitativa',name:'Química Analítica Cualitativa',meta:'5.º año · Teoría · 5 unidades',letter:'AC',view:'cualitativa',free:true}
 ];
 const FEATURES=Object.freeze({pin_subjects:'free',recent_items:'free',calendar:'free',study_desk:'free',favorites:'free',themes:'free',advanced_stats:'premium',extra_practice:'premium',extended_themes:'premium'});
@@ -127,7 +127,7 @@ function staticSearchItems(){const ui=[
   ['Inicio y materias','subjects','27xSOLved materias química matemática física ingresar Google invitado instalar apariencia cerrar sesión'],
   ['Química General · 4.º año','qg:','química general cuarto año soluciones estequiometría formulación propiedades coligativas'],
   ['Física Aplicada · Tensión superficial','phys:tension','tensión superficial capilaridad jurin du noüy cuentagotas chapa'],
-  ['Química Inorgánica · 4.º año','qi:','química inorgánica cuarto año hidrógeno oxígeno alcalinos alcalinotérreos térreos carbonoides nitrogenoides carbono nitrógeno amoníaco ácido nítrico TP 4 TP 5 cuestionario'],
+  ['Química Inorgánica · 4.º año','qi:','química inorgánica cuarto año hidrógeno oxígeno alcalinos alcalinotérreos térreos carbonoides nitrogenoides carbono nitrógeno amoníaco ácido nítrico estructura atómica modelos atómicos números cuánticos configuración electrónica azufre halógenos iodo cloro bromo dióxido de azufre ácido sulfúrico sulfuros TP 4 TP 5 TP 6 cuestionario'],
   ['Física Aplicada · Circulación de fluidos','phys:hidro','circulación de fluidos hidrodinámica viscosidad caudal continuidad reynolds poiseuille fanning potencia stokes velocidad límite']
   ];return [...ui.map(([label,key,text])=>({label,key,text})),...topicSearchItems(),...periodicElements.map(x=>({label:`Tabla periódica · ${x.name} (${x.symbol})`,key:`periodic:${x.symbol}`,text:Object.values(x).join(' ')}))]}
 // La Química del CBC quedó desvinculada de 27xSOLved: el buscador indexa sólo el contenido propio.

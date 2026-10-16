@@ -285,3 +285,33 @@
 .fxAlt>span{color:color-mix(in srgb,#b07b00 85%,var(--text))}
 .qiLonePair{fill:color-mix(in srgb,#e08a2e 25%,var(--surface));stroke:#e08a2e;stroke-width:1.5}
 .qiDash{stroke-dasharray:5 4}
+/* Química Inorgánica · Estructura atómica y TP 6 */
+.qiAmp{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;vertical-align:2px;color:color-mix(in srgb,#7d6bd6 85%,var(--text));background:color-mix(in srgb,#7d6bd6 14%,var(--surface))}
+.qiLobe{fill:color-mix(in srgb,var(--accent) 28%,transparent);stroke:var(--accent);stroke-width:1.5}
+.qiLobe.alt{fill:color-mix(in srgb,#e08a2e 28%,transparent);stroke:#e08a2e}
+.qiOrbRow{display:flex;flex-wrap:wrap;gap:12px 14px;align-items:flex-end;margin:12px 0}
+.qiSub{display:grid;justify-items:center;gap:3px}
+.qiSub small{font-size:12px;font-weight:800;color:var(--muted)}
+.qiBoxes{display:flex}
+.qiBoxes i{width:30px;height:32px;display:grid;place-items:center;border:1.5px solid color-mix(in srgb,var(--text) 45%,transparent);background:var(--surface);font-style:normal;font-weight:900;font-size:15px;letter-spacing:-2px;color:var(--accent)}
+.qiBoxes i+i{border-left-width:0}
+.qiOrbCompare>div{display:grid;justify-items:center;gap:6px;padding:12px 16px;border:1px solid var(--border);border-radius:14px;background:var(--surface)}
+.qiOrbCompare>div small{color:var(--muted);font-size:12px}
+.qiCfgCalc .miniCalcFields input[type=text]{text-transform:none}
+.qiQuick{display:flex;flex-wrap:wrap;gap:6px;padding:0 16px 12px}
+.qiQuick button{border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--text);font:inherit;font-weight:800;font-size:13px;padding:5px 11px;cursor:pointer}
+.qiQuick button:hover{border-color:var(--accent);color:var(--accent)}
+.qiCfgHead{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;margin-bottom:8px}
+.qiCfgHead b{font-size:18px}.qiCfgHead span{color:var(--muted);font-size:13px}
+.qiCfgLine{display:grid;gap:1px;margin:6px 0}
+.qiCfgLine small,.qiCfgFacts small{font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.qiCfgLine b{font-size:17px;word-break:break-word}
+.qiCfgFacts{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 6px}
+.qiCfgFacts span{display:grid;padding:7px 12px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
+.qiCfgNote{display:block;color:var(--muted);font-size:12px;line-height:1.45}
+.qiAnom{margin:8px 0;padding:8px 12px;border-radius:12px;background:color-mix(in srgb,#f2b84b 16%,var(--surface));font-size:14px}
+.qiSource{margin:18px 0;border:1px dashed var(--border);border-radius:14px;background:var(--surface2)}
+.qiSource>summary{cursor:pointer;padding:10px 14px;font-weight:800;font-size:14px}
+.qiSource>div{padding:0 16px 12px;font-size:14px;line-height:1.55;white-space:pre-line}
+.qiFlask{fill:color-mix(in srgb,var(--surface) 70%,transparent);stroke:var(--muted);stroke-width:2.5}
+.qiCloud{fill:color-mix(in srgb,var(--accent) 34%,transparent)}
