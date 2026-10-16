@@ -315,3 +315,10 @@
 .qiSource>div{padding:0 16px 12px;font-size:14px;line-height:1.55;white-space:pre-line}
 .qiFlask{fill:color-mix(in srgb,var(--surface) 70%,transparent);stroke:var(--muted);stroke-width:2.5}
 .qiCloud{fill:color-mix(in srgb,var(--accent) 34%,transparent)}
+/* Química Inorgánica · balanceo por ion-electrón desplegable */
+.qiIE>summary span{color:var(--accent)}
+.qiIE .rxBlock .ieSkip{margin:2px 0;font-size:13px;color:var(--muted);font-style:italic}
+.qiIE .ieRule{margin:4px 0 0;font-size:13px;color:var(--muted)}
+.qiIE .ieCheck{margin:10px 0;padding:8px 14px;border-radius:12px;background:var(--surface2);font-weight:700;overflow-wrap:anywhere}
+.qiIE .kitTable td:nth-child(2){white-space:nowrap}
+.ieLead{margin:18px 0 6px;font-size:14px;color:var(--muted)}
