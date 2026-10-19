@@ -5,6 +5,41 @@
 (function(){
   'use strict';
   const K=window.ET27Kit,Q=window.ET27QI;if(!K||!Q)return;
+  // ---------- Estados de agregación automáticos (pedido de la cátedra: en TODAS las reacciones) ----------
+  // Mientras se arma Analítica Cualitativa, Q.rx / Q.rxs agregan el estado a cada especie que no lo tenga:
+  // H₂O (l) · metales y sólidos conocidos (s) · gases (g) · sal o base que se disuelve "→" en iones: (s) · el resto (ac).
+  // quimica-cualitativa-5-orden.js restaura las funciones originales al terminar.
+  const ORX=Q.rx,ORXS=Q.rxs;
+  const METAL=/^(Li|Na|K|Ca|Mg|Al|Zn|Cr|Fe|Ni|Sn|Pb|Cu|Ag|Au|Pt|Bi|Cd|Co|Mn|S|I2|MnO2|NaBiO3|PbO2)$/;
+  const GAS=/^(CO2|Cl2|H2|O2|N2|BF3|NO|NO2|N2O4|SO2|F2|NH3\(g\))$/;
+  const SOLUBLE_OH=/^(Li|Na|K|Rb|Cs|Ba|Sr|Ca|NH4)/;
+  const hasState=t=>/\((s|l|g|ac|aq|am|c|d|v|conc\.?|dil\.?)\)$/.test(t)||/\([^()]*(\d\s*M|atm)[^()]*\)$/.test(t);
+  const charged=t=>/\^[0-9]*[+\-−]$/.test(t);
+  const stateOf=(sp,ctx)=>{
+    if(sp==='H2O')return 'l';
+    if(/^e\^?-$/.test(sp)||sp==='e^-')return '';
+    if(sp==='Hg')return 'l';
+    if(METAL.test(sp))return 's';
+    if(GAS.test(sp))return 'g';
+    if(!charged(sp)&&/\(OH\)\d*$/.test(sp)&&!SOLUBLE_OH.test(sp))return 's';
+    if(ctx.dissolve)return 's';
+    return 'ac';
+  };
+  const withStates=t=>{
+    t=String(t);if(/[:–]|\.\.\./.test(t))return t;
+    const parts=t.split(/(\s*(?:<=>|->|<?=\[[^\]]*\]=>)\s*)/);
+    if(parts.length<3)return t;
+    const sideSp=p=>p.split(/\s\+\s/).map(x=>x.trim()).filter(Boolean);
+    const bare=x=>x.replace(/[↓↑]$/,'').replace(/^(\d+|½|\d+\/\d+)\s+/,'');
+    const left=sideSp(parts[0]).map(bare),right=sideSp(parts[2]).map(bare);
+    const dissolve=/->/.test(parts[1])&&parts.length===3&&left.length===1&&!charged(left[0])&&!/^H[^g]/.test(left[0])&&left[0]!=='H2O'&&right.length>=2&&right.every(charged);
+    return parts.map((p,i)=>{if(i%2)return p;return p.split(/(\s\+\s)/).map(tok=>{if(/^\s\+\s$/.test(tok)||!tok.trim())return tok;
+      const m=tok.match(/^(\s*)((?:\d+|½|\d+\/\d+)\s+)?(.*?)([↓↑])?(\s*)$/);let sp=m[3];
+      if(!sp||hasState(sp))return tok;const st=stateOf(sp,{dissolve:dissolve&&i===0});
+      return `${m[1]}${m[2]||''}${sp}${st?`(${st})`:''}${m[4]||''}${m[5]}`}).join('')}).join('');
+  };
+  Q.rx=(t,note)=>ORX(withStates(t),note);
+  Q.rxs=(...items)=>ORXS(...items.map(x=>Array.isArray(x)?[withStates(x[0]),...x.slice(1)]:withStates(x)));
   // Formato con cifras significativas (las concentraciones chicas van en notación científica).
   const fmt=(x,d=3)=>{
     if(!Number.isFinite(x))return '—';
@@ -233,6 +268,6 @@
     if(!u.sections.some(x=>x.key===`qac-ej-${sec.group}`))u.sections.push({key:`qac-ej-${sec.group}`,label:sec.label,kicker:sec.kicker||'EJERCICIOS RESUELTOS',exercises:true,html:`${sec.intro||''}<div data-qac-guide="${sec.group}"></div>`});
   }
 
-  window.ET27QAC={sup,ver,flow,memo,spec,specLog,fractions,pasajes,scale,opt,jus,desc,rta,draw,st,addEx,sys,lc,ladder,reglas};
+  window.ET27QAC={_rx:{ORX,ORXS,withStates},sup,ver,flow,memo,spec,specLog,fractions,pasajes,scale,opt,jus,desc,rta,draw,st,addEx,sys,lc,ladder,reglas};
   window.ET27_QAC5=window.ET27_QAC5||{subjectName:'Química Analítica Cualitativa',year:5,units:[]};
 })();

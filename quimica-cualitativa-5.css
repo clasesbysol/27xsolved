@@ -140,3 +140,9 @@
   .qacTables>header{position:relative}
   .qacTables.open>header{top:-12px;padding-top:14px}
 }
+/* Guía maestra: correcciones conceptuales, estrategia del ejercicio y criterio de magnitud */
+.kitBox.qacFix{border-left:4px solid #c2410c;background:color-mix(in srgb,#c2410c 7%,var(--surface))}
+.kitBox.qacFix>b{color:#c2410c}
+.kitBox.qacPlan{border-left:4px solid var(--accent);background:color-mix(in srgb,var(--accent) 6%,var(--surface))}
+.kitBox.qacMagnitud{border:2px solid var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--surface));box-shadow:var(--shadow)}
+.kitBox.qacMagnitud>b{font-size:1.02em}
