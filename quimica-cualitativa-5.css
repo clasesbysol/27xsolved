@@ -150,3 +150,38 @@
 .qacInciso{margin:14px 0;padding:12px 14px;border:1px solid var(--border);border-radius:14px;background:color-mix(in srgb,var(--surface) 96%,var(--accent))}
 .qacInciso>h4{margin:0 0 8px;font-size:.98rem}
 .qacInciso>h4>span{display:inline-grid;place-items:center;min-width:26px;height:26px;margin-right:6px;border-radius:50%;background:var(--accent);color:#fff;font-size:.8rem}
+/* Modo materia: la barra lateral general se esconde y se abre con ☰ */
+.appShell.subjectFocus .sidebar{transform:translateX(-105%);transition:transform .2s;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.appShell.subjectFocus .sidebar.open{transform:none}
+.appShell.subjectFocus .main{margin-left:0}
+.appShell.subjectFocus .sidebar .mobileOnly{display:grid}
+.appShell.subjectFocus .backdrop{display:block;position:fixed;inset:0;z-index:25;border:0;background:rgba(0,0,0,.28)}
+/* Navegación de la materia */
+.qacCrumbs{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 14px;margin:0 0 16px}
+.qacCrumbs>div{display:flex;flex-wrap:wrap;gap:8px}
+.qacCrumbs button,.qacBackBottom button{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:999px;padding:8px 14px;font:800 .85rem Nunito,Inter,sans-serif;cursor:pointer}
+.qacCrumbs button:hover,.qacBackBottom button:hover{border-color:var(--accent);color:var(--accent)}
+.qacCrumbs .qacHomeBtn,.qacBackBottom button:first-child{background:var(--accent);border-color:var(--accent);color:#fff}
+.qacCrumbs .qacHomeBtn:hover,.qacBackBottom button:first-child:hover{color:#fff;filter:brightness(1.08)}
+.qacCrumbs p{margin:0;color:var(--muted);font-size:.86rem}
+.qacCrumbs p b{color:var(--text)}
+.qacBackBottom{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:28px 0 8px}
+/* Tablas del apéndice (ventana completa) */
+.qacTModal{width:min(1100px,100%)}
+.qacMBar{position:sticky;top:0;z-index:3;display:grid;gap:10px;padding:12px 22px;background:var(--surface);border-bottom:1px solid var(--border)}
+.qacTModal>header{position:relative}
+.qacMBar .qacTChips{display:flex;flex-wrap:wrap;gap:6px}
+.qacMBar .qacTChips button{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:999px;padding:6px 12px;font:800 .82rem Nunito,Inter,sans-serif;cursor:pointer}
+.qacMBar .qacTChips button.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.qacMFind{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:12px;background:var(--bg);color:var(--text);font:inherit}
+.qacMBody{padding:14px 22px 28px}
+.qacMTable h3{margin:10px 0 8px;font-size:1.05rem}
+.qacMTable h3 small{color:var(--muted);font-weight:600;font-size:.8rem}
+.qacMScroll{overflow-x:auto;border:1px solid var(--border);border-radius:12px}
+.qacMTable table{width:100%;border-collapse:collapse;font-size:.9rem}
+.qacMTable th{position:sticky;top:0;background:color-mix(in srgb,var(--accent) 10%,var(--surface));text-align:left;padding:8px 10px;font-weight:800;white-space:nowrap}
+.qacMTable td{padding:6px 10px;border-top:1px solid var(--border);vertical-align:top}
+.qacMTable td:not(:first-child){white-space:nowrap;font-variant-numeric:tabular-nums}
+.qacMTable tbody tr:nth-child(even){background:color-mix(in srgb,var(--accent) 3%,var(--surface))}
+.qacMTable .qacTNote{margin:8px 2px 0;color:var(--muted);font-size:.85rem}
+@media(max-width:760px){.qacMBar,.qacMBody{padding-left:12px;padding-right:12px}.qacMTable table{font-size:.84rem}.qacCrumbs p{width:100%}}

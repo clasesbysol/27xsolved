@@ -60,9 +60,9 @@ ${calc('qacWeak','Ácido o base débil: aproximado vs. exacto',opt('t',[['a','á
 <p>Si un ácido es débil, su base conjugada es una base débil (y al revés). Sus constantes están atadas:</p>
 ${chain([R`\mathrm{HA}\rightleftharpoons\mathrm{H^+}+\mathrm{A^-}\qquad K_a=\frac{[\mathrm{H^+}][\mathrm{A^-}]}{[\mathrm{HA}]}`],[R`\mathrm{A^-}+\mathrm{H_2O}\rightleftharpoons\mathrm{HA}+\mathrm{OH^-}\qquad K_b=\frac{[\mathrm{HA}][\mathrm{OH^-}]}{[\mathrm{A^-}]}`],[R`K_a\cdot K_b=\frac{[\mathrm{H^+}][\cancel{\mathrm{A^-}}]}{\cancel{[\mathrm{HA}]}}\cdot\frac{\cancel{[\mathrm{HA}]}[\mathrm{OH^-}]}{\cancel{[\mathrm{A^-}]}}=[\mathrm{H^+}][\mathrm{OH^-}]`,'se cancelan'])}
 ${key(R`K_a\cdot K_b=K_w\qquad\mathrm{p}K_a+\mathrm{p}K_b=\mathrm{p}K_w=14`,'Par conjugado (25 °C)')}
-${idea('Por qué funciona: sumar reacciones = multiplicar constantes','<p>Si sumás las dos reacciones de arriba te queda '+f('H2O')+' ⇌ '+f('H^+')+' + '+f('OH^-')+'. Esa es una regla que vamos a usar en toda la materia: <b>cuando se suman equilibrios, sus constantes se multiplican</b>; si una reacción se invierte, su constante se invierte (1/K).</p>')}
+${idea('Por qué funciona: sumar reacciones = multiplicar constantes','<p>Si sumás las dos reacciones de arriba te queda '+f('H2O(l)')+' ⇌ '+f('H^+(ac)')+' + '+f('OH^-(ac)')+'. Esa es una regla que vamos a usar en toda la materia: <b>cuando se suman equilibrios, sus constantes se multiplican</b>; si una reacción se invierte, su constante se invierte (1/K).</p>')}
 ${table(['Ácido','Ka','Base conjugada','Kb = Kw/Ka'],[[f('HAc'),'1,8·10⁻⁵',f('Ac^-'),'5,6·10⁻¹⁰'],[f('HCN'),'4,9·10⁻¹⁰',f('CN^-'),'2,0·10⁻⁵'],[f('NH4^+'),'5,6·10⁻¹⁰',f('NH3'),'1,8·10⁻⁵'],[f('HF'),'6,8·10⁻⁴',f('F^-'),'1,5·10⁻¹¹']])}
-${warn('Para polipróticos, ojo con qué constante va con qué','<p>Para el carbonato ('+f('CO3^2-')+' + H₂O ⇌ '+f('HCO3^-')+' + OH⁻), el par es '+f('HCO3^-')+'/'+f('CO3^2-')+', así que '+m(R`K_{b1}(\mathrm{CO_3^{2-}})=\frac{K_w}{K_{a2}}`)+'. La primera Kb va con la ÚLTIMA Ka.</p>')}
+${warn('Para polipróticos, ojo con qué constante va con qué','<p>Para el carbonato ('+f('CO3^2-(ac)')+' + '+f('H2O(l)')+' ⇌ '+f('HCO3^-(ac)')+' + '+f('OH^-(ac)')+'), el par es '+f('HCO3^-')+'/'+f('CO3^2-')+', así que '+m(R`K_{b1}(\mathrm{CO_3^{2-}})=\frac{K_w}{K_{a2}}`)+'. La primera Kb va con la ÚLTIMA Ka.</p>')}
 `);
 
   // =====================================================================
@@ -113,7 +113,7 @@ ${deep('Fórmulas generales de las fracciones (diprótico)',`${M(R`D=[\mathrm{H^
 <p>Este tema viene de Química General y casi no se usa en Cualitativa (que trabaja en solución acuosa, con Kc). Lo dejamos resumido por si aparece en el programa.</p>
 <p>Cuando en un equilibrio intervienen gases, la constante puede escribirse con presiones parciales (Kp) o con concentraciones (Kc). Como para un gas ideal ${m(R`p=\frac{n}{V}RT=[\,\mathrm{gas}\,]\,RT`)}:</p>
 ${key(R`K_p=K_c\,(RT)^{\Delta n}\qquad \Delta n=\text{moles de gas productos}-\text{moles de gas reactivos}`,'Kp y Kc')}
-${example('N₂O₄ ⇌ 2 NO₂ a 25 °C','<p>Kc = 4,61·10⁻³. Calcular Kp (R = 0,082 atm·L/mol·K).</p>',
+${example('N₂O₄(g) ⇌ 2 NO₂(g) a 25 °C','<p>Kc = 4,61·10⁻³. Calcular Kp (R = 0,082 atm·L/mol·K).</p>',
  step('Δn y cálculo',chain(R`\Delta n=2-1=1`,R`K_p=4{,}61\times10^{-3}\cdot(0{,}082\cdot298)^1=0{,}113`))+A.jus('<p>Para gases, presión parcial y concentración están relacionadas por p = [ ]·RT; al reemplazar en Kp aparece el factor (RT) elevado a la diferencia de moles gaseosos.</p>'),
  'Kp = 0,113 · si Δn = 0, Kp = Kc')}
 `);
@@ -193,8 +193,8 @@ ${punch('Nunca se usa una fórmula de memoria para una mezcla: se escribe el BC 
 <p>Una sal disuelta se separa completamente en iones. La pregunta es: <b>¿alguno de esos iones reacciona con el agua?</b> Reacciona (hidroliza) el que es <b>conjugado de una especie débil</b>. Los conjugados de fuertes (Na⁺, K⁺, Cl⁻, NO₃⁻…) son espectadores.</p>
 <h3>El método de la cátedra: mirar de dónde viene cada ion</h3>
 ${flow([
- ['1. Escribir la neutralización que da origen a la sal','Ej.: HAc + NaOH → NaAc + H₂O. Así queda claro de qué ácido y de qué base viene.'],
- ['2. Disociación total de la sal (electrolito fuerte)','NaAc → Na⁺ + Ac⁻.'],
+ ['1. Escribir la neutralización que da origen a la sal','Ej.: HAc(ac) + NaOH(ac) → NaAc(ac) + H₂O(l). Así queda claro de qué ácido y de qué base viene.'],
+ ['2. Disociación total de la sal (electrolito fuerte)','NaAc(s) → Na⁺(ac) + Ac⁻(ac).'],
  ['3. Analizar cada ion con Brønsted–Lowry','Si viene de un electrolito <b>fuerte</b>, su conjugado no tiene comportamiento ácido-base: queda inalterado. Si viene de un electrolito <b>débil</b>, su conjugado reacciona con el agua: escribir el equilibrio.'],
  ['4. Concluir','Ninguno reacciona → neutra · sólo el catión → ácida · sólo el anión → básica · los dos → comparar constantes (no se puede generalizar).']
 ])}
@@ -207,8 +207,8 @@ ${example('Aplicado a las cuatro categorías','<p>NaCl · NH₄Cl · NaAc · NH�
 
 ${table(['Sal formada por…','Ejemplo','Ion que hidroliza','Medio'],[
  ['ácido fuerte + base fuerte','NaCl, KNO₃','ninguno','<b>neutro</b> (pH 7)'],
- ['ácido débil + base fuerte','NaAc, NaCN, Na₂CO₃','el anión: A⁻ + H₂O ⇌ HA + OH⁻','<b>básico</b>'],
- ['ácido fuerte + base débil','NH₄Cl, NH₄NO₃','el catión: NH₄⁺ ⇌ NH₃ + H⁺','<b>ácido</b>'],
+ ['ácido débil + base fuerte','NaAc, NaCN, Na₂CO₃','el anión: A⁻(ac) + H₂O(l) ⇌ HA(ac) + OH⁻(ac)','<b>básico</b>'],
+ ['ácido fuerte + base débil','NH₄Cl, NH₄NO₃','el catión: NH₄⁺(ac) ⇌ NH₃(ac) + H⁺(ac)','<b>ácido</b>'],
  ['ácido débil + base débil','NH₄Ac, NH₄CN','los dos','depende de Ka vs Kb']
 ])}
 ${key(R`K_h=\frac{K_w}{K_a}\ \text{(anión de ácido débil)}\qquad K_h=\frac{K_w}{K_b}\ \text{(catión de base débil)}`,'Constante de hidrólisis')}

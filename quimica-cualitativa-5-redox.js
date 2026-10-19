@@ -22,7 +22,7 @@
     <line x1="190" y1="18" x2="290" y2="18" class="svgArrow" marker-end="url(#qacArrP)"/><text x="240" y="12" text-anchor="middle" class="svgText qiSmall">e⁻</text>
     <line x1="370" y1="18" x2="470" y2="18" class="svgArrow" marker-end="url(#qacArrP)"/><text x="420" y="12" text-anchor="middle" class="svgText qiSmall">e⁻</text>
     <text x="150" y="292" text-anchor="middle" class="svgText strong">ÁNODO (−) · oxidación</text><text x="510" y="292" text-anchor="middle" class="svgText strong">CÁTODO (+) · reducción</text>
-    <text x="108" y="200" class="svgText qiSmall">Zn → Zn²⁺ + 2e⁻</text><text x="420" y="200" class="svgText qiSmall">Cu²⁺ + 2e⁻ → Cu</text>
+    <text x="108" y="200" class="svgText qiSmall">Zn(s) → Zn²⁺(ac) + 2e⁻</text><text x="420" y="200" class="svgText qiSmall">Cu²⁺(ac) + 2e⁻ → Cu(s)</text>
     <text x="108" y="250" class="svgText qiSmall">ZnSO₄ 1 M</text><text x="420" y="250" class="svgText qiSmall">CuSO₄ 1 M</text>
   </svg>`;
 
@@ -34,7 +34,7 @@ ${table(['Proceso','Electrones','Número de oxidación','La especie es el…'],[
 ${punch('El oxidante se reduce; el reductor se oxida. Parece un trabalenguas, pero es lógico: el oxidante le saca electrones al otro y se los queda.')}
 <h3>Repaso exprés de números de oxidación</h3>
 ${table(['Regla','Ejemplos'],[['Elemento libre: 0','Fe, Cu, Cl₂, O₂'],['Ion monoatómico: su carga','Fe³⁺ = +3, Cl⁻ = −1'],['O: −2 (peróxidos −1)','H₂O, Cr₂O₇²⁻ · H₂O₂'],['H: +1 (hidruros metálicos −1)','HCl, NH₃ · NaH'],['Suma = carga de la especie','neutra 0; ion = su carga']])}
-${example('Identificar oxidante y reductor','<p>En la reacción entre dicromato y Fe²⁺ en medio ácido: Cr₂O₇²⁻ + Fe²⁺ → Cr³⁺ + Fe³⁺.</p>',
+${example('Identificar oxidante y reductor','<p>En la reacción entre dicromato y Fe²⁺ en medio ácido: Cr₂O₇²⁻(ac) + Fe²⁺(ac) → Cr³⁺(ac) + Fe³⁺(ac).</p>',
  step('Números de oxidación del Cr',chain(R`2x+7(-2)=-2\ \Rightarrow\ x=+6\ \text{en}\ \mathrm{Cr_2O_7^{2-}}`,R`\mathrm{Cr^{3+}}:\ +3`))+
  step('Conclusión',`<p>Cr: +6 → +3, baja: se <b>reduce</b> → el Cr₂O₇²⁻ es el <b>oxidante</b>. Fe: +2 → +3, sube: se <b>oxida</b> → el Fe²⁺ es el <b>reductor</b>.</p>${vira('Cr₂O₇²⁻ naranja','#e2711d','Cr³⁺ verde','#3d8b4a')}`)+A.jus('<p>El que se reduce gana electrones (baja su número de oxidación) y es el oxidante, porque oxida al otro; el que se oxida pierde electrones y es el reductor.</p>'),
  'Oxidante: Cr₂O₇²⁻ · Reductor: Fe²⁺')}
@@ -54,7 +54,7 @@ ${flow([
  ['Controlar','átomos de cada elemento y carga total a ambos lados.'],
  ['Pasar a la ecuación molecular (si la piden)','agregar los iones espectadores de las sales y ácidos dados.']
 ])}
-${example('Dicromato + Fe²⁺ en H₂SO₄','<p>Balancear: K₂Cr₂O₇ + FeSO₄ + H₂SO₄ → Cr₂(SO₄)₃ + Fe₂(SO₄)₃ + K₂SO₄ + H₂O</p>',
+${example('Dicromato + Fe²⁺ en H₂SO₄','<p>Balancear: K₂Cr₂O₇(ac) + FeSO₄(ac) + H₂SO₄(ac) → Cr₂(SO₄)₃(ac) + Fe₂(SO₄)₃(ac) + K₂SO₄(ac) + H₂O(l)</p>',
  step('1. Hemirreacciones (iónicas)',rxs(['Cr2O7^2- -> Cr^3+','reducción (Cr +6 → +3)'],['Fe^2+ -> Fe^3+','oxidación']))+
  step('2. Átomos que no son O ni H',rx('Cr2O7^2- -> 2 Cr^3+','2 Cr de cada lado'))+
  step('3. Oxígeno con agua',rx('Cr2O7^2- -> 2 Cr^3+ + 7 H2O','7 O a la izquierda → 7 H₂O a la derecha'))+
@@ -63,13 +63,13 @@ ${example('Dicromato + Fe²⁺ en H₂SO₄','<p>Balancear: K₂Cr₂O₇ + FeSO
  step('6. Igualar electrones (× 1 y × 6) y sumar',rxs(['Cr2O7^2- + 14 H^+ + 6 e^- -> 2 Cr^3+ + 7 H2O','× 1'],['6 Fe^2+ -> 6 Fe^3+ + 6 e^-','× 6'],['Cr2O7^2- + 14 H^+ + 6 Fe^2+ -> 2 Cr^3+ + 6 Fe^3+ + 7 H2O','ecuación iónica']))+
  step('7. Control',`<p>Cr 2 = 2 · Fe 6 = 6 · O 7 = 7 · H 14 = 14 · carga: −2 + 14 + 12 = <b>+24</b>; 6 + 18 = <b>+24</b> ✓</p>`)+
  step('8. Ecuación molecular',rx('K2Cr2O7 + 6 FeSO4 + 7 H2SO4 -> Cr2(SO4)3 + 3 Fe2(SO4)3 + K2SO4 + 7 H2O')+`<p>Los 14 H⁺ vienen de 7 H₂SO₄. Control del S: 6 + 7 = 13; 3 + 9 + 1 = 13 ✓</p>`)+A.jus('<p>En una redox los electrones que pierde el reductor los gana el oxidante: por eso se igualan los electrones de las dos hemirreacciones antes de sumarlas. En medio ácido el O se balancea con H₂O y el H con H⁺.</p>'),
- 'K₂Cr₂O₇ + 6 FeSO₄ + 7 H₂SO₄ → Cr₂(SO₄)₃ + 3 Fe₂(SO₄)₃ + K₂SO₄ + 7 H₂O')}
-${example('Permanganato + oxalato (un producto gaseoso)','<p>Balancear en medio ácido: MnO₄⁻ + C₂O₄²⁻ → Mn²⁺ + CO₂</p>',
+ 'K₂Cr₂O₇(ac) + 6 FeSO₄(ac) + 7 H₂SO₄(ac) → Cr₂(SO₄)₃(ac) + 3 Fe₂(SO₄)₃(ac) + K₂SO₄(ac) + 7 H₂O(l)')}
+${example('Permanganato + oxalato (un producto gaseoso)','<p>Balancear en medio ácido: MnO₄⁻(ac) + C₂O₄²⁻(ac) → Mn²⁺(ac) + CO₂(g)</p>',
  step('Reducción',rxs(['MnO4^- -> Mn^2+'],['MnO4^- + 8 H^+ + 5 e^- -> Mn^2+ + 4 H2O','Mn +7 → +2: 5 e⁻']))+
  step('Oxidación',rxs(['C2O4^2- -> 2 CO2','C +3 → +4, dos C'],['C2O4^2- -> 2 CO2 + 2 e^-','carga −2 = 0 − 2 ✓']))+
  step('× 2 y × 5, y sumar',rx('2 MnO4^- + 16 H^+ + 5 C2O4^2- -> 2 Mn^2+ + 10 CO2 + 8 H2O'))+
  step('Control',`<p>Mn 2 · C 10 · O 8 + 20 = 28 = 20 + 8 ✓ · H 16 = 16 · carga −2 + 16 − 10 = +4 = +4 ✓</p>`)+A.jus('<p>Mn pasa de +7 a +2 (5 e⁻, se reduce) y cada C del oxalato de +3 a +4 (2 e⁻ por oxalato, se oxida). El mínimo común múltiplo de 5 y 2 da 10 electrones intercambiados.</p>'),
- '2 MnO₄⁻ + 5 C₂O₄²⁻ + 16 H⁺ → 2 Mn²⁺ + 10 CO₂ + 8 H₂O')}
+ '2 MnO₄⁻(ac) + 5 C₂O₄²⁻(ac) + 16 H⁺(ac) → 2 Mn²⁺(ac) + 10 CO₂(g) + 8 H₂O(l)')}
 `);
 
   // =====================================================================
@@ -80,20 +80,20 @@ ${table(['Método A: directo con OH⁻ y H₂O','Método B: “como en ácido y 
  ['Por cada H que <b>falta</b>, agregar <b>1 H₂O</b> en ese lado y <b>1 OH⁻</b> del otro.','Sumar a <b>ambos lados</b> tantos OH⁻ como H⁺ haya.'],
  ['Balancear carga con e⁻ y seguir igual.','Juntar H⁺ + OH⁻ = H₂O y simplificar el agua.']
 ])}
-${example('Permanganato + sulfito en medio básico','<p>Balancear: KMnO₄ + Na₂SO₃ → MnO₂ + Na₂SO₄ (medio básico)</p>',
+${example('Permanganato + sulfito en medio básico','<p>Balancear: KMnO₄(ac) + Na₂SO₃(ac) → MnO₂(s) + Na₂SO₄(ac) (medio básico)</p>',
  step('1. Reducción',rxs(['MnO4^- -> MnO2','Mn +7 → +4'],['MnO4^- + 2 H2O -> MnO2 + 4 OH^-','sobran 2 O a la izquierda: 2 H₂O a la izquierda y 4 OH⁻ a la derecha'],['MnO4^- + 2 H2O + 3 e^- -> MnO2 + 4 OH^-','carga: −1 → −4: 3 e⁻']))+
  step('2. Oxidación',rxs(['SO3^2- -> SO4^2-','S +4 → +6'],['SO3^2- + 2 OH^- -> SO4^2- + H2O','falta 1 O a la izquierda: 2 OH⁻ ahí y 1 H₂O a la derecha'],['SO3^2- + 2 OH^- -> SO4^2- + H2O + 2 e^-','carga: −4 → −2: 2 e⁻']))+
  step('3. × 2 y × 3, sumar y simplificar',rxs(['2 MnO4^- + 4 H2O + 3 SO3^2- + 6 OH^- -> 2 MnO2 + 8 OH^- + 3 SO4^2- + 3 H2O'],['2 MnO4^- + 3 SO3^2- + H2O -> 2 MnO2 + 3 SO4^2- + 2 OH^-','se cancelan 3 H₂O y 6 OH⁻']))+
  step('4. Control',`<p>Mn 2 · S 3 · O 8 + 9 + 1 = 18 = 4 + 12 + 2 ✓ · H 2 = 2 ✓ · carga −2 − 6 = −8 = −6 − 2 ✓ · <b>no hay H⁺</b> ✓</p>`)+
  step('5. Molecular',rx('2 KMnO4 + 3 Na2SO3 + H2O -> 2 MnO2 + 3 Na2SO4 + 2 KOH'))+A.jus('<p>En medio básico no hay H⁺ libre: el O se balancea con H₂O y HO⁻. Mn +7 → +4 (3 e⁻) y S +4 → +6 (2 e⁻): se multiplica por 2 y por 3 para igualar 6 electrones.</p>'),
- '2 MnO₄⁻ + 3 SO₃²⁻ + H₂O → 2 MnO₂ + 3 SO₄²⁻ + 2 OH⁻')}
-${example('Cromo(III) a cromato con hipoclorito (reconocimiento del cromo)','<p>Balancear en medio básico: Cr(OH)₃ + ClO⁻ → CrO₄²⁻ + Cl⁻. Lo resolvemos con el <b>método B</b> para mostrarlo.</p>',
+ '2 MnO₄⁻(ac) + 3 SO₃²⁻(ac) + H₂O(l) → 2 MnO₂(s) + 3 SO₄²⁻(ac) + 2 OH⁻(ac)')}
+${example('Cromo(III) a cromato con hipoclorito (reconocimiento del cromo)','<p>Balancear en medio básico: Cr(OH)₃(s) + ClO⁻(ac) → CrO₄²⁻(ac) + Cl⁻(ac). Lo resolvemos con el <b>método B</b> para mostrarlo.</p>',
  step('1. Oxidación como si fuera ácido',rxs(['Cr(OH)3 + H2O -> CrO4^2- + 5 H^+ + 3 e^-','Cr +3 → +6']))+
  step('2. Reducción como si fuera ácido',rxs(['ClO^- + 2 H^+ + 2 e^- -> Cl^- + H2O','Cl +1 → −1']))+
  step('3. × 2 y × 3, sumar',rxs(['2 Cr(OH)3 + 2 H2O + 3 ClO^- + 6 H^+ -> 2 CrO4^2- + 10 H^+ + 3 Cl^- + 3 H2O'],['2 Cr(OH)3 + 3 ClO^- -> 2 CrO4^2- + 4 H^+ + 3 Cl^- + H2O','simplificando H⁺ y H₂O']))+
  step('4. Neutralizar: + 4 OH⁻ a cada lado',rxs(['2 Cr(OH)3 + 3 ClO^- + 4 OH^- -> 2 CrO4^2- + 3 Cl^- + 4 H2O + H2O'],['2 Cr(OH)3 + 3 ClO^- + 4 OH^- -> 2 CrO4^2- + 3 Cl^- + 5 H2O','4 H⁺ + 4 OH⁻ = 4 H₂O']))+
  step('5. Control',`<p>Cr 2 · Cl 3 · O 6 + 3 + 4 = 13 = 8 + 5 ✓ · H 6 + 4 = 10 = 10 ✓ · carga −3 − 4 = −7 = −4 − 3 ✓</p>${vira('Cr(OH)₃ verde grisáceo','#6f8f6a','CrO₄²⁻ amarillo','#e8c21c')}`)+A.jus('<p>Se balancea como en medio ácido y después se agregan HO⁻ a ambos lados para neutralizar los H⁺: así la ecuación final queda en medio básico, que es donde ocurre la reacción.</p>'),
- '2 Cr(OH)₃ + 3 ClO⁻ + 4 OH⁻ → 2 CrO₄²⁻ + 3 Cl⁻ + 5 H₂O')}
+ '2 Cr(OH)₃(s) + 3 ClO⁻(ac) + 4 OH⁻(ac) → 2 CrO₄²⁻(ac) + 3 Cl⁻(ac) + 5 H₂O(l)')}
 ${note('Dismutación (o desproporción)','<p>Una misma especie se oxida y se reduce a la vez. Ejemplo clásico en medio básico:</p>'+rx('Cl2 + 2 OH^- -> Cl^- + ClO^- + H2O','Cl 0 → −1 y 0 → +1')+'<p>Se balancea igual: las dos hemirreacciones parten del Cl₂.</p>')}
 ${warn('Errores típicos','<ul><li>Dejar H⁺ en la ecuación final de un medio básico.</li><li>Sumar hemirreacciones sin igualar electrones.</li><li>Escribir sales o ácidos sin disociar en las hemirreacciones (va '+f('MnO4^-')+', no KMnO₄).</li><li>No controlar la carga al final: es el control que detecta casi todos los errores.</li></ul>')}
 `);
@@ -101,8 +101,8 @@ ${warn('Errores típicos','<ul><li>Dejar H⁺ en la ecuación final de un medio 
   // =====================================================================
   add('oxidantes','Sustancias oxidantes y reductoras','REDOX · 04',`
 ${memo([
- ['Oxidantes frecuentes','strong','<ul><li>'+f('MnO4^-')+' → '+f('Mn^2+')+' (ácido) · '+f('MnO2')+' (neutro/básico)</li><li>'+f('Cr2O7^2-')+' → '+f('Cr^3+')+'</li><li>'+f('H2O2')+' → '+f('H2O')+'</li><li>'+f('HNO3')+' → NO o NO₂</li><li>'+f('Cl2')+', '+f('Br2')+', '+f('I2')+' → haluros</li><li>'+f('ClO^-')+' → '+f('Cl^-')+'</li><li>'+f('Fe^3+')+' → '+f('Fe^2+')+'</li></ul>'],
- ['Reductores frecuentes','weak','<ul><li>metales activos: Zn, Fe, Al, Mg</li><li>'+f('Fe^2+')+' → '+f('Fe^3+')+'</li><li>'+f('Sn^2+')+' → '+f('Sn^4+')+'</li><li>'+f('I^-')+' → '+f('I2')+'</li><li>'+f('SO3^2-')+' → '+f('SO4^2-')+'</li><li>'+f('C2O4^2-')+' → '+f('CO2')+'</li><li>'+f('H2S')+' → S</li><li>'+f('H2O2')+' → '+f('O2')+' (¡también puede ser reductor!)</li></ul>']
+ ['Oxidantes frecuentes','strong','<ul><li>'+f('MnO4^-(ac)')+' → '+f('Mn^2+(ac)')+' (ácido) · '+f('MnO2(s)')+' (neutro/básico)</li><li>'+f('Cr2O7^2-(ac)')+' → '+f('Cr^3+(ac)')+'</li><li>'+f('H2O2(ac)')+' → '+f('H2O(l)')+'</li><li>'+f('HNO3(ac)')+' → '+f('NO(g)')+' o '+f('NO2(g)')+'</li><li>'+f('Cl2(g)')+', '+f('Br2(l)')+', '+f('I2(s)')+' → haluros ('+f('Cl^-(ac)')+', '+f('Br^-(ac)')+', '+f('I^-(ac)')+')</li><li>'+f('ClO^-(ac)')+' → '+f('Cl^-(ac)')+'</li><li>'+f('Fe^3+(ac)')+' → '+f('Fe^2+(ac)')+'</li></ul>'],
+ ['Reductores frecuentes','weak','<ul><li>metales activos: Zn, Fe, Al, Mg</li><li>'+f('Fe^2+(ac)')+' → '+f('Fe^3+(ac)')+'</li><li>'+f('Sn^2+(ac)')+' → '+f('Sn^4+(ac)')+'</li><li>'+f('I^-(ac)')+' → '+f('I2(s)')+'</li><li>'+f('SO3^2-(ac)')+' → '+f('SO4^2-(ac)')+'</li><li>'+f('C2O4^2-(ac)')+' → '+f('CO2(g)')+'</li><li>'+f('H2S(ac)')+' → '+f('S(s)')+'</li><li>'+f('H2O2(ac)')+' → '+f('O2(g)')+' (¡también puede ser reductor!)</li></ul>']
 ])}
 ${idea('¿Quién puede ser oxidante, reductor o las dos cosas?','<ul><li>Elemento en su <b>máximo</b> estado de oxidación (Mn +7 en MnO₄⁻, Cr +6, N +5 en HNO₃): sólo puede bajar → <b>sólo oxidante</b>.</li><li>En su <b>mínimo</b> (S −2 en H₂S, I⁻, N −3 en NH₃): <b>sólo reductor</b>.</li><li>En un estado <b>intermedio</b> (Fe²⁺, H₂O₂ con O −1, SO₃²⁻ con S +4, NO₂⁻): <b>puede ser las dos cosas</b>, depende de con quién reaccione.</li></ul>')}
 `);
@@ -147,14 +147,14 @@ ${rx('2 H^+(1 M) + 2 e^- <=> H2(g, 1 atm)','E° = 0,00 V')}
 <p>El potencial estándar de cualquier par es la fem de la pila que forma con el ENH, con todas las especies en condiciones estándar (1 M, 1 atm, 25 °C).</p>
 <h3>Tabla de potenciales estándar de reducción</h3>
 ${table(['Hemirreacción de reducción','E° (V)'],[
- ['F₂ + 2e⁻ → 2F⁻','+2,87'],['NaBiO₃ + 6H⁺ + 2e⁻ → Bi³⁺ + Na⁺ + 3H₂O','≈ +1,8 (según tabla)'],['H₂O₂ + 2H⁺ + 2e⁻ → 2H₂O','+1,78'],['MnO₄⁻ + 8H⁺ + 5e⁻ → Mn²⁺ + 4H₂O','+1,51'],['Cl₂ + 2e⁻ → 2Cl⁻','+1,36'],['Cr₂O₇²⁻ + 14H⁺ + 6e⁻ → 2Cr³⁺ + 7H₂O','+1,33'],['O₂ + 4H⁺ + 4e⁻ → 2H₂O','+1,23'],['Br₂ + 2e⁻ → 2Br⁻','+1,07'],['NO₃⁻ + 4H⁺ + 3e⁻ → NO + 2H₂O','+0,96'],['Ce⁴⁺ + e⁻ → Ce³⁺','+1,61'],['Hg²⁺ + 2e⁻ → Hg','+0,85'],['Ag⁺ + e⁻ → Ag','+0,80'],['Fe³⁺ + e⁻ → Fe²⁺','+0,77'],['I₂ + 2e⁻ → 2I⁻','+0,54'],['Cu²⁺ + 2e⁻ → Cu','+0,34'],['AgCl + e⁻ → Ag + Cl⁻','+0,22'],['Sn⁴⁺ + 2e⁻ → Sn²⁺','+0,15'],['<b>2H⁺ + 2e⁻ → H₂</b>','<b>0,00</b>'],['Pb²⁺ + 2e⁻ → Pb','−0,13'],['Sn²⁺ + 2e⁻ → Sn','−0,14'],['Ni²⁺ + 2e⁻ → Ni','−0,25'],['Fe²⁺ + 2e⁻ → Fe','−0,44'],['Zn²⁺ + 2e⁻ → Zn','−0,76'],['Al³⁺ + 3e⁻ → Al','−1,66'],['Mg²⁺ + 2e⁻ → Mg','−2,37'],['Na⁺ + e⁻ → Na','−2,71']
+ ['F₂(g) + 2e⁻ → 2F⁻(ac)','+2,87'],['NaBiO₃(s) + 6H⁺(ac) + 2e⁻ → Bi³⁺(ac) + Na⁺(ac) + 3H₂O(l)','≈ +1,8 (según tabla)'],['H₂O₂(ac) + 2H⁺(ac) + 2e⁻ → 2H₂O(l)','+1,78'],['MnO₄⁻(ac) + 8H⁺(ac) + 5e⁻ → Mn²⁺(ac) + 4H₂O(l)','+1,51'],['Cl₂(g) + 2e⁻ → 2Cl⁻(ac)','+1,36'],['Cr₂O₇²⁻(ac) + 14H⁺(ac) + 6e⁻ → 2Cr³⁺(ac) + 7H₂O(l)','+1,33'],['O₂(g) + 4H⁺(ac) + 4e⁻ → 2H₂O(l)','+1,23'],['Br₂(l) + 2e⁻ → 2Br⁻(ac)','+1,07'],['NO₃⁻(ac) + 4H⁺(ac) + 3e⁻ → NO(g) + 2H₂O(l)','+0,96'],['Ce⁴⁺(ac) + e⁻ → Ce³⁺(ac)','+1,61'],['Hg²⁺(ac) + 2e⁻ → Hg(l)','+0,85'],['Ag⁺(ac) + e⁻ → Ag(s)','+0,80'],['Fe³⁺(ac) + e⁻ → Fe²⁺(ac)','+0,77'],['I₂(s) + 2e⁻ → 2I⁻(ac)','+0,54'],['Cu²⁺(ac) + 2e⁻ → Cu(s)','+0,34'],['AgCl(s) + e⁻ → Ag(s) + Cl⁻(ac)','+0,22'],['Sn⁴⁺(ac) + 2e⁻ → Sn²⁺(ac)','+0,15'],['<b>2H⁺(ac) + 2e⁻ → H₂(g)</b>','<b>0,00</b>'],['Pb²⁺(ac) + 2e⁻ → Pb(s)','−0,13'],['Sn²⁺(ac) + 2e⁻ → Sn(s)','−0,14'],['Ni²⁺(ac) + 2e⁻ → Ni(s)','−0,25'],['Fe²⁺(ac) + 2e⁻ → Fe(s)','−0,44'],['Zn²⁺(ac) + 2e⁻ → Zn(s)','−0,76'],['Al³⁺(ac) + 3e⁻ → Al(s)','−1,66'],['Mg²⁺(ac) + 2e⁻ → Mg(s)','−2,37'],['Na⁺(ac) + e⁻ → Na(s)','−2,71']
 ])}
 ${flow([
  ['Arriba de la tabla (E° grande y positivo)','las formas oxidadas son <b>oxidantes fuertes</b> (F₂, MnO₄⁻, Cl₂): tienen muchas ganas de reducirse.'],
  ['Abajo de la tabla (E° muy negativo)','las formas reducidas son <b>reductores fuertes</b> (Na, Mg, Zn): tienen muchas ganas de oxidarse.'],
  ['Regla para predecir','un oxidante reacciona espontáneamente con cualquier reductor que esté <b>más abajo</b> en la tabla (E°cát &gt; E°án).']
 ])}
-${idea('Potencial de oxidación','<p>Algunas tablas dan potenciales de <b>oxidación</b>: son los mismos números con el signo cambiado (Zn → Zn²⁺ + 2e⁻, E°ox = +0,76 V). Fijate siempre cómo está escrita la hemirreacción en tu tabla. Con potenciales de oxidación la fórmula queda '+m(R`E^\circ_{\text{pila}}=E^\circ_{\text{red,cát}}+E^\circ_{\text{ox,án}}`)+'.</p>')}
+${idea('Potencial de oxidación','<p>Algunas tablas dan potenciales de <b>oxidación</b>: son los mismos números con el signo cambiado (Zn(s) → Zn²⁺(ac) + 2e⁻, E°ox = +0,76 V). Fijate siempre cómo está escrita la hemirreacción en tu tabla. Con potenciales de oxidación la fórmula queda '+m(R`E^\circ_{\text{pila}}=E^\circ_{\text{red,cát}}+E^\circ_{\text{ox,án}}`)+'.</p>')}
 ${warn('E° NO se multiplica','<p>Para igualar electrones multiplicamos las hemirreacciones por 2, 3, 5…, pero <b>el potencial no cambia</b>: es una propiedad intensiva (como la temperatura). Lo que sí se multiplica es ΔG (y n).</p>')}
 ${example('¿Reacciona el Fe³⁺ con el I⁻? ¿Y con el Br⁻?','<p>Usar la tabla.</p>',
  step('Fe³⁺ + I⁻',chain(R`E^\circ=E^\circ(\mathrm{Fe^{3+}/Fe^{2+}})-E^\circ(\mathrm{I_2/I^-})=0{,}77-0{,}54=+0{,}23\ \mathrm{V}>0`)+rx('2 Fe^3+ + 2 I^- -> 2 Fe^2+ + I2','espontánea: aparece el color pardo del I₂'))+
@@ -204,7 +204,7 @@ ${key(R`E_{\text{pila}}=0\quad\Longleftrightarrow\quad E_{\text{cátodo}}=E_{\te
 ${chain([R`0=E^\circ-\frac{0{,}0592}{n}\log K`,'E = 0 y Q = K'],[R`\frac{0{,}0592}{n}\log K=E^\circ`],[R`\log K=\frac{n\,E^\circ}{0{,}0592}`],[R`K=10^{\,nE^\circ/0{,}0592}`])}
 ${key(R`\log K=\frac{n\,E^\circ_{\text{pila}}}{0{,}0592}\qquad(25\,^\circ\mathrm{C})`,'Relación E° – K')}
 ${table(['E° pila','K','Significado'],[['muy positivo (&gt; 0,3 V con n = 2)','enorme (&gt; 10¹⁰)','reacción prácticamente completa'],['≈ 0','≈ 1','equilibrio con cantidades parecidas de reactivos y productos'],['negativo','&lt; 1','casi no ocurre en ese sentido']])}
-${example('Constantes de equilibrio de dos reacciones','<p>a) Zn + Cu²⁺ ⇌ Zn²⁺ + Cu (E° = 1,10 V). b) Sn²⁺ + 2 Fe³⁺ ⇌ Sn⁴⁺ + 2 Fe²⁺ (E°: Fe³⁺/Fe²⁺ 0,77 V; Sn⁴⁺/Sn²⁺ 0,15 V).</p>',
+${example('Constantes de equilibrio de dos reacciones','<p>a) Zn(s) + Cu²⁺(ac) ⇌ Zn²⁺(ac) + Cu(s) (E° = 1,10 V). b) Sn²⁺(ac) + 2 Fe³⁺(ac) ⇌ Sn⁴⁺(ac) + 2 Fe²⁺(ac) (E°: Fe³⁺/Fe²⁺ 0,77 V; Sn⁴⁺/Sn²⁺ 0,15 V).</p>',
  step('a) n = 2',chain(R`\log K=\frac{2\cdot1{,}10}{0{,}0592}=37{,}2\ \Rightarrow\ K=1{,}5\times10^{37}`))+
  step('b) E° y n',chain([R`E^\circ=0{,}77-0{,}15=0{,}62\ \mathrm{V}\qquad n=2`,'el Sn²⁺ cede 2 e⁻, que toman 2 Fe³⁺'],R`\log K=\frac{2\cdot0{,}62}{0{,}0592}=20{,}9\ \Rightarrow\ K=8{,}8\times10^{20}`))+A.jus('<p>En el equilibrio la pila tiene E = 0 y Q = K; despejando Nernst queda log K = n·E°/0,0592. Un E° positivo de unas décimas de volt ya da K enormes: reacciones prácticamente completas.</p>'),
  'Ambas K enormes: reacciones prácticamente completas')}
@@ -219,13 +219,13 @@ ${idea('Las dos caras de la misma moneda','<p>'+m(R`\Delta G^\circ=-nFE^\circ`)+
 
   add('redox-otro','Redox + precipitación y redox + complejos','REDOX · COMBINADOS',`
 <p>Si el ion de un par redox precipita o forma un complejo, su concentración libre baja muchísimo y, por Nernst, <b>el potencial cambia</b>. Se puede calcular un “E° nuevo” para el par con el sólido o el complejo.</p>
-${example('E° del electrodo AgCl/Ag','<p>Calcular el E° de AgCl(s) + e⁻ → Ag(s) + Cl⁻, sabiendo que E°(Ag⁺/Ag) = 0,80 V y Kps AgCl = 1,8·10⁻¹⁰.</p>',
+${example('E° del electrodo AgCl/Ag','<p>Calcular el E° de AgCl(s) + e⁻ → Ag(s) + Cl⁻(ac), sabiendo que E°(Ag⁺/Ag) = 0,80 V y Kps AgCl = 1,8·10⁻¹⁰.</p>',
  step('1. Nernst del par de la plata',chain(R`E=0{,}80-0{,}0592\log\frac{1}{[\mathrm{Ag^+}]}=0{,}80+0{,}0592\log[\mathrm{Ag^+}]`))+
  step('2. La plata libre la fija el Kps',chain(R`[\mathrm{Ag^+}]=\frac{K_{ps}}{[\mathrm{Cl^-}]}`,R`E=0{,}80+0{,}0592\log K_{ps}-0{,}0592\log[\mathrm{Cl^-}]`))+
  step('3. “Estándar” del nuevo par: [Cl⁻] = 1 M',chain(R`E^\circ(\mathrm{AgCl/Ag})=0{,}80+0{,}0592\log(1{,}8\times10^{-10})=0{,}80-0{,}577=0{,}22\ \mathrm{V}`))+
  ver('<p>El valor tabulado es 0,222 V ✔. Es el electrodo de referencia de plata–cloruro de plata que se usa en los pH-metros.</p>')+A.jus('<p>Al precipitar AgCl, la Ag⁺ libre queda fijada por el Kps (muy chica): por Nernst el potencial del par baja. Por eso la plata en presencia de cloruro es peor oxidante.</p>'),
  'E°(AgCl/Ag) = 0,22 V: la plata es mucho peor oxidante cuando está precipitada')}
-${example('E° del complejo amoniacal de plata','<p>Calcular el E° de [Ag(NH₃)₂]⁺ + e⁻ → Ag + 2 NH₃ (Ki = 5,9·10⁻⁸).</p>',
+${example('E° del complejo amoniacal de plata','<p>Calcular el E° de [Ag(NH₃)₂]⁺(ac) + e⁻ → Ag(s) + 2 NH₃(ac) (Ki = 5,9·10⁻⁸).</p>',
  step('Mismo razonamiento, con el complejo',chain(R`[\mathrm{Ag^+}]=K_i\frac{[\mathrm{Ag(NH_3)_2^+}]}{[\mathrm{NH_3}]^2}\ \xrightarrow{\ \text{todo 1 M}\ }\ [\mathrm{Ag^+}]=K_i`,R`E^\circ=0{,}80+0{,}0592\log(5{,}9\times10^{-8})=0{,}37\ \mathrm{V}`))+A.jus('<p>Al complejar la Ag⁺ (forma oxidada), su concentración libre baja muchísimo y, por Nernst, baja el potencial del par.</p>'),
  'E° = 0,37 V (tabulado 0,373 V ✔)')}
 ${punch('Precipitar o complejar la forma OXIDADA baja el potencial (el par se vuelve peor oxidante). Hacerlo con la forma REDUCIDA lo sube.')}

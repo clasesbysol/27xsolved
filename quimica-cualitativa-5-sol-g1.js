@@ -23,7 +23,7 @@
      '<p>El H₂SO₄ se disocia totalmente en la 1.ª etapa y, en la 2.ª (débil, pero con Ka₂ alta), aporta SO₄²⁻: <b>ion común</b> del equilibrio de solubilidad. En el instante del agregado el sistema sale del equilibrio:</p>'+
      M(R`Q=[\mathrm{Ba^{2+}}][\mathrm{SO_4^{2-}}]>K_{ps}`,'aumentó [SO₄²⁻]')+
      lc('BaSO4(s) <=> Ba^2+(ac) + SO4^2-(ac)','se agrega SO₄²⁻ (ion común)','←',[['[SO₄²⁻]','↑ (respecto del agua pura)'],['[Ba²⁺]','↓'],['BaSO₄(s)','↑']],'Por Le Châtelier el equilibrio se desplaza hacia el sólido: precipita BaSO₄ hasta que Q vuelve a ser igual a Kps. La [Ba²⁺] en solución baja y la cantidad de sólido aumenta.')+
-     note('¿Y el H₃O⁺ del ácido?','<p>Podría protonar algo de SO₄²⁻ (SO₄²⁻ + H₃O⁺ ⇌ HSO₄⁻ + H₂O), pero el sulfato es una base muy débil (Kb = Kw/Ka₂ = 8,3·10⁻¹³): ese efecto es chico frente al aporte de sulfato. Por eso el BaSO₄ <b>no</b> se disuelve en ácidos.</p>')),
+     note('¿Y el H₃O⁺ del ácido?','<p>Podría protonar algo de SO₄²⁻ (SO₄²⁻(ac) + H₃O⁺(ac) ⇌ HSO₄⁻(ac) + H₂O(l)), pero el sulfato es una base muy débil (Kb = Kw/Ka₂ = 8,3·10⁻¹³): ese efecto es chico frente al aporte de sulfato. Por eso el BaSO₄ <b>no</b> se disuelve en ácidos.</p>')),
    jus:('<p>a) El BaSO₄ es una sal poco soluble (Kps = 1,1·10⁻¹⁰): en contacto con agua se establece el equilibrio heterogéneo con una solubilidad de 10⁻⁵ M; lo disuelto está totalmente disociado. b) El H₂SO₄ aporta SO₄²⁻ (ion común): Q &gt; Kps y, por Le Châtelier, el equilibrio se desplaza hacia el sólido, que aumenta.</p>')
   }),'a) Kps muy bajo: s ≈ 1,0·10⁻⁵ M · b) ion común SO₄²⁻: Q &gt; Kps, precipita más BaSO₄');
 
@@ -50,7 +50,7 @@
     inc('c','Justificación teórica de los cambios',flow([['Precipitación','el NH₃ es base débil: su equilibrio con el agua genera HO⁻. Con el Cu²⁺ presente, Q supera el Kps del Cu(OH)₂ (Kps muy bajo) y precipita.'],['Disolución','el NH₃ en exceso actúa como ligando (base de Lewis: dona el par libre del N al Cu²⁺, ácido de Lewis). El complejo es muy estable (Kf = 1,1·10¹³): consume Cu²⁺ libre, Q del hidróxido queda por debajo del Kps y, por Le Châtelier, el sólido se disuelve.'],['Color','el cambio de ligandos (H₂O → NH₃) alrededor del Cu²⁺ cambia el color: celeste del acuocomplejo, azul intenso del amincomplejo.']]))+
     inc('d','¿Por qué vuelve el azul original al agregar HCl?',rxs(['NH3(ac) + H3O^+(ac) -> NH4^+(ac) + H2O(l)','K = 1/Ka(NH₄⁺) = 1,8·10⁹: prácticamente completa'],['[Cu(NH3)4]^2+(ac) + 4 H3O^+(ac) <=> Cu^2+(ac) + 4 NH4^+(ac) + 4 H2O(l)','K = (1/Kf)/Ka⁴ = 9,5·10²³'])+'<p>El H₃O⁺ protona el NH₃ libre: el NH₄⁺ ya no tiene par libre y no puede coordinarse al cobre. Al bajar [NH₃], por Le Châtelier el complejo se disocia y vuelve el Cu²⁺ hidratado (azul). En medio ácido [HO⁻] es muy baja, así que el Cu(OH)₂ no reprecipita.</p>'+M(R`K=\frac{K_i}{K_a^{\,4}}=\frac{1/1{,}1\times10^{13}}{(5{,}56\times10^{-10})^4}=\frac{9{,}1\times10^{-14}}{9{,}6\times10^{-38}}=9{,}5\times10^{23}\gg1`)),
    jus:('<p>Cada agregado saca al sistema del equilibrio (Q ≠ K) y evoluciona hasta un nuevo equilibrio. Precipita Cu(OH)₂ porque el HO⁻ del NH₃ hace Q &gt; Kps; se disuelve porque el complejo con NH₃ (Kf grande) baja el Cu²⁺ libre (Q &lt; Kps); el HCl destruye el complejo porque protona el ligando (K global ≫ 1).</p>')
-  }),'CuSO₄ soluble → Cu(OH)₂(s) (Q &gt; Kps) → [Cu(NH₃)₄]²⁺ (Kf grande, Q &lt; Kps) → con HCl, NH₃ → NH₄⁺ y vuelve el Cu²⁺');
+  }),'CuSO₄ soluble → Cu(OH)₂(s) (Q &gt; Kps) → [Cu(NH₃)₄]²⁺ (Kf grande, Q &lt; Kps) → con HCl, NH₃(ac) → NH₄⁺(ac) y vuelve el Cu²⁺');
 
   // ---------------------------------------------------------------- 4
   S('g1-4',res({
@@ -75,14 +75,14 @@
    sist:rxs(['FeCl3(s) -> Fe^3+(ac) + 3 Cl^-(ac)','sal soluble: total (ejemplo de sal férrica)'],['Fe^3+(ac) + 6 H2O(l) -> [Fe(H2O)6]^3+(ac)','hidratación: el Fe³⁺ (ácido de Lewis) acepta pares de los O del agua'],['[Fe(H2O)6]^3+(ac) + H2O(l) <=> [Fe(OH)(H2O)5]^2+(ac) + H3O^+(ac)','Ka ≈ 6·10⁻³ (bibliografía; no figura en las tablas)'],['Fe^3+(ac) + 3 HO^-(ac) <=> Fe(OH)3(s)','Kps = 4·10⁻³⁸ (Tabla 5)'],W),
    cuali:'<p><b>Brønsted-Lowry:</b> el ion hexaacuohierro(III) es un ácido: cede un H⁺ a una molécula de agua (que actúa como base) y forma H₃O⁺. Los pares conjugados son [Fe(H₂O)₆]³⁺/[Fe(OH)(H₂O)₅]²⁺ y H₃O⁺/H₂O. La solución resulta ácida.</p><p><b>Por qué cede el protón (Lewis):</b> el Fe³⁺ es pequeño y de carga alta; al coordinarse con el O del agua atrae fuertemente su densidad electrónica, debilita el enlace O–H y facilita que el H⁺ pase al solvente.</p><p><b>Relación con el hidróxido:</b> si se sigue sacando H⁺ (subiendo el pH), se llega al Fe(OH)₃, de Kps bajísimo, que precipita: por eso se dice que el catión “precipita como hidróxido”.</p>'+warn('Arrhenius no sirve acá','<p>El Fe³⁺ no tiene H en su fórmula: con la definición de Arrhenius (libera H⁺ propios) no se podría explicar su acidez. Hace falta Brønsted (con el acuocomplejo) o Lewis.</p>'),
    jus:('<p>Con Brønsted-Lowry, el [Fe(H₂O)₆]³⁺ es un ácido débil (Ka ≈ 6·10⁻³) que cede H⁺ al agua y forma H₃O⁺. Con Lewis, el Fe³⁺ es aceptor de pares: polariza el agua coordinada y debilita el O–H. El producto final de esa hidrólisis es el Fe(OH)₃, muy poco soluble.</p>')
-  }),'[Fe(H₂O)₆]³⁺ + H₂O ⇌ [Fe(OH)(H₂O)₅]²⁺ + H₃O⁺: ácido de Brønsted (y aceptor de pares de Lewis)');
+  }),'[Fe(H₂O)₆]³⁺(ac) + H₂O(l) ⇌ [Fe(OH)(H₂O)₅]²⁺(ac) + H₃O⁺(ac): ácido de Brønsted (y aceptor de pares de Lewis)');
 
   // ---------------------------------------------------------------- 6
   S('g1-6',res({
    plan:'<p>En Lewis, un <b>ácido</b> acepta un par de electrones y una <b>base</b> lo dona. Para cada sustancia se arma la estructura de Lewis, se buscan los pares libres (posibles donadores) y los centros deficientes en electrones o los H⁺ que puede ceder (aceptores).</p>',
    cuali:table(['Sustancia','Estructura de Lewis (descripción)','Pares libres / aceptores','Carácter (Lewis)'],[
     ['Pirrolidina (C₄H₈NH)','anillo de 4 C y 1 N; el N une 2 C y 1 H y conserva <b>un par libre</b>','el par libre del N puede donarse (por ejemplo a un H⁺ o a un catión metálico)','<b>base de Lewis</b> (amina secundaria)'],
-    ['Ácido fosfórico (H₃PO₄)','P central unido a 4 O: uno doble (P=O) y tres O–H; cada O conserva pares libres','el H⁺ que libera es un ácido de Lewis (acepta un par del agua); los O tienen pares libres, pero muy poco disponibles','<b>ácido</b> (cede H⁺: H₃PO₄ + H₂O ⇌ H₂PO₄⁻ + H₃O⁺, Ka₁ = 7,5·10⁻³)'],
+    ['Ácido fosfórico (H₃PO₄)','P central unido a 4 O: uno doble (P=O) y tres O–H; cada O conserva pares libres','el H⁺ que libera es un ácido de Lewis (acepta un par del agua); los O tienen pares libres, pero muy poco disponibles','<b>ácido</b> (cede H⁺: H₃PO₄(ac) + H₂O(l) ⇌ H₂PO₄⁻(ac) + H₃O⁺(ac), Ka₁ = 7,5·10⁻³)'],
     ['Etanol (CH₃CH₂OH)','O unido a C y H con <b>dos pares libres</b>','los pares del O pueden donarse; el H del O–H es muy poco ácido en agua','<b>base de Lewis débil</b> (prácticamente neutro en agua)']])+
     rxs(['C4H8NH(ac) + H2O(l) <=> C4H8NH2^+(ac) + HO^-(ac)','la pirrolidina dona su par al H⁺ del agua: base'],['H3PO4(ac) + H2O(l) <=> H2PO4^-(ac) + H3O^+(ac)','Ka₁ = 7,5·10⁻³ (Tabla 1): ácido'])+
     note('Ácidos de Brønsted dentro de Lewis','<p>En Lewis el aceptor estricto es el H⁺; un ácido como el H₃PO₄ se considera ácido porque es la fuente de ese H⁺ (aceptor de pares). La teoría de Lewis es más general: incluye también ácidos sin H, como los cationes metálicos.</p>'),
@@ -116,7 +116,7 @@
    plan:'<p>Una especie anfiprótica puede ceder un H⁺ (actúa como ácido) o aceptarlo (actúa como base). Se escriben los dos equilibrios con el agua y se comparan sus constantes para ver qué carácter predomina.</p>',
    sist:'<h4>Carbonato ácido (HCO₃⁻)</h4>'+rxs(['HCO3^-(ac) + H2O(l) <=> CO3^2-(ac) + H3O^+(ac)','como ácido: Ka₂ = 5,6·10⁻¹¹'],['HCO3^-(ac) + H2O(l) <=> H2CO3(ac) + HO^-(ac)','como base: Kb = Kw/Ka₁ = 10⁻¹⁴/4,3·10⁻⁷ = 2,3·10⁻⁸'])+
     '<h4>Ortoarseniato ácido (HAsO₄²⁻)</h4>'+rxs(['HAsO4^2-(ac) + H2O(l) <=> AsO4^3-(ac) + H3O^+(ac)','como ácido: Ka₃ = 3,0·10⁻¹²'],['HAsO4^2-(ac) + H2O(l) <=> H2AsO4^-(ac) + HO^-(ac)','como base: Kb = Kw/Ka₂ = 10⁻¹⁴/1,0·10⁻⁷ = 1,0·10⁻⁷'])+tab('Ka del carbónico y del arsénico: Tabla 1.'),
-   cuali:'<p>En los dos casos la constante como base es mayor que la constante como ácido: sus soluciones son <b>básicas</b>. Para el bicarbonato se estima pH ≈ ½(pKa₁ + pKa₂) = ½(6,37 + 10,25) = 8,31.</p>'+note('Si “ortoarseniato ácido” se refiere al H₂AsO₄⁻','<p>Ese es el ortoarseniato <b>diácido</b>: H₂AsO₄⁻ + H₂O ⇌ HAsO₄²⁻ + H₃O⁺ (Ka₂ = 1,0·10⁻⁷) y H₂AsO₄⁻ + H₂O ⇌ H₃AsO₄ + HO⁻ (Kb = Kw/Ka₁ = 1,8·10⁻¹²): predomina el carácter ácido.</p>'),
+   cuali:'<p>En los dos casos la constante como base es mayor que la constante como ácido: sus soluciones son <b>básicas</b>. Para el bicarbonato se estima pH ≈ ½(pKa₁ + pKa₂) = ½(6,37 + 10,25) = 8,31.</p>'+note('Si “ortoarseniato ácido” se refiere al H₂AsO₄⁻','<p>Ese es el ortoarseniato <b>diácido</b>: H₂AsO₄⁻(ac) + H₂O(l) ⇌ HAsO₄²⁻(ac) + H₃O⁺(ac) (Ka₂ = 1,0·10⁻⁷) y H₂AsO₄⁻(ac) + H₂O(l) ⇌ H₃AsO₄(ac) + HO⁻(ac) (Kb = Kw/Ka₁ = 1,8·10⁻¹²): predomina el carácter ácido.</p>'),
    jus:('<p>Son anfipróticos porque tienen un H⁺ que ceder y un par que acepta H⁺. El carácter que predomina se decide comparando la constante ácida con la básica de la misma especie.</p>')
   }),'HCO₃⁻ y HAsO₄²⁻: anfipróticos, con predominio básico (Kb &gt; Ka)');
 
@@ -147,7 +147,7 @@
    cuali:'<p><b>Primer cambio:</b> el HO⁻ del NH₃ hace Q &gt; Kps y precipita Cr(OH)₃. <b>Segundo cambio:</b> el H₂O₂ es un oxidante; en medio básico oxida el Cr(OH)₃ a CrO₄²⁻, que es amarillo y soluble. La reacción es prácticamente completa (→). Como el medio es básico, el cromato no se protona apreciablemente:</p>'+M(R`\frac{[\mathrm{HCrO_4^-}]}{[\mathrm{CrO_4^{2-}}]}=\frac{[\mathrm{H_3O^+}]}{K_a}\approx\frac{10^{-11}}{3{,}0\times10^{-7}}=3\times10^{-5}`,'a pH ≈ 11 predomina CrO₄²⁻'),
    cuanti:'<p><b>Expresiones de equilibrio del sistema final:</b></p>'+M(R`K_b=\frac{[\mathrm{NH_4^+}][\mathrm{HO^-}]}{[\mathrm{NH_3}]}\qquad K_a=\frac{[\mathrm{CrO_4^{2-}}][\mathrm{H_3O^+}]}{[\mathrm{HCrO_4^-}]}\qquad K_w=[\mathrm{H_3O^+}][\mathrm{HO^-}]`)+M(R`K_{ps}=[\mathrm{Cr^{3+}}][\mathrm{HO^-}]^3\ \text{(sólo mientras quede Cr(OH)}_3\text{ sin oxidar)}`),
    jus:('<p>El Cr³⁺ precipita como Cr(OH)₃ porque el HO⁻ del amoníaco supera su Kps. El H₂O₂ oxida el Cr(III) a Cr(VI); en medio básico queda como CrO₄²⁻ (amarillo), que predomina sobre HCrO₄⁻ porque el pH está muy por encima de su pKa (6,52).</p>')
-  }),'Cr(OH)₃(s) por Q &gt; Kps · con H₂O₂: 2 Cr(OH)₃ + 3 H₂O₂ + 4 HO⁻ → 2 CrO₄²⁻ (amarillo) + 8 H₂O');
+  }),'Cr(OH)₃(s) por Q &gt; Kps · con H₂O₂: 2 Cr(OH)₃(s) + 3 H₂O₂(ac) + 4 HO⁻(ac) → 2 CrO₄²⁻(ac) (amarillo) + 8 H₂O(l)');
 
   // ---------------------------------------------------------------- 13
   S('g1-13',res({
@@ -203,7 +203,7 @@
   // ---------------------------------------------------------------- Burriel
   S('g1t-f1',res({
    cuali:inc('1','Errores teóricos del texto',flow([
-     ['Las disociaciones sin el agua','escribe AB ⇌ A⁺ + B⁻ (estilo Arrhenius), sin el solvente ni los estados ni la constante debajo. En clase: HA(ac) + H₂O(l) ⇌ A⁻(ac) + H₃O⁺(ac), con su Ka.'],
+     ['Las disociaciones sin el agua','plantea la disociación del electrolito al estilo Arrhenius: sin el solvente, sin los estados de agregación y sin la constante debajo. En clase: HA(ac) + H₂O(l) ⇌ A⁻(ac) + H₃O⁺(ac), con su Ka.'],
      ['“Disminuyendo la concentración total de AB”','después de agregar AB, el nuevo equilibrio tiene <b>más</b> AB que el original: lo que baja es respecto del instante del agregado (parte del AB añadido se disocia). Además, al aumentar la concentración el grado de disociación α disminuye, aunque haya más iones.'],
      ['El precipitado tratado como electrolito débil','en “disminución de la concentración” AB pasa a ser un precipitado: un sólido poco soluble no es un electrolito débil; lo que se disuelve está totalmente disociado. Se escribe AB(s) ⇌ A⁺(ac) + B⁻(ac), equilibrio heterogéneo con su Kps.'],
      ['Sin cargas en el complejo','“para simplificar se omiten las cargas”: el balance de carga y las expresiones de K las necesitan.'],
@@ -214,12 +214,12 @@
   }),'Arrhenius en lugar de Brønsted; precipitado tratado como electrolito débil; n = número de ligandos');
   S('g1t-f2',res({
    cuali:inc('5','Magnitud de las disociaciones sucesivas','<p><b>No</b> tienen la misma magnitud: cada etapa es mucho más débil que la anterior, Ka₁ ≫ Ka₂ ≫ Ka₃, porque cuesta más sacar un H⁺ positivo de una especie cada vez más negativa. Ejemplo (Tabla 1): H₃PO₄ Ka₁ = 7,5·10⁻³, Ka₂ = 6,2·10⁻⁸, Ka₃ = 4,2·10⁻¹³. El esquema del libro lo sugiere con “cajas” cada vez más chicas.</p>')+
-    inc('6','¿A qué tipo de sales corresponde el sistema?','<p>A sales de <b>ácido débil y base fuerte</b> (catión neutro, como Na⁺ o K⁺, y anión base débil): NaAc, NaCN, borato de sodio. Su solución es <b>básica</b> porque el anión hidroliza: A⁻ + H₂O ⇌ HA + HO⁻ (Kb = Kw/Ka).</p>')+
+    inc('6','¿A qué tipo de sales corresponde el sistema?','<p>A sales de <b>ácido débil y base fuerte</b> (catión neutro, como Na⁺ o K⁺, y anión base débil): NaAc, NaCN, borato de sodio. Su solución es <b>básica</b> porque el anión hidroliza: A⁻(ac) + H₂O(l) ⇌ HA(ac) + HO⁻(ac) (Kb = Kw/Ka).</p>')+
     inc('7','Términos que en clase no usamos (o usamos distinto)','<ul><li>“sistema monoprótido / poliprótido” (en clase: monoprótico, poliprótico).</li><li>“disolvente” (en clase: solvente).</li><li>H⁺ en lugar de H₃O⁺, y OH⁻ en lugar de HO⁻.</li><li>“catión neutro, nada ácido”; “se retrograda la disociación”; “reacción parásita o colateral”.</li><li>“Ion borato BO₂⁻” (en rigor es el metaborato).</li></ul>')
   }),'Ka₁ ≫ Ka₂ ≫ Ka₃ · sales de ácido débil y base fuerte (básicas)');
   S('g1t-f3',res({
    cuali:inc('8','Errores desde el marco teórico de clase',flow([
-     ['La disociación de la sal con doble flecha','Na₃A ⇌ 3Na⁺ + A³⁻: una sal soluble es un electrolito fuerte; va con flecha simple y sin constante: Na₃A(s) → 3Na⁺(ac) + A³⁻(ac).'],
+     ['La disociación de la sal con doble flecha','Na₃A(s) ⇌ 3Na⁺(ac) + A³⁻(ac): una sal soluble es un electrolito fuerte; va con flecha simple y sin constante: Na₃A(s) → 3Na⁺(ac) + A³⁻(ac).'],
      ['El agua escrita arriba de la flecha','el agua es reactivo: A³⁻(ac) + H₂O(l) ⇌ HA²⁻(ac) + HO⁻(ac), con su Kb debajo.'],
      ['Autoprotólisis con H⁺','2 H₂O(l) ⇌ H₃O⁺(ac) + HO⁻(ac), con Kw.'],
      ['Faltan constantes y estados','cada equilibrio con su constante abajo y cada especie con su estado.']]))+

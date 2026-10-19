@@ -105,7 +105,7 @@ ${example('Ag₂CrO₄: no da lo mismo cuál ion es el común','<p>Calcular s de
  step('a) Ion común Ag⁺',sup([['[Ag⁺] = 0,010 + 2s ≈ 0,010','s va a ser muy chica (ion común).']])+chain(R`K_{ps}=(0{,}010)^2\cdot s\ \Rightarrow\ s=\frac{1{,}1\times10^{-12}}{10^{-4}}=1{,}1\times10^{-8}\ \mathrm{M}`)+ver('<p>2s = 2,2·10⁻⁸ ≪ 0,010 ✔</p>'))+
  step('b) Ion común CrO₄²⁻',sup([['[CrO₄²⁻] = 0,010 + s ≈ 0,010','idem.']])+chain(R`K_{ps}=(2s)^2\cdot0{,}010\ \Rightarrow\ s=\sqrt{\frac{1{,}1\times10^{-12}}{0{,}040}}=5{,}2\times10^{-6}\ \mathrm{M}`)+ver('<p>s = 5,2·10⁻⁶ ≪ 0,010 ✔</p>')),
  'a) 1,1·10⁻⁸ M · b) 5,2·10⁻⁶ M — reprime mucho más el ion que va al cuadrado')}
-${idea('Para precipitar “completamente”, se agrega exceso de reactivo','<p>Por el ion común, un pequeño exceso del agente precipitante baja muchísimo la concentración del ion que queremos sacar de la solución. ¡Pero ojo!: un gran exceso puede volver a disolver el precipitado si forma complejos (por ejemplo AgCl en Cl⁻ muy concentrado → '+f('[AgCl2]^-')+'). Eso es Unidad 3 y 5.</p>')}
+${idea('Para precipitar “completamente”, se agrega exceso de reactivo','<p>Por el ion común, un pequeño exceso del agente precipitante baja muchísimo la concentración del ion que queremos sacar de la solución. ¡Pero ojo!: un gran exceso puede volver a disolver el precipitado si forma complejos (por ejemplo, con Cl⁻ muy concentrado: '+f('AgCl(s)')+' + '+f('Cl^-(ac)')+' ⇌ '+f('[AgCl2]^-(ac)')+'). Eso es Unidad 3 y 5.</p>')}
 `);
 
   // =====================================================================
@@ -171,7 +171,7 @@ ${idea('Cómo se elige un agente precipitante','<ul><li>Que forme con el ion bus
 <p>El pH controla la precipitación de dos maneras:</p>
 ${flow([
  ['Cuando el anión es OH⁻ (hidróxidos)','[OH⁻] la fija directamente el pH: para cada catión hay un pH de inicio y un pH de precipitación completa.'],
- ['Cuando el anión es base conjugada de un ácido débil (S²⁻, CO₃²⁻, F⁻, CrO₄²⁻, PO₄³⁻)','En medio ácido el anión se protona (S²⁻ → HS⁻ → H₂S): baja su concentración libre y el sólido se disuelve o no llega a precipitar.']
+ ['Cuando el anión es base conjugada de un ácido débil (S²⁻, CO₃²⁻, F⁻, CrO₄²⁻, PO₄³⁻)','En medio ácido el anión se protona (S²⁻(ac) → HS⁻(ac) → H₂S(ac)): baja su concentración libre y el sólido se disuelve o no llega a precipitar.']
 ])}
 <h3>Hidróxidos: ¿a qué pH precipitan?</h3>
 ${example('Separar Fe³⁺ de Mg²⁺ ajustando el pH','<p>Una solución es 0,010 M en Fe³⁺ y 0,010 M en Mg²⁺. Kps Fe(OH)₃ = 4·10⁻³⁸ · Kps Mg(OH)₂ = 1,8·10⁻¹¹. Calcular el pH de inicio y de precipitación completa (10⁻⁵ M) de cada uno.</p>',
@@ -194,7 +194,7 @@ ${example('Separar Cu²⁺ de Fe²⁺ con H₂S en HCl 0,30 M','<p>Solución 0,0
  step('3. ¿Cuánto cobre queda?',chain(R`[\mathrm{Cu^{2+}}]=\frac{6\times10^{-37}}{1{,}1\times10^{-26}}=5{,}7\times10^{-11}\ \mathrm{M}`)+ver('<p>Precipitación completa del cobre ✔. Separación perfecta: es el grupo II frente al grupo III.</p>'))+
  step('4. ¿A qué pH empezaría el FeS?',chain([R`[\mathrm{S^{2-}}]=\frac{6\times10^{-19}}{0{,}010}=6\times10^{-17}\ \mathrm{M}`,'sulfuro mínimo para Q = Kps'],[R`[\mathrm{H^+}]=\sqrt{\frac{9{,}5\times10^{-28}}{6\times10^{-17}}}=4{,}0\times10^{-6}\ \mathrm{M}\ \Rightarrow\ \mathrm{pH}=5{,}4`,''])),
  'En HCl 0,30 M precipita sólo CuS; el FeS necesita un medio mucho menos ácido (grupo III)')}
-${idea('Sales de ácidos débiles se disuelven en ácidos','<p>CaCO₃, FeS, ZnS, CaF₂ y los fosfatos se disuelven al acidificar: el H⁺ se lleva el anión (CO₃²⁻ → HCO₃⁻ → H₂CO₃ → CO₂↑), Q baja por debajo del Kps y se disuelve más sólido (Le Châtelier). En cambio el AgCl o el BaSO₄ no se disuelven en ácidos: sus aniones son conjugados de ácidos fuertes y no se protonan. El cálculo con números está en la Unidad 5.</p>')}
+${idea('Sales de ácidos débiles se disuelven en ácidos','<p>CaCO₃, FeS, ZnS, CaF₂ y los fosfatos se disuelven al acidificar: el H⁺ se lleva el anión (CO₃²⁻(ac) → HCO₃⁻(ac) → H₂CO₃(ac) → CO₂(g)↑), Q baja por debajo del Kps y se disuelve más sólido (Le Châtelier). En cambio el AgCl o el BaSO₄ no se disuelven en ácidos: sus aniones son conjugados de ácidos fuertes y no se protonan. El cálculo con números está en la Unidad 5.</p>')}
 ${rxs(['CaCO3(s) + 2 H^+ -> Ca^2+ + CO2(g)↑ + H2O','se disuelve con efervescencia'],['FeS(s) + 2 H^+ -> Fe^2+ + H2S(g)↑','olor a huevo podrido'])}
 `);
 

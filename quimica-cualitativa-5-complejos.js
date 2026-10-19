@@ -13,7 +13,7 @@
   // =====================================================================
   add('complejos','¿Qué es un ion complejo?','COMPLEJOS · 01',`
 <p>Un <b>complejo</b> (o compuesto de coordinación) se forma cuando un ion metálico central se une a varias moléculas o iones que le “prestan” pares de electrones. Es una reacción ácido-base <b>de Lewis</b>:</p>
-${rx('Ag^+ + 2 :NH3 -> [Ag(NH3)2]^+','ácido de Lewis + base de Lewis → complejo')}
+${rx('Ag^+(ac) + 2 :NH3(ac) -> [Ag(NH3)2]^+(ac)','ácido de Lewis + base de Lewis → complejo')}
 ${figure(window.ET27QAC.draw.complejo,'El ion central acepta pares de electrones de los ligandos: es una reacción ácido-base de Lewis.')}
 ${table(['Parte','Qué es','Ejemplo en [Cu(NH₃)₄]²⁺'],[
  ['Ion central','catión metálico con orbitales vacíos (ácido de Lewis)',f('Cu^2+')],
@@ -52,7 +52,7 @@ ${deep('Constantes escalonadas (parciales) y globales',`<p>En realidad los ligan
   add('patron','El patrón de los ejercicios: despreciar el catión libre','COMPLEJOS · 03',`
 <p>Casi todos los ejercicios de esta unidad son iguales: se mezcla un catión metálico con <b>exceso de ligando</b> y se pide la concentración de catión libre. Como Kf es enorme, la formación es prácticamente completa, y se resuelve así:</p>
 ${flow([
- ['Escribir la reacción de formación','M + n L ⇌ MLₙ, con su constante.'],
+ ['Escribir la reacción de formación','M(ac) + n L(ac) ⇌ MLₙ(ac), con su constante.'],
  ['Hacer la reacción como si fuera completa','Kf grande y ligando en exceso: todo el metal pasa a complejo. '+m(R`[\mathrm{ML_n}]\approx C_M`)],
  ['Calcular el ligando libre que sobra','A lo que se puso hay que restarle lo que quedó unido: '+m(R`[\mathrm{L}]\approx C_L-n\,C_M`)+'. ¡No olvidar el coeficiente n!'],
  ['Reemplazar en K y despejar el catión libre','Con Ki: '+m(R`[\mathrm{M}]=K_i\frac{[\mathrm{ML_n}]}{[\mathrm{L}]^n}`)+'. Con Kf: '+m(R`[\mathrm{M}]=\frac{[\mathrm{ML_n}]}{K_f[\mathrm{L}]^n}`)],
@@ -138,17 +138,17 @@ ${idea('Por qué el ácido destruye los complejos amoniacales','<p>El H⁺ compi
 ${punch('Si una reacción es la suma de otras, su constante es el PRODUCTO de sus constantes. Si se invierte una reacción, su constante se invierte (1/K).')}
 ${table(['Operación con la reacción','Qué le pasa a K'],[['Sumar dos reacciones','K = K₁·K₂'],['Invertir la reacción','K → 1/K'],['Multiplicar la reacción por n','K → Kⁿ'],['Restar una reacción','dividir por su K']])}
 ${flow([
- ['Escribir la reacción GLOBAL que pide el problema','Por ejemplo: AgCl(s) + 2 NH₃ ⇌ [Ag(NH₃)₂]⁺ + Cl⁻.'],
+ ['Escribir la reacción GLOBAL que pide el problema','Por ejemplo: AgCl(s) + 2 NH₃(ac) ⇌ [Ag(NH₃)₂]⁺(ac) + Cl⁻(ac).'],
  ['Descomponerla en equilibrios de tabla','Kps, Ka, Kb, Kf (o Ki), Kw.'],
  ['Calcular K global','Multiplicando y dividiendo según corresponda.'],
  ['Interpretar K global','K ≫ 1: la reacción global ocurre (el precipitado se disuelve, el complejo se rompe…). K ≪ 1: no ocurre.'],
  ['Si piden concentraciones: tabla con la reacción global','Y las suposiciones de siempre (lo que es chico frente a lo grande), justificadas y verificadas.']
 ])}
 ${table(['Combinación','Ejemplo','K global'],[
- ['Precipitación + ácido-base','CaCO₃(s) + 2 H⁺ ⇌ Ca²⁺ + H₂CO₃','Kps / (Ka₁·Ka₂)'],
- ['Precipitación + complejo','AgCl(s) + 2 NH₃ ⇌ [Ag(NH₃)₂]⁺ + Cl⁻','Kps · Kf'],
- ['Complejo + ácido-base','[Ag(NH₃)₂]⁺ + 2 H⁺ ⇌ Ag⁺ + 2 NH₄⁺','Ki / Ka(NH₄⁺)²'],
- ['Redox + precipitación','AgCl(s) + e⁻ ⇌ Ag(s) + Cl⁻','E° nuevo = E°(Ag⁺/Ag) + 0,0592·log Kps']
+ ['Precipitación + ácido-base','CaCO₃(s) + 2 H⁺(ac) ⇌ Ca²⁺(ac) + H₂CO₃(ac)','Kps / (Ka₁·Ka₂)'],
+ ['Precipitación + complejo','AgCl(s) + 2 NH₃(ac) ⇌ [Ag(NH₃)₂]⁺(ac) + Cl⁻(ac)','Kps · Kf'],
+ ['Complejo + ácido-base','[Ag(NH₃)₂]⁺(ac) + 2 H⁺(ac) ⇌ Ag⁺(ac) + 2 NH₄⁺(ac)','Ki / Ka(NH₄⁺)²'],
+ ['Redox + precipitación','AgCl(s) + e⁻ ⇌ Ag(s) + Cl⁻(ac)','E° nuevo = E°(Ag⁺/Ag) + 0,0592·log Kps']
 ],'compareTable')}
 `);
 

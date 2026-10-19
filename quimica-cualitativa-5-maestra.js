@@ -39,12 +39,12 @@ ${warn('Espontáneo no quiere decir rápido',`<p>La termodinámica dice <b>si</b
 <p>La <b>cinética química</b> estudia la <b>velocidad de reacción</b>: cuánto cambia la concentración de una especie por unidad de tiempo, y de qué depende (concentraciones, temperatura, catalizadores, superficie de contacto).</p>
 <ul>
 <li><b>Reacción irreversible</b> (en la práctica, “completa”): los productos prácticamente no se reconvierten en reactivos; avanza hasta que se agota el reactivo limitante. Se escribe →.</li>
-<li><b>Reacción reversible</b>: ocurren a la vez la reacción directa (por ejemplo, la <b>disociación</b> HA → H⁺ + A⁻) y la inversa (la <b>asociación</b> H⁺ + A⁻ → HA). Se escribe ⇌.</li>
+<li><b>Reacción reversible</b>: ocurren a la vez la reacción directa (por ejemplo, la <b>disociación</b> HA(ac) → H⁺(ac) + A⁻(ac)) y la inversa (la <b>asociación</b> H⁺(ac) + A⁻(ac) → HA(ac)). Se escribe ⇌.</li>
 </ul>
 <h3>Equilibrio dinámico</h3>
 <p>En una reacción reversible, al principio la velocidad directa es grande y la inversa casi nula; a medida que se forman productos, la directa disminuye y la inversa aumenta, hasta que <b>las dos velocidades se igualan</b>. Desde ese momento las concentraciones no cambian, pero <b>las dos reacciones siguen ocurriendo</b>: por eso el equilibrio químico es <b>dinámico</b>.</p>
 ${M(R`v_{\text{directa}}=v_{\text{inversa}}\neq0\qquad\Rightarrow\qquad\text{concentraciones constantes}`,'condición de equilibrio')}
-${fix(`<p>A veces se dice que “las reacciones irreversibles alcanzan un equilibrio estático”. No es así: una reacción idealmente irreversible <b>no se describe como un equilibrio</b>; simplemente avanza hasta que se consume un reactivo. Conviene distinguir tres situaciones:</p>`+table(['Situación','Qué pasa','Ejemplo'],[['Reacción prácticamente completa','se agotó el reactivo limitante; la inversa es despreciable','neutralización H₃O⁺ + HO⁻ → 2 H₂O (K = 10¹⁴)'],['Ausencia de cambio observable','no vemos cambios, pero puede ser porque la reacción es muy lenta (no hay equilibrio)','H₂ + O₂ guardados a temperatura ambiente'],['Equilibrio químico','v directa = v inversa ≠ 0; Q = K','NH₃ en agua, ácido acético en agua']]))}
+${fix(`<p>A veces se dice que “las reacciones irreversibles alcanzan un equilibrio estático”. No es así: una reacción idealmente irreversible <b>no se describe como un equilibrio</b>; simplemente avanza hasta que se consume un reactivo. Conviene distinguir tres situaciones:</p>`+table(['Situación','Qué pasa','Ejemplo'],[['Reacción prácticamente completa','se agotó el reactivo limitante; la inversa es despreciable','neutralización H₃O⁺(ac) + HO⁻(ac) → 2 H₂O(l) (K = 10¹⁴)'],['Ausencia de cambio observable','no vemos cambios, pero puede ser porque la reacción es muy lenta (no hay equilibrio)','H₂ + O₂ guardados a temperatura ambiente'],['Equilibrio químico','v directa = v inversa ≠ 0; Q = K','NH₃ en agua, ácido acético en agua']]))}
 ${idea('Para el resto de la materia','<p>Todo lo que viene (ácido-base, precipitación, complejos y redox) son <b>equilibrios químicos</b> en solución acuosa: se describen con su constante (ley de acción de masas) y se predicen sus cambios con Le Châtelier.</p>')}
 `);
 
@@ -59,12 +59,12 @@ ${rxs(['NaCl(s) -> Na^+(ac) + Cl^-(ac)','disolución y disociación: electrolito
 ${table(['Término','Qué significa','Ejemplo'],[
  ['Disolución','el soluto se dispersa en el solvente','el NaCl sólido se disuelve en agua'],
  ['Disociación','un compuesto que ya tiene iones (iónico) los separa al disolverse','NaCl(s) → Na⁺(ac) + Cl⁻(ac)'],
- ['Ionización','una sustancia molecular forma iones al reaccionar con el agua','HCl + H₂O → H₃O⁺ + Cl⁻'],
- ['Hidrólisis','un ion de una sal reacciona con el agua (ácido-base)','Ac⁻ + H₂O ⇌ HAc + HO⁻'],
+ ['Ionización','una sustancia molecular forma iones al reaccionar con el agua','HCl(ac) + H₂O(l) → H₃O⁺(ac) + Cl⁻(ac)'],
+ ['Hidrólisis','un ion de una sal reacciona con el agua (ácido-base)','Ac⁻(ac) + H₂O(l) ⇌ HAc(ac) + HO⁻(ac)'],
  ['Solubilidad','<b>cuánto</b> soluto se puede disolver como máximo (solución saturada)','AgCl: s = 1,3·10⁻⁵ M'],
  ['Grado de disociación (α)','qué <b>fracción</b> de lo disuelto está disociada','HAc 0,10 M: α = 1,3 %']])}
 ${fix(`<p>“Si una sal casi no se disuelve, es un electrolito débil” es <b>falso</b>. Solubilidad y fuerza del electrolito son cosas distintas: el AgCl es muy poco soluble, pero <b>lo poco que se disuelve está totalmente disociado</b> en Ag⁺ y Cl⁻ (es un electrolito fuerte). Al revés, el ácido acético es muy soluble y es un electrolito débil.</p>`)}
-${warn('Sal de un ácido débil ≠ electrolito débil',`<p>El acetato de sodio es un electrolito <b>fuerte</b> (se disocia totalmente: NaAc → Na⁺ + Ac⁻). Lo que es débil es la reacción ácido-base del ion acetato con el agua. Conviene decir las dos cosas por separado.</p>`)}
+${warn('Sal de un ácido débil ≠ electrolito débil',`<p>El acetato de sodio es un electrolito <b>fuerte</b> (se disocia totalmente: NaAc(s) → Na⁺(ac) + Ac⁻(ac)). Lo que es débil es la reacción ácido-base del ion acetato con el agua. Conviene decir las dos cosas por separado.</p>`)}
 `);
 
   add('acido-base','qac-ab-magnitud','Criterio de clase: magnitud de las constantes',`
@@ -160,7 +160,7 @@ ${spec([3.74],['HCOOH','HCOO⁻'],{mark:[{pH:2.54,label:'pH de esta solución'}]
   append('acido-base','qac-ab-lam',`
 <h3>Concentraciones y actividades</h3>
 <p>En rigor, la ley de acción de masas se escribe con <b>actividades</b> (concentraciones “efectivas”). En soluciones diluidas la actividad de cada ion es casi igual a su concentración molar, y por eso en la materia se usan concentraciones. Los <b>sólidos puros</b> y el <b>agua como solvente</b> tienen actividad 1: por eso no aparecen en la expresión de K.</p>
-${table(['Constante','Equilibrio que describe','Ejemplo'],[['K (general)','cualquier equilibrio','aA + bB ⇌ cC + dD'],['Ka','ionización de un ácido débil','HAc + H₂O ⇌ Ac⁻ + H₃O⁺'],['Kb','reacción de una base débil con agua','NH₃ + H₂O ⇌ NH₄⁺ + HO⁻'],['Kw','autoprotólisis del agua','2 H₂O ⇌ H₃O⁺ + HO⁻'],['Kps','disolución de un sólido poco soluble en equilibrio con sus iones','AgCl(s) ⇌ Ag⁺ + Cl⁻']])}
+${table(['Constante','Equilibrio que describe','Ejemplo'],[['K (general)','cualquier equilibrio','aA(ac) + bB(ac) ⇌ cC(ac) + dD(ac) (cada especie con su estado)'],['Ka','ionización de un ácido débil','HAc(ac) + H₂O(l) ⇌ Ac⁻(ac) + H₃O⁺(ac)'],['Kb','reacción de una base débil con agua','NH₃(ac) + H₂O(l) ⇌ NH₄⁺(ac) + HO⁻(ac)'],['Kw','autoprotólisis del agua','2 H₂O(l) ⇌ H₃O⁺(ac) + HO⁻(ac)'],['Kps','disolución de un sólido poco soluble en equilibrio con sus iones','AgCl(s) ⇌ Ag⁺(ac) + Cl⁻(ac)']])}
 ${fix('<p>El <b>Kps sí es una constante de equilibrio</b>: es la constante del equilibrio heterogéneo entre un sólido poco soluble y sus iones en solución. El sólido no figura en la expresión porque su actividad es 1, no porque el Kps “no sea un equilibrio”.</p>')}
 ${idea('Ley de acción de masas y choques efectivos','<p>La ley de acción de masas es una relación <b>termodinámica</b> entre las concentraciones en el equilibrio (sale de ΔG° = −RT ln K). La teoría de <b>choques efectivos</b> es un modelo <b>cinético</b>: explica la velocidad de las reacciones (más concentración → más choques por segundo) y sirve como imagen para entender por qué, por ejemplo, un ácido concentrado se disocia en una fracción menor. Pero no reemplaza la explicación del equilibrio: la constante no se deduce de contar choques.</p>')}
 `);
@@ -337,7 +337,7 @@ ${example('Ag₂CrO₄ en K₂CrO₄ 0,010 M (ion común)','',
 ${table(['Factor','Qué hace','Efecto sobre la solubilidad'],[
  ['Ion común','aumenta la concentración de un ion del equilibrio de disolución','baja (Le Châtelier hacia el sólido)'],
  ['pH','protona el anión (si es base débil: S²⁻, CO₃²⁻, CrO₄²⁻, F⁻) o fija [HO⁻] en los hidróxidos','acidificar disuelve sales de aniones básicos; alcalinizar precipita hidróxidos'],
- ['Formación de complejos','el catión libre pasa a complejo (Ag⁺ → [Ag(NH₃)₂]⁺)','sube: baja el ion libre, Q &lt; Kps y se disuelve más sólido (ver Complejos)']])}
+ ['Formación de complejos','el catión libre pasa a complejo (Ag⁺(ac) → [Ag(NH₃)₂]⁺(ac))','sube: baja el ion libre, Q &lt; Kps y se disuelve más sólido (ver Complejos)']])}
 ${example('Cloruro férrico: hidrólisis y precipitación de Fe(OH)₃','<p>El FeCl₃ es una sal <b>soluble</b> (no es un sólido poco soluble). ¿Por qué sus soluciones se enturbian si no se acidifican? FeCl₃ 0,010 M; Kps Fe(OH)₃ = 4·10⁻³⁸ (Tabla 5).</p>',
  rxs(['FeCl3(s) -> Fe^3+(ac) + 3 Cl^-(ac)','sal soluble: electrolito fuerte'],['[Fe(H2O)6]^3+(ac) + H2O(l) <=> [Fe(OH)(H2O)5]^2+(ac) + H3O^+(ac)','hidrólisis ácida del catión (Ka ≈ 6·10⁻³)'],['Fe(OH)3(s) <=> Fe^3+(ac) + 3 HO^-(ac)','Kps = 4·10⁻³⁸'])+
  chain(['[\\mathrm{HO^-}]_{\\text{inicio}}=\\sqrt[3]{\\frac{4\\times10^{-38}}{0{,}010}}=1{,}6\\times10^{-12}\\ \\mathrm{M}\\ \\Rightarrow\\ \\mathrm{pH}=2{,}2','pH a partir del cual Q supera el Kps'])+
@@ -368,6 +368,6 @@ ${flow([['Condición estequiométrica (necesaria)','tiene que haber moles de lig
 ${example('AgCl 0,010 mol en 1 L: ¿cuánto NH₃ hace falta?','<p>Kps AgCl = 1,8·10⁻¹⁰ (Tabla 5); β₂ = 1,7·10⁷.</p>',
  rxs(['AgCl(s) <=> Ag^+(ac) + Cl^-(ac)','Kps'],['Ag^+(ac) + 2 NH3(ac) <=> [Ag(NH3)2]^+(ac)','β₂'],['AgCl(s) + 2 NH3(ac) <=> [Ag(NH3)2]^+(ac) + Cl^-(ac)','K = Kps·β₂'])+
  chain(R`K=1{,}8\times10^{-10}\cdot1{,}7\times10^{7}=3{,}1\times10^{-3}`,['\\text{todo disuelto: }[\\mathrm{Ag(NH_3)_2^+}]=[\\mathrm{Cl^-}]=0{,}010\\ \\mathrm{M}','balance de materia'],R`[\mathrm{NH_3}]_{\text{libre}}=\sqrt{\frac{0{,}010\cdot0{,}010}{3{,}1\times10^{-3}}}=0{,}18\ \mathrm{M}`,R`C_{\mathrm{NH_3}}\ge0{,}18+2\cdot0{,}010=0{,}20\ \mathrm{M}`)+
- jus('<p>La estequiometría sola pedía 0,020 M de NH₃; el equilibrio exige además 0,18 M de NH₃ libre. Con 0,020 M no se disolvería todo. A esto se suma que una pequeña parte del NH₃ se protona (NH₃ + H₂O ⇌ NH₄⁺ + HO⁻), lo que reduce el ligando libre disponible: si el medio fuera ácido, el NH₄⁺ formado no complejaría la plata.</p>'),'Hace falta NH₃ total ≥ 0,20 M (no alcanza con los 0,020 M estequiométricos)')}
+ jus('<p>La estequiometría sola pedía 0,020 M de NH₃; el equilibrio exige además 0,18 M de NH₃ libre. Con 0,020 M no se disolvería todo. A esto se suma que una pequeña parte del NH₃ se protona (NH₃(ac) + H₂O(l) ⇌ NH₄⁺(ac) + HO⁻(ac)), lo que reduce el ligando libre disponible: si el medio fuera ácido, el NH₄⁺ formado no complejaría la plata.</p>'),'Hace falta NH₃ total ≥ 0,20 M (no alcanza con los 0,020 M estequiométricos)')}
 `);
 })();

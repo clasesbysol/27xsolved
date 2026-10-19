@@ -12,7 +12,7 @@
 
   // ---------------------------------------------------------------- 1
   S('g2-1',res({
-   plan:'<p>Se comparan constantes de ácidos. Como pKa = −log Ka, <b>a menor pKa, mayor Ka</b>: el equilibrio HA + H₂O ⇌ A⁻ + H₃O⁺ está más desplazado hacia los productos y el ácido es más fuerte.</p>',
+   plan:'<p>Se comparan constantes de ácidos. Como pKa = −log Ka, <b>a menor pKa, mayor Ka</b>: el equilibrio HA(ac) + H₂O(l) ⇌ A⁻(ac) + H₃O⁺(ac) está más desplazado hacia los productos y el ácido es más fuerte.</p>',
    cuali:table(['Par','pKa','Ka = 10⁻ᵖᴷᵃ','Más fuerte'],[['HF / HIO₃','3,45 / 0,77','3,5·10⁻⁴ / 1,7·10⁻¹','<b>HIO₃</b>'],['HNO₂ / HCN','3,37 / 9,31','4,3·10⁻⁴ / 4,9·10⁻¹⁰','<b>HNO₂</b>']])+'<p>Por el criterio de la cursada, la Ka del HIO₃ es <b>alta</b> (10⁻¹), las del HF y HNO₂ son intermedias (10⁻⁴) y la del HCN es baja (10⁻¹⁰).</p>',
    jus:'<p>A menor pKa, mayor Ka: el ácido cede con más facilidad su protón al agua. HIO₃ (pKa 0,77) es más fuerte que HF (3,45) y HNO₂ (3,37) más fuerte que HCN (9,31).</p>'
   }),'HIO₃ más fuerte que HF · HNO₂ más fuerte que HCN');

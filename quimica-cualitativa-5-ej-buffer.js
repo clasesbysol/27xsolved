@@ -26,7 +26,7 @@
    jus('<p>a) <b>No</b>: sobra base fuerte, el pH tiene que ser ≈ 13,2. b) <b>No</b> es reguladora: el ácido débil se consumió totalmente (no queda el componente ácido del par) y manda el exceso de base fuerte.</p>'),'a) No (pH ≈ 13,2) · b) No');
   e2(22,'Verdadero o falso',st('',['Una solución de NH₄Cl es capaz de regular el pH.','Una solución de NH₃ es ácida porque tiene amonios.','Una solución de H₂S es capaz de regular el pH.']),
    step('a) FALSO',jus('<p>Sólo está NH₄⁺; el NH₃ que forma por hidrólisis es despreciable. Falta el componente básico del par en cantidad apreciable.</p>'))+
-   step('b) FALSO',jus('<p>NH₃ + H₂O ⇌ NH₄⁺ + HO⁻: los NH₄⁺ se forman junto con la misma cantidad de HO⁻, así que [HO⁻] &gt; [H₃O⁺] → básica.</p>'))+
+   step('b) FALSO',jus('<p>NH₃(ac) + H₂O(l) ⇌ NH₄⁺(ac) + HO⁻(ac): los NH₄⁺ se forman junto con la misma cantidad de HO⁻, así que [HO⁻] &gt; [H₃O⁺] → básica.</p>'))+
    step('c) FALSO',jus('<p>H₂S es un ácido débil solo: HS⁻ es despreciable frente a H₂S (α ≈ 0,1 %). No hay par conjugado en cantidades comparables.</p>')),'a) F · b) F · c) F');
   A.addEx('buffer',{group:'bg2',label:'Guía 2 · soluciones reguladoras'},g2);
 
@@ -57,14 +57,14 @@
    jus('<p>El par útil es H₂PO₄⁻/HPO₄²⁻ (pKa₂ 7,199): regula entre 6,2 y 8,2. A pH 8,5 la relación HPO₄²⁻/H₂PO₄⁻ = 10<sup>1,3</sup> = 20: el H₂PO₄⁻ queda casi agotado y no puede neutralizar bases. <b>No será útil.</b></p>'),'No');
   er(8,'¿La solución fisiológica regula?',st('Solución 0,9 % m/V de NaCl. ¿Es reguladora?'),jus('<p><b>No.</b> Na⁺ y Cl⁻ vienen de electrolitos fuertes: no hay par conjugado débil. Su pH es el del agua y cualquier agregado lo cambia.</p>'),'No');
   er(9,'Reguladora de pH 2 con Na₂SO₄ y H₂SO₄',st('Diseñe una reguladora de pH 2 con sulfato de sodio y ácido sulfúrico. pKa₂ = 1,2.'),
-   jus('<p>Par HSO₄⁻/SO₄²⁻; pH 2 está en 1,2 ± 1. El H₂SO₄ aporta HSO₄⁻ (1.ª disociación total y su H⁺ protona sulfato): H₂SO₄ + SO₄²⁻ → 2 HSO₄⁻. Pero Ka₂ es grande y [H₃O⁺] = 0,01 M no es despreciable frente a las concentraciones: se diseña con el BC, no con Henderson.</p>')+
+   jus('<p>Par HSO₄⁻/SO₄²⁻; pH 2 está en 1,2 ± 1. El H₂SO₄ aporta HSO₄⁻ (1.ª disociación total y su H⁺ protona sulfato): H₂SO₄(ac) + SO₄²⁻(ac) → 2 HSO₄⁻(ac). Pero Ka₂ es grande y [H₃O⁺] = 0,01 M no es despreciable frente a las concentraciones: se diseña con el BC, no con Henderson.</p>')+
    chain(R`\text{a pH 2: }\alpha_{\mathrm{HSO_4^-}}=\frac{0{,}01}{0{,}01+0{,}063}=0{,}137\qquad\alpha_{\mathrm{SO_4^{2-}}}=0{,}863`,[R`\text{BC: }2n+0{,}01=(n+x)(\alpha_{\mathrm{HSO_4^-}}+2\alpha_{\mathrm{SO_4^{2-}}})`,'n = mol Na₂SO₄, x = mol H₂SO₄ por litro'],R`\text{con }x=0{,}050\ \mathrm{mol\ H_2SO_4}\Rightarrow n=0{,}61\ \mathrm{mol\ Na_2SO_4}`,R`[\mathrm{HSO_4^-}]=0{,}090\qquad[\mathrm{SO_4^{2-}}]=0{,}568\quad(\text{cociente }6{,}3=10^{0{,}8}\ \checkmark)`),
    'Por litro: 0,050 mol de H₂SO₄ + 0,61 mol de Na₂SO₄ (una opción)');
   er(10,'Carbonato en el plasma',st('Relación de concentraciones de especies del ácido carbónico para mantener pH 7,4 (pKa₁ 6,36; pKa₂ 10,33), con 4 L de sangre.'),
    chain(R`\frac{[\mathrm{HCO_3^-}]}{[\mathrm{H_2CO_3}]}=10^{7{,}4-6{,}36}=11\qquad\frac{[\mathrm{CO_3^{2-}}]}{[\mathrm{HCO_3^-}]}=10^{7{,}4-10{,}33}=1{,}2\times10^{-3}`)+jus('<p>El volumen no influye: Henderson depende del cociente. El par activo es H₂CO₃/HCO₃⁻; el CO₃²⁻ es despreciable.</p>'),'HCO₃⁻ : H₂CO₃ = 11 : 1');
   er(11,'Grupo 3: reguladora de pH 10 y sulfuro',st('Justifique por qué la reguladora de pH 10 aumenta la concentración de sulfuros (pKa₁ 6,97; pKa₂ 15).'),
    chain(R`\alpha_{\mathrm{S^{2-}}}=\frac{K_{a1}K_{a2}}{[\mathrm{H_3O^+}]^2+K_{a1}[\mathrm{H_3O^+}]+K_{a1}K_{a2}}`,R`\mathrm{pH}\ 10:\ \alpha=1\times10^{-5}\qquad\mathrm{pH}\ 1:\ \alpha=1\times10^{-20}`)+
-   jus('<p>Al bajar [H₃O⁺], el equilibrio H₂S ⇌ HS⁻ ⇌ S²⁻ se desplaza hacia el S²⁻ (Le Châtelier): la fracción de sulfuro libre aumenta unas 10¹⁵ veces respecto del medio ácido, y precipitan sulfuros de Kps mayores (grupo III). El buffer mantiene el pH aunque la precipitación libere H₃O⁺.</p>'),'');
+   jus('<p>Al bajar [H₃O⁺], el equilibrio H₂S(ac) ⇌ HS⁻(ac) ⇌ S²⁻(ac) se desplaza hacia el S²⁻ (Le Châtelier): la fracción de sulfuro libre aumenta unas 10¹⁵ veces respecto del medio ácido, y precipitan sulfuros de Kps mayores (grupo III). El buffer mantiene el pH aunque la precipitación libere H₃O⁺.</p>'),'');
   er(12,'Buffer de borato a pH 10 para baño de pies',st('Ácido bórico y sus sales (80 % de pureza) en 500 mL a pH 10. pKa₁ 9,14; pKa₂ 12,7; pKa₃ 13,8.'),
    chain(R`\frac{[\mathrm{H_2BO_3^-}]}{[\mathrm{H_3BO_3}]}=10^{10-9{,}14}=7{,}24`)+jus('<p>Par H₃BO₃/H₂BO₃⁻ (pKa₁): pH 10 está dentro de 9,14 ± 1 (algo lejos del pKa, capacidad menor que la máxima). No se da la concentración total: elegimos 0,10 M.</p>')+
    chain(R`[\mathrm{H_3BO_3}]=0{,}0121\ \mathrm{M}\to6{,}06\times10^{-3}\ \mathrm{mol}\to\frac{0{,}375\ \mathrm{g}}{0{,}80}=0{,}47\ \mathrm{g}`,R`[\mathrm{NaH_2BO_3}]=0{,}0879\ \mathrm{M}\to0{,}0439\ \mathrm{mol}\to\frac{3{,}68\ \mathrm{g}}{0{,}80}=4{,}6\ \mathrm{g}`),

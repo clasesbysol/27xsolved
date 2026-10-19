@@ -123,9 +123,9 @@
   draw.buffer=`<svg viewBox="0 0 660 230" role="img" aria-label="Funcionamiento de un buffer: la base del par capta el H+ agregado y el ácido del par neutraliza el OH- agregado">
     <defs><marker id="qacArrB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10z" class="svgAccentFill"/></marker></defs>
     <rect x="230" y="55" width="200" height="110" rx="18" class="qacBox"/>
-    <text x="330" y="95" text-anchor="middle" class="qacBig">HA ⇌ A⁻</text><text x="330" y="122" text-anchor="middle" class="svgText qiSmall">las dos formas en cantidad apreciable</text><text x="330" y="145" text-anchor="middle" class="svgText strong">pH ≈ pKa ± 1</text>
-    <rect x="12" y="20" width="170" height="70" rx="14" class="qacBoxAlt"/><text x="97" y="50" text-anchor="middle" class="svgText strong">agrego H⁺</text><text x="97" y="72" text-anchor="middle" class="svgText qiSmall">A⁻ + H⁺ → HA</text>
-    <rect x="478" y="20" width="170" height="70" rx="14" class="qacBoxAlt"/><text x="563" y="50" text-anchor="middle" class="svgText strong">agrego OH⁻</text><text x="563" y="72" text-anchor="middle" class="svgText qiSmall">HA + OH⁻ → A⁻ + H₂O</text>
+    <text x="330" y="95" text-anchor="middle" class="qacBig">HA(ac) ⇌ A⁻(ac)</text><text x="330" y="122" text-anchor="middle" class="svgText qiSmall">las dos formas en cantidad apreciable</text><text x="330" y="145" text-anchor="middle" class="svgText strong">pH ≈ pKa ± 1</text>
+    <rect x="12" y="20" width="170" height="70" rx="14" class="qacBoxAlt"/><text x="97" y="50" text-anchor="middle" class="svgText strong">agrego H⁺</text><text x="97" y="72" text-anchor="middle" class="svgText qiSmall">A⁻(ac) + H⁺(ac) → HA(ac)</text>
+    <rect x="478" y="20" width="170" height="70" rx="14" class="qacBoxAlt"/><text x="563" y="50" text-anchor="middle" class="svgText strong">agrego OH⁻</text><text x="563" y="72" text-anchor="middle" class="svgText qiSmall">HA(ac) + OH⁻(ac) → A⁻(ac) + H₂O(l)</text>
     <line x1="184" y1="62" x2="226" y2="90" class="svgArrow" marker-end="url(#qacArrB)"/><line x1="476" y1="62" x2="434" y2="90" class="svgArrow" marker-end="url(#qacArrB)"/>
     <text x="330" y="200" text-anchor="middle" class="svgText strong">Cambia un poco el cociente [A⁻]/[HA], no el pH</text>
     <text x="330" y="220" text-anchor="middle" class="svgText qiSmall">pH = pKa + log([A⁻]/[HA]): el log de un cociente cercano a 1 cambia muy poco</text>
