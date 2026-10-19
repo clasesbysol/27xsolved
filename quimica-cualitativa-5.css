@@ -146,3 +146,7 @@
 .kitBox.qacPlan{border-left:4px solid var(--accent);background:color-mix(in srgb,var(--accent) 6%,var(--surface))}
 .kitBox.qacMagnitud{border:2px solid var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--surface));box-shadow:var(--shadow)}
 .kitBox.qacMagnitud>b{font-size:1.02em}
+/* Resoluciones: incisos */
+.qacInciso{margin:14px 0;padding:12px 14px;border:1px solid var(--border);border-radius:14px;background:color-mix(in srgb,var(--surface) 96%,var(--accent))}
+.qacInciso>h4{margin:0 0 8px;font-size:.98rem}
+.qacInciso>h4>span{display:inline-grid;place-items:center;min-width:26px;height:26px;margin-right:6px;border-radius:50%;background:var(--accent);color:#fff;font-size:.8rem}
