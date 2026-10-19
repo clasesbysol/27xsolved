@@ -52,7 +52,7 @@ ${table(['Herramienta','Qué permite justificar','Frase modelo (corta)'],[
  ['<b>BM, BC y despeje en K</b>','el cálculo y qué término de un balance se puede tachar','“En el BC es razonable suponer [HO⁻] baja respecto de [Ac⁻] porque el medio es ácido.”']
 ],'compareTable')}
 <h3>Teoría de los choques efectivos y el grado de disociación</h3>
-<p>Para que dos partículas reaccionen tienen que <b>chocar</b> con la orientación y la energía adecuadas: eso es un <b>choque efectivo</b>. En un ácido débil HA hay dos reacciones a la vez: la disociación (HA + H₂O → A⁻ + H₃O⁺) y la inversa (A⁻ + H₃O⁺ → HA + H₂O). La inversa necesita que un A⁻ y un H₃O⁺ se encuentren, y eso depende de cuántas partículas hay por litro.</p>
+<p>Para que dos partículas reaccionen tienen que <b>chocar</b> con la orientación y la energía adecuadas: eso es un <b>choque efectivo</b>. En un ácido débil HA hay dos reacciones a la vez: la disociación (HA(ac) + H₂O(l) → A⁻(ac) + H₃O⁺(ac)) y la inversa (A⁻(ac) + H₃O⁺(ac) → HA(ac) + H₂O(l)). La inversa necesita que un A⁻ y un H₃O⁺ se encuentren, y eso depende de cuántas partículas hay por litro.</p>
 <p>Para comparar usamos el <b>grado de disociación α</b> (la fracción del ácido que está disociada: α = [A⁻]/C; si α = 0,01, de cada 100 moléculas que pusimos, 1 está disociada).</p>
 ${figure(A.draw.choques,'Más concentrado: más encuentros entre iones, más recombinación, menor fracción disociada.')}
 ${flow([
@@ -86,18 +86,18 @@ ${warn('Lo que Arrhenius no puede explicar','<ul><li>El <b>amoníaco</b> es bás
 ${key(R`\text{ácido}=\text{dador de }\mathrm{H^+}\qquad\text{base}=\text{aceptor de }\mathrm{H^+}`,'Brønsted–Lowry')}
 <p>Una reacción ácido-base es <b>pasar un protón de una especie a otra</b>. Por eso siempre hay dos pares: el ácido, al perder su H⁺, se convierte en una base (su <b>base conjugada</b>), y la base, al ganarlo, se convierte en un ácido (su <b>ácido conjugado</b>).</p>
 ${rxs(['HCl + H2O -> Cl^- + H3O^+','ácido₁ + base₂ → base₁ + ácido₂'],['NH3 + H2O <=> NH4^+ + OH^-','base₁ + ácido₂ ⇌ ácido₁ + base₂'],['HAc + H2O <=> Ac^- + H3O^+','el acético cede su H⁺ al agua'],['CO3^2- + H2O <=> HCO3^- + OH^-','el carbonato es una base: acepta un H⁺'])}
-${table(['Ácido','⇌ H⁺ +','Base conjugada'],[[f('HCl'),'',f('Cl^-')],[f('H3O^+'),'',f('H2O')],[f('H2O'),'',f('OH^-')],[f('NH4^+'),'',f('NH3')],[f('HCO3^-'),'',f('CO3^2-')],[f('H2CO3'),'',f('HCO3^-')]])}
+${table(['Ácido','cede un H⁺','Base conjugada'],[[f('HCl'),'− H⁺',f('Cl^-')],[f('H3O^+'),'− H⁺',f('H2O')],[f('H2O'),'− H⁺',f('OH^-')],[f('NH4^+'),'− H⁺',f('NH3')],[f('HCO3^-'),'− H⁺',f('CO3^2-')],[f('H2CO3'),'− H⁺',f('HCO3^-')]])}
 ${idea('Cómo armar un par conjugado sin equivocarte','<p>El ácido y su base conjugada difieren <b>en exactamente un H⁺</b>: misma fórmula, un H menos y una carga negativa más. '+f('H2PO4^-')+' → su base conjugada es '+f('HPO4^2-')+' (no '+f('PO4^3-')+') y su ácido conjugado es '+f('H3PO4')+'.</p>')}
 ${note('H⁺ y H₃O⁺ son lo mismo','<p>En agua el protón está siempre hidratado: lo escribimos '+f('H3O^+')+' (ion hidronio) cuando queremos mostrar que el agua lo aceptó, y '+f('H^+')+' para abreviar en las cuentas. En toda la materia '+m(R`[\mathrm{H^+}]=[\mathrm{H_3O^+}]`)+'.</p>')}
 <h3>3 · Lewis (1923): pares de electrones</h3>
 ${key(R`\text{ácido}=\text{aceptor de un par de e}^-\qquad\text{base}=\text{dador de un par de e}^-`,'Lewis')}
 <p>Lewis mira lo que pasa con los electrones: la base tiene un <b>par libre</b> y lo “presta” para formar un enlace (coordinado o dativo) con el ácido, que tiene un <b>orbital vacío</b>. Así entran como ácidos especies que no tienen ningún H:</p>
-${rxs(['BF3 + NH3 -> F3B–NH3','el B tiene un orbital vacío; el N, un par libre'],['Ag^+ + 2 NH3 -> [Ag(NH3)2]^+','¡un complejo es una reacción ácido-base de Lewis! (Unidad 3)'],['Fe^3+ + 6 H2O -> [Fe(H2O)6]^3+','los cationes metálicos son ácidos de Lewis'],['H^+ + OH^- -> H2O','el H⁺ acepta un par del OH⁻'])}
+${rxs(['BF3(g) + NH3(g) -> F3B–NH3(s)','el B tiene un orbital vacío; el N, un par libre'],['Ag^+ + 2 NH3 -> [Ag(NH3)2]^+','¡un complejo es una reacción ácido-base de Lewis! (Unidad 3)'],['Fe^3+ + 6 H2O -> [Fe(H2O)6]^3+','los cationes metálicos son ácidos de Lewis'],['H^+ + OH^- -> H2O','el H⁺ acepta un par del OH⁻'])}
 <h3>Comparación y casos resueltos</h3>
 ${table(['Especie','Arrhenius','Brønsted–Lowry','Lewis'],[
  [f('HCl'),'ácido (libera H⁺ en agua)','ácido (cede H⁺)','ácido (su H⁺ acepta un par)'],
  [f('NaOH'),'base (libera OH⁻)','el OH⁻ es la base (acepta H⁺)','el OH⁻ es base (da un par)'],
- [f('NH3'),'<b>no la explica</b>','base (acepta H⁺ → NH₄⁺)','base (par libre del N)'],
+ [f('NH3'),'<b>no la explica</b>','base (acepta H⁺(ac) → NH₄⁺(ac))','base (par libre del N)'],
  [f('H2O'),'—','<b>ácido o base</b> según con quién reaccione','ácido o base'],
  [f('BF3'),'—','— (no tiene H)','<b>ácido</b> (orbital vacío)'],
  [f('Ag^+')+', '+f('Cu^2+')+', '+f('Fe^3+'),'—','—','<b>ácidos</b> (forman complejos)']
@@ -124,7 +124,7 @@ ${rxs(['H2O + NH3 <=> OH^- + NH4^+','frente a una base, el agua actúa como áci
 <h3>El esquema de los anfolitos: la escalera del fosfórico</h3>
 <p>Para no perderse con las constantes de un poliprótico, se escribe la cadena “esquelética”, sin los H₂O ni los H₃O⁺, sólo las especies. Arriba, la constante de cada paso hacia la derecha (pierde un H⁺: <b>Ka</b>); abajo, la de cada paso hacia la izquierda (gana un H⁺: <b>Kb</b>):</p>
 ${figure(A.ladder(['H₃PO₄','H₂PO₄⁻','HPO₄²⁻','PO₄³⁻'],'del ácido fosfórico'),'Las especies del medio (H₂PO₄⁻ y HPO₄²⁻) tienen una flecha hacia cada lado: son anfipróticas (anfolitos).')}
-${table(['Paso','Constante','Relación'],[['H₃PO₄ ⇌ H₂PO₄⁻','Ka₁ = 7,5·10⁻³',''],['H₂PO₄⁻ ⇌ HPO₄²⁻','Ka₂ = 6,2·10⁻⁸',''],['HPO₄²⁻ ⇌ PO₄³⁻','Ka₃ = 4,2·10⁻¹³',''],['PO₄³⁻ ⇌ HPO₄²⁻','Kb₁','= Kw/Ka₃ = 2,4·10⁻²'],['HPO₄²⁻ ⇌ H₂PO₄⁻','Kb₂','= Kw/Ka₂ = 1,6·10⁻⁷'],['H₂PO₄⁻ ⇌ H₃PO₄','Kb₃','= Kw/Ka₁ = 1,3·10⁻¹²']])}
+${table(['Paso','Constante','Relación'],[['H₃PO₄(ac) ⇌ H₂PO₄⁻(ac)','Ka₁ = 7,5·10⁻³',''],['H₂PO₄⁻(ac) ⇌ HPO₄²⁻(ac)','Ka₂ = 6,2·10⁻⁸',''],['HPO₄²⁻(ac) ⇌ PO₄³⁻(ac)','Ka₃ = 4,2·10⁻¹³',''],['PO₄³⁻(ac) ⇌ HPO₄²⁻(ac)','Kb₁','= Kw/Ka₃ = 2,4·10⁻²'],['HPO₄²⁻(ac) ⇌ H₂PO₄⁻(ac)','Kb₂','= Kw/Ka₂ = 1,6·10⁻⁷'],['H₂PO₄⁻(ac) ⇌ H₃PO₄(ac)','Kb₃','= Kw/Ka₁ = 1,3·10⁻¹²']])}
 ${idea('Recurso para no equivocarse','<p>Cada par de flechas (arriba y abajo) es un par conjugado: <b>Ka·Kb = Kw</b> con las dos constantes del mismo tramo. Por eso <b>Kb₁ va con Ka₃</b> (el último tramo) y <b>Kb₃ con Ka₁</b>. Para saber si un anfolito es ácido o básico, se comparan las dos flechas que salen de él: el H₂PO₄⁻ tiene Ka₂ (6,2·10⁻⁸) &gt; Kb₃ (1,3·10⁻¹²) → es ácido; el HPO₄²⁻ tiene Kb₂ (1,6·10⁻⁷) &gt; Ka₃ (4,2·10⁻¹³) → es básico.</p>')}
 <h3>Diagrama de especiación: dónde vive cada especie</h3>
 <p>Un <b>diagrama de especiación</b> muestra qué fracción del total está en cada forma (α, de 0 a 1) según el pH. Con él se ve enseguida qué especie predomina y cuáles son despreciables a cada pH.</p>
@@ -236,7 +236,7 @@ ${table(['','Electrolito fuerte','Electrolito débil'],[
  ['Ejemplos','HCl, HNO₃, NaOH, sales solubles (NaCl, NaAc, NH₄Cl)','HAc, HF, NH₃, H₂CO₃, HSO₄⁻'],
  ['Conductividad','alta','baja para la misma concentración']
 ])}
-${warn('Una sal es un electrolito fuerte aunque venga de un ácido débil','<p>El acetato de sodio se disocia <b>totalmente</b> (NaAc → Na⁺ + Ac⁻): es un electrolito fuerte. Lo que es débil es el comportamiento ácido-base del ion Ac⁻ con el agua. Son dos cosas distintas y conviene decirlas por separado.</p>')}
+${warn('Una sal es un electrolito fuerte aunque venga de un ácido débil','<p>El acetato de sodio se disocia <b>totalmente</b> (NaAc(s) → Na⁺(ac) + Ac⁻(ac)): es un electrolito fuerte. Lo que es débil es el comportamiento ácido-base del ion Ac⁻ con el agua. Son dos cosas distintas y conviene decirlas por separado.</p>')}
 `);
 
   // =====================================================================
@@ -299,9 +299,9 @@ ${example('Descripción completa de NH₄Cl 0,10 M','<p>(Kb NH₃ = 1,8·10⁻�
  'Ácida, pH 5,13, con todas las concentraciones')}
 <h3>Errores de descripción que la profe marca siempre</h3>
 ${table(['Error','Por qué está mal','Correcto'],[
- [rx('H3PO4 + 3 H2O -> 3 H3O^+ + PO4^3-'),'un débil no se disocia totalmente (va ⇌) y los protones salen <b>de a uno</b>, cada uno con su Ka','tres equilibrios: H₃PO₄ ⇌ H₂PO₄⁻ ⇌ HPO₄²⁻ ⇌ PO₄³⁻'],
- [rx('HSO4^- -> SO4^2- + H3O^+'),'la segunda disociación del sulfúrico es débil (Ka₂ = 1,2·10⁻²)','HSO₄⁻ + H₂O ⇌ SO₄²⁻ + H₃O⁺, con Ka₂'],
- [rx('NH4^+ -> NH3 + H3O^+'),'faltan el agua (Brønsted: el H⁺ va al H₂O), el equilibrio y la constante','NH₄⁺ + H₂O ⇌ NH₃ + H₃O⁺, Ka'],
+ [rx('H3PO4 + 3 H2O -> 3 H3O^+ + PO4^3-'),'un débil no se disocia totalmente (va ⇌) y los protones salen <b>de a uno</b>, cada uno con su Ka','tres equilibrios: H₃PO₄(ac) ⇌ H₂PO₄⁻(ac) ⇌ HPO₄²⁻(ac) ⇌ PO₄³⁻(ac)'],
+ [rx('HSO4^- -> SO4^2- + H3O^+'),'la segunda disociación del sulfúrico es débil (Ka₂ = 1,2·10⁻²)','HSO₄⁻(ac) + H₂O(l) ⇌ SO₄²⁻(ac) + H₃O⁺(ac), con Ka₂'],
+ [rx('NH4^+ -> NH3 + H3O^+'),'faltan el agua (Brønsted: el H⁺ va al H₂O), el equilibrio y la constante','NH₄⁺(ac) + H₂O(l) ⇌ NH₃(ac) + H₃O⁺(ac), Ka'],
  [rx('H2O + H2O -> H3O^+ + HO^-'),'la autoprotólisis es un equilibrio','⇌ con Kw'],
  ['[HO⁻] = 0 en un ácido','Kw siempre vale: [HO⁻] = Kw/[H₃O⁺], chico pero no cero','calcularla'],
  ['Olvidar la autoprotólisis del agua','está en todas las soluciones acuosas','escribirla siempre']
@@ -353,7 +353,7 @@ ${flow([
 ${example('Mezcla con exceso de ácido','<p>Se mezclan 25,0 mL de HCl 0,100 M con 15,0 mL de NaOH 0,120 M. Calcular el pH.</p>',
  step('1. Milimoles',chain(R`n_{\mathrm{H^+}}=25{,}0\cdot0{,}100=2{,}50\ \mathrm{mmol}`,R`n_{\mathrm{OH^-}}=15{,}0\cdot0{,}120=1{,}80\ \mathrm{mmol}`))+
  step('2. Reacción completa',table(['','H⁺','OH⁻'],[['Inicio','2,50','1,80'],['Reacciona','−1,80','−1,80'],['Final','<b>0,70</b>','0']]))+
- step('3. Concentración del exceso en el volumen total',chain(R`[\mathrm{H^+}]=\frac{0{,}70\ \mathrm{mmol}}{40{,}0\ \mathrm{mL}}=0{,}0175\ \mathrm{M}`,R`\mathrm{pH}=-\log(0{,}0175)=1{,}76`))+A.jus('<p>La neutralización H₃O⁺ + HO⁻ → 2 H₂O tiene K = 1/Kw = 10¹⁴: es completa, por eso se trabaja con estequiometría en moles y no con equilibrio. Sobra ácido fuerte, que fija el pH; es razonable suponer el aporte del agua bajo respecto de él.</p>'),
+ step('3. Concentración del exceso en el volumen total',chain(R`[\mathrm{H^+}]=\frac{0{,}70\ \mathrm{mmol}}{40{,}0\ \mathrm{mL}}=0{,}0175\ \mathrm{M}`,R`\mathrm{pH}=-\log(0{,}0175)=1{,}76`))+A.jus('<p>La neutralización H₃O⁺(ac) + HO⁻(ac) → 2 H₂O(l) tiene K = 1/Kw = 10¹⁴: es completa, por eso se trabaja con estequiometría en moles y no con equilibrio. Sobra ácido fuerte, que fija el pH; es razonable suponer el aporte del agua bajo respecto de él.</p>'),
  'pH = 1,76 (sobra ácido)')}
 ${warn('Errores típicos en mezclas','<ul><li>Restar <b>concentraciones</b> en vez de moles: sólo los moles se conservan.</li><li>Dividir por el volumen de uno solo de los reactivos en lugar del total.</li><li>Olvidar que '+f('H2SO4')+' o '+f('Ca(OH)2')+' aportan más de un H⁺ u OH⁻ por fórmula (al menos en la primera disociación del sulfúrico).</li></ul>')}
 `);

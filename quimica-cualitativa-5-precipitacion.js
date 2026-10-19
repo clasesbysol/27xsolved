@@ -50,7 +50,7 @@ ${table(['Tipo','Ejemplo','Kps en función de s','s'],[
 ])}
 ${key(R`K_{ps}=m^m\,n^n\,s^{\,m+n}`,'Fórmula general (en agua pura)')}
 ${warn('El error clásico','<p>Para Ag₂CrO₄ escribir '+m(R`K_{ps}=(2s)\cdot s`)+' (sin elevar al cuadrado) o '+m(R`K_{ps}=2s^2\cdot s`)+' (elevando sólo la s). Es '+m(R`(2s)^2=4s^2`)+': el coeficiente <b>también</b> se eleva.</p>')}
-${table(['Sal','Kps (25 °C)'],[['AgCl','1,8·10⁻¹⁰'],['AgBr','5,0·10⁻¹³'],['AgI','8,3·10⁻¹⁷'],['Ag₂CrO₄','1,1·10⁻¹²'],['PbCl₂','1,7·10⁻⁵'],['PbI₂','7,1·10⁻⁹'],['BaSO₄','1,1·10⁻¹⁰'],['CaCO₃','4,5·10⁻⁹'],['CaF₂','3,9·10⁻¹¹'],['Mg(OH)₂','1,8·10⁻¹¹'],['Fe(OH)₃','4·10⁻³⁸'],['Al(OH)₃','1,3·10⁻³³'],['FeS','6,3·10⁻¹⁸'],['CuS','6,3·10⁻³⁶']])}
+${table(['Sal','Kps (25 °C)'],[['AgCl','1,8·10⁻¹⁰'],['AgBr','5,0·10⁻¹³'],['AgI','8,5·10⁻¹⁷'],['Ag₂CrO₄','1,1·10⁻¹²'],['PbCl₂','1,6·10⁻⁵'],['PbI₂','7,1·10⁻⁹'],['BaSO₄','1,1·10⁻¹⁰'],['CaCO₃','2,8·10⁻⁹'],['CaF₂','5,3·10⁻⁹'],['Mg(OH)₂','1,8·10⁻¹¹'],['Fe(OH)₃','4·10⁻³⁸'],['Al(OH)₃','1,3·10⁻³³'],['FeS','6·10⁻¹⁹'],['CuS','6·10⁻³⁷']])}
 ${note('Los Kps varían mucho entre tablas','<p>Sobre todo los de sulfuros e hidróxidos (pueden diferir en órdenes de magnitud según la fuente). Usá los de tu guía.</p>')}
 ${example('Solubilidad del AgCl en agua','<p>Calcular s en mol/L y en g/L (M = 143,3 g/mol).</p>',
  step('1. Equilibrio y tabla',rx('AgCl(s) <=> Ag^+ + Cl^-')+table(['','Ag⁺','Cl⁻'],[['Se disuelven s mol/L','s','s']]))+
@@ -81,7 +81,7 @@ ${warn('¿El dato es de la sal o de un ion?','<p>“La concentración de <b>estr
   // =====================================================================
   add('comparar','Comparación de Kps: ¿cuál es más soluble?','PRECIPITACIÓN · 03',`
 ${punch('Comparar Kps directamente SÓLO vale para sales del mismo tipo (misma relación m:n). Si no, hay que comparar s.')}
-${table(['Sales del mismo tipo (AB)','Kps','s (M)'],[['AgCl','1,8·10⁻¹⁰','1,3·10⁻⁵'],['AgBr','5,0·10⁻¹³','7,1·10⁻⁷'],['AgI','8,3·10⁻¹⁷','9,1·10⁻⁹']])}
+${table(['Sales del mismo tipo (AB)','Kps','s (M)'],[['AgCl','1,8·10⁻¹⁰','1,3·10⁻⁵'],['AgBr','5,0·10⁻¹³','7,1·10⁻⁷'],['AgI','8,5·10⁻¹⁷','9,2·10⁻⁹']])}
 <p>Acá sí: menor Kps → menor s. El AgI es el menos soluble.</p>
 ${example('AgCl vs Ag₂CrO₄: la trampa','<p>Kps(AgCl) = 1,8·10⁻¹⁰ · Kps(Ag₂CrO₄) = 1,1·10⁻¹². ¿Cuál es más soluble?</p>',
  step('Mirando sólo Kps…',`<p>Diríamos que el cromato (Kps menor) es menos soluble. <b>Error</b>: son de distinto tipo.</p>`)+
@@ -105,7 +105,7 @@ ${example('Ag₂CrO₄: no da lo mismo cuál ion es el común','<p>Calcular s de
  step('a) Ion común Ag⁺',sup([['[Ag⁺] = 0,010 + 2s ≈ 0,010','s va a ser muy chica (ion común).']])+chain(R`K_{ps}=(0{,}010)^2\cdot s\ \Rightarrow\ s=\frac{1{,}1\times10^{-12}}{10^{-4}}=1{,}1\times10^{-8}\ \mathrm{M}`)+ver('<p>2s = 2,2·10⁻⁸ ≪ 0,010 ✔</p>'))+
  step('b) Ion común CrO₄²⁻',sup([['[CrO₄²⁻] = 0,010 + s ≈ 0,010','idem.']])+chain(R`K_{ps}=(2s)^2\cdot0{,}010\ \Rightarrow\ s=\sqrt{\frac{1{,}1\times10^{-12}}{0{,}040}}=5{,}2\times10^{-6}\ \mathrm{M}`)+ver('<p>s = 5,2·10⁻⁶ ≪ 0,010 ✔</p>')),
  'a) 1,1·10⁻⁸ M · b) 5,2·10⁻⁶ M — reprime mucho más el ion que va al cuadrado')}
-${idea('Para precipitar “completamente”, se agrega exceso de reactivo','<p>Por el ion común, un pequeño exceso del agente precipitante baja muchísimo la concentración del ion que queremos sacar de la solución. ¡Pero ojo!: un gran exceso puede volver a disolver el precipitado si forma complejos (por ejemplo AgCl en Cl⁻ muy concentrado → '+f('[AgCl2]^-')+'). Eso es Unidad 3 y 5.</p>')}
+${idea('Para precipitar “completamente”, se agrega exceso de reactivo','<p>Por el ion común, un pequeño exceso del agente precipitante baja muchísimo la concentración del ion que queremos sacar de la solución. ¡Pero ojo!: un gran exceso puede volver a disolver el precipitado si forma complejos (por ejemplo, con Cl⁻ muy concentrado: '+f('AgCl(s)')+' + '+f('Cl^-(ac)')+' ⇌ '+f('[AgCl2]^-(ac)')+'). Eso es Unidad 3 y 5.</p>')}
 `);
 
   // =====================================================================
@@ -147,8 +147,8 @@ ${example('Cloruro y cromato con Ag⁺ (método de Mohr)','<p>Una solución es 0
  step('4. Conclusión',`<p>Cuando aparece el color rojo ladrillo del Ag₂CrO₄ ya precipitó el 99,98 % del cloruro: la separación (y la titulación) funciona.</p>${vira('AgCl blanco','#f4f4f4','Ag₂CrO₄ rojo ladrillo','#b5462d')}`)+A.jus('<p>Precipita primero la sal que alcanza antes su Kps, es decir la que necesita menos Ag⁺. Cuando empieza la segunda, [Ag⁺] es la que fija su Kps y con ella se calcula cuánto quedó de la primera (ion común).</p>'),
  'Primero AgCl · cuando empieza el Ag₂CrO₄ queda 0,017 % del Cl⁻')}
 ${example('Yoduro y cloruro','<p>Solución 0,010 M en I⁻ y 0,010 M en Cl⁻, se agrega Ag⁺. ¿Se pueden separar?</p>',
- step('Ag⁺ para empezar',chain(R`\mathrm{AgI}:\ \frac{8{,}3\times10^{-17}}{0{,}010}=8{,}3\times10^{-15}\ \mathrm{M}\qquad\mathrm{AgCl}:\ \frac{1{,}8\times10^{-10}}{0{,}010}=1{,}8\times10^{-8}\ \mathrm{M}`))+
- step('I⁻ que queda cuando empieza el AgCl',chain(R`[\mathrm{I^-}]=\frac{8{,}3\times10^{-17}}{1{,}8\times10^{-8}}=4{,}6\times10^{-9}\ \mathrm{M}\ \ (0{,}00005\,\%)`))+A.jus('<p>Precipita primero el AgI porque necesita una [Ag⁺] muchísimo menor para llegar a su Kps; cuando empieza el AgCl, el I⁻ que queda es despreciable respecto del inicial: la separación es completa.</p>'),
+ step('Ag⁺ para empezar',chain(R`\mathrm{AgI}:\ \frac{8{,}5\times10^{-17}}{0{,}010}=8{,}5\times10^{-15}\ \mathrm{M}\qquad\mathrm{AgCl}:\ \frac{1{,}8\times10^{-10}}{0{,}010}=1{,}8\times10^{-8}\ \mathrm{M}`))+
+ step('I⁻ que queda cuando empieza el AgCl',chain(R`[\mathrm{I^-}]=\frac{8{,}5\times10^{-17}}{1{,}8\times10^{-8}}=4{,}7\times10^{-9}\ \mathrm{M}\ \ (0{,}00005\,\%)`))+A.jus('<p>Precipita primero el AgI porque necesita una [Ag⁺] muchísimo menor para llegar a su Kps; cuando empieza el AgCl, el I⁻ que queda es despreciable respecto del inicial: la separación es completa.</p>'),
  'Separación excelente: precipita todo el AgI antes de que empiece el AgCl')}
 `);
 
@@ -156,7 +156,7 @@ ${example('Yoduro y cloruro','<p>Solución 0,010 M en I⁻ y 0,010 M en Cl⁻, s
   add('agentes','Agentes precipitantes y la marcha de cationes','PRECIPITACIÓN · 07',`
 <p>Un <b>agente precipitante</b> es el reactivo que se agrega para precipitar selectivamente un grupo de iones. En la marcha sistemática de cationes, cada reactivo separa un “grupo”, aprovechando todo lo de esta unidad (Kps, ion común, pH) y de la siguiente (complejos).</p>
 ${table(['Grupo','Agente precipitante','Qué precipita','Por qué funciona'],[
- ['I','HCl diluido','AgCl, PbCl₂, Hg₂Cl₂ (blancos)','son los únicos cloruros insolubles; el PbCl₂ precipita incompleto (Kps 1,7·10⁻⁵, se separa en caliente)'],
+ ['I','HCl diluido','AgCl, PbCl₂, Hg₂Cl₂ (blancos)','son los únicos cloruros insolubles; el PbCl₂ precipita incompleto (Kps 1,6·10⁻⁵, se separa en caliente)'],
  ['II','H₂S en medio ácido (HCl ≈ 0,3 M)','CuS, Bi₂S₃, CdS, HgS, PbS, SnS₂, As₂S₃, Sb₂S₃','en medio ácido [S²⁻] es mínima: sólo precipitan los sulfuros de Kps muy chico'],
  ['III','NH₃ + NH₄Cl, luego (NH₄)₂S','Fe(OH)₃, Al(OH)₃, Cr(OH)₃ · NiS, CoS, MnS, ZnS','el buffer amoniacal fija el pH (≈ 9) y ahora [S²⁻] es alta: precipitan los sulfuros más solubles; el NH₄Cl impide que precipite el Mg(OH)₂'],
  ['IV','(NH₄)₂CO₃ en medio amoniacal','CaCO₃, SrCO₃, BaCO₃','carbonatos insolubles de los alcalinotérreos'],
@@ -171,7 +171,7 @@ ${idea('Cómo se elige un agente precipitante','<ul><li>Que forme con el ion bus
 <p>El pH controla la precipitación de dos maneras:</p>
 ${flow([
  ['Cuando el anión es OH⁻ (hidróxidos)','[OH⁻] la fija directamente el pH: para cada catión hay un pH de inicio y un pH de precipitación completa.'],
- ['Cuando el anión es base conjugada de un ácido débil (S²⁻, CO₃²⁻, F⁻, CrO₄²⁻, PO₄³⁻)','En medio ácido el anión se protona (S²⁻ → HS⁻ → H₂S): baja su concentración libre y el sólido se disuelve o no llega a precipitar.']
+ ['Cuando el anión es base conjugada de un ácido débil (S²⁻, CO₃²⁻, F⁻, CrO₄²⁻, PO₄³⁻)','En medio ácido el anión se protona (S²⁻(ac) → HS⁻(ac) → H₂S(ac)): baja su concentración libre y el sólido se disuelve o no llega a precipitar.']
 ])}
 <h3>Hidróxidos: ¿a qué pH precipitan?</h3>
 ${example('Separar Fe³⁺ de Mg²⁺ ajustando el pH','<p>Una solución es 0,010 M en Fe³⁺ y 0,010 M en Mg²⁺. Kps Fe(OH)₃ = 4·10⁻³⁸ · Kps Mg(OH)₂ = 1,8·10⁻¹¹. Calcular el pH de inicio y de precipitación completa (10⁻⁵ M) de cada uno.</p>',
@@ -187,30 +187,30 @@ ${example('El papel del NH₄Cl en el grupo III','<p>A la solución anterior se 
  'El NH₄Cl reprime la ionización del NH₃ (ion común), baja [OH⁻] y evita que el Mg²⁺ precipite')}
 <h3>Sulfuros: [S²⁻] se regula con [H⁺]</h3>
 <p>Del capítulo de polipróticos, con H₂S saturado (0,10 M):</p>
-${key(R`[\mathrm{S^{2-}}]=\frac{K_{a1}K_{a2}\,[\mathrm{H_2S}]}{[\mathrm{H^+}]^2}=\frac{1{,}3\times10^{-21}}{[\mathrm{H^+}]^2}`,'Sulfuro libre según el pH')}
-${example('Separar Cu²⁺ de Fe²⁺ con H₂S en HCl 0,30 M','<p>Solución 0,010 M en Cu²⁺ y 0,010 M en Fe²⁺, saturada con H₂S, en HCl 0,30 M. Kps CuS = 6,3·10⁻³⁶ · Kps FeS = 6,3·10⁻¹⁸.</p>',
- step('1. [S²⁻] en ese medio',sup([['[H⁺] = 0,30 M','la fija el HCl; el H₂S (ácido muy débil y reprimido) no aporta nada apreciable.']])+chain(R`[\mathrm{S^{2-}}]=\frac{1{,}3\times10^{-21}}{(0{,}30)^2}=1{,}4\times10^{-20}\ \mathrm{M}`))+
- step('2. Q de cada sulfuro',chain([R`Q=0{,}010\cdot1{,}4\times10^{-20}=1{,}4\times10^{-22}`,'igual para los dos'],[R`\mathrm{CuS}:\ 1{,}4\times10^{-22}\gg6{,}3\times10^{-36}`,'precipita'],[R`\mathrm{FeS}:\ 1{,}4\times10^{-22}\ll6{,}3\times10^{-18}`,'no precipita']))+
- step('3. ¿Cuánto cobre queda?',chain(R`[\mathrm{Cu^{2+}}]=\frac{6{,}3\times10^{-36}}{1{,}4\times10^{-20}}=4{,}4\times10^{-16}\ \mathrm{M}`)+ver('<p>Precipitación completa del cobre ✔. Separación perfecta: es el grupo II frente al grupo III.</p>'))+
- step('4. ¿A qué pH empezaría el FeS?',chain(R`[\mathrm{S^{2-}}]=\frac{6{,}3\times10^{-18}}{0{,}010}=6{,}3\times10^{-16}\ \Rightarrow\ [\mathrm{H^+}]=\sqrt{\frac{1{,}3\times10^{-21}}{6{,}3\times10^{-16}}}=1{,}4\times10^{-3}\ (\mathrm{pH}\ 2{,}8)`)),
+${key(R`[\mathrm{S^{2-}}]=\frac{K_{a1}K_{a2}\,[\mathrm{H_2S}]}{[\mathrm{H^+}]^2}=\frac{9{,}5\times10^{-28}}{[\mathrm{H^+}]^2}`,'Sulfuro libre según el pH (Ka₁ y Ka₂ de la Tabla 1)')}
+${example('Separar Cu²⁺ de Fe²⁺ con H₂S en HCl 0,30 M','<p>Solución 0,010 M en Cu²⁺ y 0,010 M en Fe²⁺, saturada con H₂S, en HCl 0,30 M. Kps CuS = 6·10⁻³⁷ · Kps FeS = 6·10⁻¹⁹ (Tabla 5).</p>',
+ step('1. [S²⁻] en ese medio',sup([['[H⁺] = 0,30 M','la fija el HCl; el H₂S (ácido muy débil y reprimido) no aporta nada apreciable.']])+chain(R`[\mathrm{S^{2-}}]=\frac{9{,}5\times10^{-28}}{(0{,}30)^2}=1{,}1\times10^{-26}\ \mathrm{M}`))+
+ step('2. Q de cada sulfuro',chain([R`Q=0{,}010\cdot1{,}1\times10^{-26}=1{,}1\times10^{-28}`,'igual para los dos'],[R`\mathrm{CuS}:\ 1{,}1\times10^{-28}\gg6\times10^{-37}`,'precipita'],[R`\mathrm{FeS}:\ 1{,}1\times10^{-28}\ll6\times10^{-19}`,'no precipita']))+
+ step('3. ¿Cuánto cobre queda?',chain(R`[\mathrm{Cu^{2+}}]=\frac{6\times10^{-37}}{1{,}1\times10^{-26}}=5{,}7\times10^{-11}\ \mathrm{M}`)+ver('<p>Precipitación completa del cobre ✔. Separación perfecta: es el grupo II frente al grupo III.</p>'))+
+ step('4. ¿A qué pH empezaría el FeS?',chain([R`[\mathrm{S^{2-}}]=\frac{6\times10^{-19}}{0{,}010}=6\times10^{-17}\ \mathrm{M}`,'sulfuro mínimo para Q = Kps'],[R`[\mathrm{H^+}]=\sqrt{\frac{9{,}5\times10^{-28}}{6\times10^{-17}}}=4{,}0\times10^{-6}\ \mathrm{M}\ \Rightarrow\ \mathrm{pH}=5{,}4`,''])),
  'En HCl 0,30 M precipita sólo CuS; el FeS necesita un medio mucho menos ácido (grupo III)')}
-${idea('Sales de ácidos débiles se disuelven en ácidos','<p>CaCO₃, FeS, ZnS, CaF₂ y los fosfatos se disuelven al acidificar: el H⁺ se lleva el anión (CO₃²⁻ → HCO₃⁻ → H₂CO₃ → CO₂↑), Q baja por debajo del Kps y se disuelve más sólido (Le Châtelier). En cambio el AgCl o el BaSO₄ no se disuelven en ácidos: sus aniones son conjugados de ácidos fuertes y no se protonan. El cálculo con números está en la Unidad 5.</p>')}
+${idea('Sales de ácidos débiles se disuelven en ácidos','<p>CaCO₃, FeS, ZnS, CaF₂ y los fosfatos se disuelven al acidificar: el H⁺ se lleva el anión (CO₃²⁻(ac) → HCO₃⁻(ac) → H₂CO₃(ac) → CO₂(g)↑), Q baja por debajo del Kps y se disuelve más sólido (Le Châtelier). En cambio el AgCl o el BaSO₄ no se disuelven en ácidos: sus aniones son conjugados de ácidos fuertes y no se protonan. El cálculo con números está en la Unidad 5.</p>')}
 ${rxs(['CaCO3(s) + 2 H^+ -> Ca^2+ + CO2(g)↑ + H2O','se disuelve con efervescencia'],['FeS(s) + 2 H^+ -> Fe^2+ + H2S(g)↑','olor a huevo podrido'])}
 `);
 
   add('precip-acido','Precipitación + ácido-base','PRECIPITACIÓN · pH',`
 <p>Si el anión del precipitado es la base conjugada de un ácido débil, el H⁺ se lo “roba” y el sólido se disuelve más. Si es un hidróxido, el pH fija directamente [OH⁻].</p>
-${example('¿Se disuelve el CaCO₃ en ácido? (con K global)','<p>Kps CaCO₃ = 4,5·10⁻⁹ · Ka₁ = 4,3·10⁻⁷ · Ka₂ = 5,6·10⁻¹¹ del H₂CO₃.</p>',
+${example('¿Se disuelve el CaCO₃ en ácido? (con K global)','<p>Kps CaCO₃ = 2,8·10⁻⁹ (Tabla 5) · Ka₁ = 4,3·10⁻⁷ · Ka₂ = 5,6·10⁻¹¹ del H₂CO₃.</p>',
  step('1. Reacción global y su descomposición',rxs(['CaCO3(s) <=> Ca^2+ + CO3^2-','Kps'],['CO3^2- + H^+ <=> HCO3^-','1/Ka₂'],['HCO3^- + H^+ <=> H2CO3','1/Ka₁'],['CaCO3(s) + 2 H^+ <=> Ca^2+ + H2CO3','suma']))+
- step('2. K global',chain(R`K=\frac{K_{ps}}{K_{a1}K_{a2}}=\frac{4{,}5\times10^{-9}}{4{,}3\times10^{-7}\cdot5{,}6\times10^{-11}}=1{,}9\times10^{8}`))+
+ step('2. K global',chain(R`K=\frac{K_{ps}}{K_{a1}K_{a2}}=\frac{2{,}8\times10^{-9}}{4{,}3\times10^{-7}\cdot5{,}6\times10^{-11}}=1{,}2\times10^{8}`))+
  step('3. Interpretar',`<p>K ≫ 1: el carbonato se disuelve en ácido. Además el H₂CO₃ se descompone en CO₂ + H₂O y el gas se escapa, lo que tira todavía más el equilibrio hacia la derecha.</p>`)+A.jus('<p>El CO₃²⁻ es base conjugada de un ácido débil: el H₃O⁺ lo protona, baja su concentración libre, Q &lt; Kps y por Le Châtelier se disuelve más sólido. Sumar reacciones equivale a multiplicar sus constantes.</p>'),
- 'K = 1,9·10⁸: el CaCO₃ se disuelve en ácidos (con efervescencia)')}
-${example('Solubilidad del CaF₂ en una solución regulada a pH 2,00','<p>Kps CaF₂ = 3,9·10⁻¹¹ · Ka HF = 6,8·10⁻⁴. Comparar con la solubilidad en agua (2,1·10⁻⁴ M).</p>',
+ 'K = 1,2·10⁸: el CaCO₃ se disuelve en ácidos (con efervescencia)')}
+${example('Solubilidad del CaF₂ en una solución regulada a pH 2,00','<p>Kps CaF₂ = 5,3·10⁻⁹ (Tabla 5) · Ka HF = 6,8·10⁻⁴ (Tabla 1). Comparar con la solubilidad en agua (1,1·10⁻³ M).</p>',
  step('1. Qué cambia respecto del agua',`<p>El F⁻ que se disuelve se reparte entre F⁻ y HF. Sólo el F⁻ libre entra en el Kps. Usamos la fracción del diagrama de especiación.</p>`)+
  step('2. Suponemos',sup([['[H⁺] = 1,0·10⁻² M constante','la solución está <b>regulada</b>: el buffer absorbe los H⁺ que consume el F⁻ al protonarse.']]))+
  step('3. Fracción de F⁻ libre',chain([R`\alpha_{\mathrm{F^-}}=\frac{K_a}{K_a+[\mathrm{H^+}]}=\frac{6{,}8\times10^{-4}}{6{,}8\times10^{-4}+10^{-2}}=0{,}064`,'sólo el 6,4 % del fluoruro queda como F⁻']))+
- step('4. Balance de masa y Kps',chain([R`[\mathrm{Ca^{2+}}]=s\qquad[\mathrm{F^-}]+[\mathrm{HF}]=2s\ \Rightarrow\ [\mathrm{F^-}]=2s\,\alpha_{\mathrm{F^-}}`,''],R`K_{ps}=s\,(2s\,\alpha)^2=4\alpha^2s^3`,R`s=\sqrt[3]{\frac{3{,}9\times10^{-11}}{4\cdot(0{,}064)^2}}=1{,}3\times10^{-3}\ \mathrm{M}`)),
- 's = 1,3·10⁻³ M: unas 6 veces más soluble que en agua')}
+ step('4. Balance de masa y Kps',chain([R`[\mathrm{Ca^{2+}}]=s\qquad[\mathrm{F^-}]+[\mathrm{HF}]=2s\ \Rightarrow\ [\mathrm{F^-}]=2s\,\alpha_{\mathrm{F^-}}`,''],R`K_{ps}=s\,(2s\,\alpha)^2=4\alpha^2s^3`,R`s=\sqrt[3]{\frac{5{,}3\times10^{-9}}{4\cdot(0{,}064)^2}}=6{,}9\times10^{-3}\ \mathrm{M}`)),
+ 's = 6,9·10⁻³ M: unas 6 veces más soluble que en agua')}
 ${example('Mg(OH)₂ a pH 9,00 (regulado)','<p>¿Cuánto Mg²⁺ puede quedar en solución a pH 9 sin que precipite? Kps = 1,8·10⁻¹¹.</p>',
  step('Con el pH fijo, [OH⁻] es dato',chain(R`[\mathrm{OH^-}]=10^{-5}\ \mathrm{M}`,R`[\mathrm{Mg^{2+}}]_{\text{máx}}=\frac{1{,}8\times10^{-11}}{(10^{-5})^2}=0{,}18\ \mathrm{M}`))+A.jus('<p>En un medio regulado el pH, y por lo tanto [HO⁻], se mantiene fijo aunque se consuma HO⁻: el máximo de Mg²⁺ sale directamente de Kps.</p>'),
  'Hasta 0,18 M de Mg²⁺ a pH 9: por eso en el buffer amoniacal el Mg no precipita')}

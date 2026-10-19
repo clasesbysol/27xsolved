@@ -23,7 +23,7 @@ ${lc('NH3 + H2O <=> NH4^+ + HO^-','se agrega NH₄Cl (aporta NH₄⁺, un produc
 ${punch('El sistema SIEMPRE llega a un nuevo equilibrio. K sólo cambia con la temperatura.')}
 `],
   ['teorias','2 · Ácidos y bases: las tres teorías',`
-${table(['Teoría','Ácido','Base','Ejemplo'],[['Arrhenius','libera H⁺ en agua','libera HO⁻ en agua','HCl → H⁺ + Cl⁻ · NaOH → Na⁺ + HO⁻'],['Brønsted–Lowry','<b>cede</b> un H⁺','<b>acepta</b> un H⁺','NH₃ + H₂O ⇌ NH₄⁺ + HO⁻'],['Lewis','acepta un par de e⁻','dona un par de e⁻','Ag⁺ + 2 NH₃ → [Ag(NH₃)₂]⁺']])}
+${table(['Teoría','Ácido','Base','Ejemplo'],[['Arrhenius','libera H⁺ en agua','libera HO⁻ en agua','HCl(ac) → H⁺(ac) + Cl⁻(ac) · NaOH(s) → Na⁺(ac) + HO⁻(ac)'],['Brønsted–Lowry','<b>cede</b> un H⁺','<b>acepta</b> un H⁺','NH₃(ac) + H₂O(l) ⇌ NH₄⁺(ac) + HO⁻(ac)'],['Lewis','acepta un par de e⁻','dona un par de e⁻','Ag⁺(ac) + 2 NH₃(ac) → [Ag(NH₃)₂]⁺(ac)']])}
 ${rxs(['HAc + H2O <=> Ac^- + H3O^+','ácido₁ + base₂ ⇌ base₁ + ácido₂: dos pares conjugados'])}
 ${idea('Por qué Arrhenius no alcanza','<p>Sólo vale en agua y exige tener H⁺ o HO⁻ en la fórmula: no explica que el NH₃ sea básico ni que el NH₄Cl sea ácido. Brønsted–Lowry la incluye y la amplía.</p>')}
 `],
@@ -126,7 +126,7 @@ ${example('Regular a pH 9,5','<p>HAc (4,74) · NH₃ (pKb 4,74) · HCO₃⁻ (pK
 `],
   ['agregados','4 · Agregado de ácido o base fuerte',`
 ${punch('Primero la reacción completa (estequiometría en moles), después Henderson.')}
-${example('100 mL HAc 0,10 + NaAc 0,15; se agrega 1,0 mmol de HCl','',jus('<p>El H₃O⁺ agregado reacciona completamente con el Ac⁻ (base del par): Ac⁻ + H₃O⁺ → HAc + H₂O.</p>')+table(['mmol','Ac⁻','HAc'],[['antes','15','10'],['después','14','11']])+chain(R`\mathrm{pH}:\ 4{,}92\ \to\ 4{,}74+\log\frac{14}{11}=4{,}85`),'Cambia 0,07 (en agua cambiaría 5 unidades)')}
+${example('100 mL HAc 0,10 + NaAc 0,15; se agrega 1,0 mmol de HCl','',jus('<p>El H₃O⁺ agregado reacciona completamente con el Ac⁻ (base del par): Ac⁻(ac) + H₃O⁺(ac) → HAc(ac) + H₂O(l).</p>')+table(['mmol','Ac⁻','HAc'],[['antes','15','10'],['después','14','11']])+chain(R`\mathrm{pH}:\ 4{,}92\ \to\ 4{,}74+\log\frac{14}{11}=4{,}85`),'Cambia 0,07 (en agua cambiaría 5 unidades)')}
 `],
   ['practica','5 · Para practicar',`
 ${prac('buffer',[['b-g2-18','NaOH + HAc: ¿regula?'],['b-g2-22','V o F'],['b-g3-1','Elegir el ácido'],['b-g3-2','Imidazol'],['b-g3-3','Henderson no alcanza'],['e7-1','Factor VIII (examen)']])}
