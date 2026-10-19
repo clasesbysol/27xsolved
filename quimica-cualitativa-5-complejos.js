@@ -161,7 +161,7 @@ ${example('Solubilidad del AgCl en NH₃ 1,0 M','<p>Calcular s y compararla con 
  step('3. Resolvemos',chain([R`3{,}06\times10^{-3}=\frac{s\cdot s}{(1{,}0-2s)^2}\ \Rightarrow\ \frac{s}{1{,}0-2s}=\sqrt{3{,}06\times10^{-3}}=0{,}0553`,'raíz cuadrada de los dos lados: no hace falta la cuadrática'],R`s=\frac{0{,}0553}{1+2\cdot0{,}0553}=0{,}050\ \mathrm{M}`))+
  step('4. Verificamos',ver('<p>'+m(R`[\mathrm{Ag^+}]=\frac{K_{ps}}{[\mathrm{Cl^-}]}=\frac{1{,}8\times10^{-10}}{0{,}050}=3{,}6\times10^{-9}\ \mathrm{M}`)+', despreciable frente a 0,050 M de complejo ✔. NH₃ libre = 0,90 M (sigue en exceso) ✔.</p>')),
  's = 0,050 M: unas 3700 veces más soluble que en agua')}
-${table(['Haluro','Kps','K = Kps·Kf','s en NH₃ 1 M','¿Se disuelve?'],[['AgCl','1,8·10⁻¹⁰','3,1·10⁻³','5,0·10⁻² M','sí'],['AgBr','5,0·10⁻¹³','8,5·10⁻⁶','2,9·10⁻³ M','poco'],['AgI','8,3·10⁻¹⁷','1,4·10⁻⁹','3,8·10⁻⁵ M','prácticamente no']])}
+${table(['Haluro','Kps','K = Kps·Kf','s en NH₃ 1 M','¿Se disuelve?'],[['AgCl','1,8·10⁻¹⁰','3,1·10⁻³','5,0·10⁻² M','sí'],['AgBr','5,0·10⁻¹³','8,5·10⁻⁶','2,9·10⁻³ M','poco'],['AgI','8,5·10⁻¹⁷','1,4·10⁻⁹','3,8·10⁻⁵ M','prácticamente no']])}
 ${idea('Esto se usa en la marcha','<p>Con NH₃ se disuelve el AgCl del grupo I y queda el Hg₂Cl₂ (que con NH₃ se ennegrece). Y con la tabla se entiende por qué para disolver AgI hace falta un ligando mucho más fuerte, como el CN⁻ o el S₂O₃²⁻ (Kf enormes).</p>')}
 ${example('¿Cuánto amoníaco hace falta para disolver un precipitado?','<p>¿Qué concentración total de NH₃ se necesita para disolver 0,010 mol de AgCl en 1,0 L?</p>',
  step('1. Si se disuelve todo',chain(R`[\mathrm{Ag(NH_3)_2^+}]=[\mathrm{Cl^-}]=0{,}010\ \mathrm{M}`))+

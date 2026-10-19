@@ -136,9 +136,9 @@ ${idea('El patrón del ion común','<p>Cuando hay ion común, la cuenta es <b>m�
   // =====================================================================
   add('polipro','Ácidos polipróticos: constantes parciales y total','ÁCIDO-BASE · 14',`
 <p>Un ácido poliprótico tiene más de un H ácido y los cede <b>de a uno</b>, cada uno con su constante. Siempre Ka₁ ≫ Ka₂ ≫ Ka₃: cuesta más sacar un H⁺ de una especie que ya es negativa.</p>
-${rxs(['H2S <=> H^+ + HS^-','Ka₁ = 1,0·10⁻⁷'],['HS^- <=> H^+ + S^2-','Ka₂ = 1,3·10⁻¹³'],['H2S <=> 2 H^+ + S^2-','K total = Ka₁·Ka₂ = 1,3·10⁻²⁰'])}
+${rxs(['H2S <=> H^+ + HS^-','Ka₁ = 9,5·10⁻⁸ (Tabla 1)'],['HS^- <=> H^+ + S^2-','Ka₂ = 1·10⁻¹⁹ (Tabla 1)'],['H2S <=> 2 H^+ + S^2-','K total = Ka₁·Ka₂ = 9,5·10⁻²⁷'])}
 ${key(R`K_{total}=K_{a1}\cdot K_{a2}=\frac{[\mathrm{H^+}]^2[\mathrm{S^{2-}}]}{[\mathrm{H_2S}]}`,'Constante total (suma de las dos etapas)')}
-${table(['Ácido','Ka₁','Ka₂','Ka₃'],[['H₂S','1,0·10⁻⁷','1,3·10⁻¹³','—'],['H₂CO₃','4,3·10⁻⁷','5,6·10⁻¹¹','—'],['H₂SO₃','1,5·10⁻²','1,0·10⁻⁷','—'],['H₂SO₄','fuerte','1,2·10⁻²','—'],['H₃PO₄','7,5·10⁻³','6,2·10⁻⁸','4,8·10⁻¹³']])}
+${table(['Ácido','Ka₁','Ka₂','Ka₃'],[['H₂S','9,5·10⁻⁸','1·10⁻¹⁹','—'],['H₂CO₃','4,3·10⁻⁷','5,6·10⁻¹¹','—'],['H₂SO₃','1,7·10⁻²','6,4·10⁻⁸','—'],['H₂SO₄','fuerte','1,2·10⁻²','—'],['H₃PO₄','7,5·10⁻³','6,2·10⁻⁸','4,2·10⁻¹³']])}
 <h3>Cómo se calcula: la primera etapa manda</h3>
 ${sup([
  ['El pH lo fija sólo la primera disociación','Ka₂ es miles de veces menor que Ka₁, y además la segunda etapa está reprimida por el H⁺ de la primera (ion común).'],
@@ -146,11 +146,11 @@ ${sup([
  ['[A²⁻] ≈ Ka₂','de Ka₂ = [H⁺][A²⁻]/[HA⁻] con [H⁺] ≈ [HA⁻], se simplifican.']
 ])}
 ${example('H₂S 0,10 M (solución saturada)','<p>Calcular pH, [HS⁻] y [S²⁻].</p>',
- step('1. Primera etapa, como monoprótico',chain(R`[\mathrm{H^+}]=\sqrt{K_{a1}C}=\sqrt{1{,}0\times10^{-7}\cdot0{,}10}=1{,}0\times10^{-4}\ \mathrm{M}`,R`\mathrm{pH}=4{,}00\qquad[\mathrm{HS^-}]\approx1{,}0\times10^{-4}\ \mathrm{M}`))+
- step('2. Segunda etapa',chain(R`[\mathrm{S^{2-}}]=K_{a2}\frac{[\mathrm{HS^-}]}{[\mathrm{H^+}]}\approx K_{a2}=1{,}3\times10^{-13}\ \mathrm{M}`))+
- step('3. Verificamos',ver('<p>(a) '+m(R`\frac{10^{-4}}{0{,}10}=0{,}1\,\%`)+' → x ≪ C ✔. (b) La segunda etapa aporta 1,3·10⁻¹³ M de H⁺ frente a 10⁻⁴: despreciable ✔.</p>'))+A.jus('<p>El pH lo fija la primera disociación: es razonable suponer el H₃O⁺ de la segunda bajo respecto del de la primera porque Ka₂ ≪ Ka₁ y además la segunda está reprimida por el H₃O⁺ de la primera (ion común). Es razonable suponer [HS⁻] baja respecto de C porque C/Ka₁ &gt; 100.</p>'),
- 'pH 4,00 · [HS⁻] = 1,0·10⁻⁴ M · [S²⁻] = 1,3·10⁻¹³ M')}
-${idea('La [S²⁻] se controla con el pH','<p>Despejando de la constante total: '+m(R`[\mathrm{S^{2-}}]=\frac{K_{a1}K_{a2}[\mathrm{H_2S}]}{[\mathrm{H^+}]^2}=\frac{1{,}3\times10^{-21}}{[\mathrm{H^+}]^2}`)+' (con H₂S saturado 0,10 M). Cambiando el pH con HCl se puede subir o bajar [S²⁻] en muchos órdenes: es la base de la separación de cationes por sulfuros (Unidades 2 y 5).</p>')}
+ step('1. Primera etapa, como monoprótico',chain(R`[\mathrm{H^+}]=\sqrt{K_{a1}C}=\sqrt{9{,}5\times10^{-8}\cdot0{,}10}=9{,}7\times10^{-5}\ \mathrm{M}`,R`\mathrm{pH}=4{,}01\qquad[\mathrm{HS^-}]\approx9{,}7\times10^{-5}\ \mathrm{M}`))+
+ step('2. Segunda etapa',chain(R`[\mathrm{S^{2-}}]=K_{a2}\frac{[\mathrm{HS^-}]}{[\mathrm{H^+}]}\approx K_{a2}=1\times10^{-19}\ \mathrm{M}`))+
+ step('3. Verificamos',ver('<p>(a) '+m(R`\frac{10^{-4}}{0{,}10}=0{,}1\,\%`)+' → x ≪ C ✔. (b) La segunda etapa aporta 1·10⁻¹⁹ M de H⁺ frente a 10⁻⁴: despreciable ✔.</p>'))+A.jus('<p>El pH lo fija la primera disociación: es razonable suponer el H₃O⁺ de la segunda bajo respecto del de la primera porque Ka₂ ≪ Ka₁ y además la segunda está reprimida por el H₃O⁺ de la primera (ion común). Es razonable suponer [HS⁻] baja respecto de C porque C/Ka₁ &gt; 100.</p>'),
+ 'pH 4,01 · [HS⁻] = 9,7·10⁻⁵ M · [S²⁻] = 1·10⁻¹⁹ M')}
+${idea('La [S²⁻] se controla con el pH','<p>Despejando de la constante total: '+m(R`[\mathrm{S^{2-}}]=\frac{K_{a1}K_{a2}[\mathrm{H_2S}]}{[\mathrm{H^+}]^2}=\frac{9{,}5\times10^{-28}}{[\mathrm{H^+}]^2}`)+' (con H₂S saturado 0,10 M y las constantes de la Tabla 1). Cambiando el pH con HCl se puede subir o bajar [S²⁻] en muchos órdenes: es la base de la separación de cationes por sulfuros (Unidades 2 y 5).</p>')}
 ${example('Ácido sulfúrico 0,010 M: el caso especial','<p>Calcular el pH de H₂SO₄ 0,010 M (Ka₂ = 1,2·10⁻²).</p>',
  step('1. Primera etapa: fuerte',rx('H2SO4 -> H^+ + HSO4^-','0,010 → 0,010 + 0,010'))+
  step('2. Segunda etapa: débil, pero con Ka₂ grande',rx('HSO4^- <=> H^+ + SO4^2-')+chain([R`1{,}2\times10^{-2}=\frac{(0{,}010+x)\,x}{0{,}010-x}`,'el H⁺ de la primera etapa es ion común']))+
@@ -273,7 +273,7 @@ ${cards([
  ['Débiles','Al diluir un ácido débil, ¿α sube o baja?','Sube (Ostwald). La [H⁺] total baja igual.'],
  ['Especiación','¿Qué hay en pH = pKa?','50 % de la forma ácida y 50 % de la básica.'],
  ['Ion común','¿Qué le pasa al HAc si agrego HCl?','Se disocia mucho menos: [Ac⁻] = Ka·[HAc]/[H⁺].'],
- ['Polipróticos','[S²⁻] en H₂S 0,1 M','≈ Ka₂ = 1,3·10⁻¹³ M.'],
+ ['Polipróticos','[S²⁻] en H₂S 0,1 M','≈ Ka₂ = 1·10⁻¹⁹ M (Tabla 1).'],
  ['Polipróticos','pH de H₂SO₄ 0,010 M','1,84: el segundo H es débil pero con Ka₂ grande (cuadrática).'],
  ['Hidrólisis','¿NaCN es ácido o básico?','Básico: el CN⁻ es base conjugada de un ácido débil.'],
  ['Hidrólisis','pH del NaHCO₃','≈ ½(pKa₁ + pKa₂) = 8,31.'],
