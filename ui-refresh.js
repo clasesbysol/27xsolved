@@ -30,6 +30,7 @@
   };
   const writeJSON = (key, value) => {
     try { localStorage.setItem(key, JSON.stringify(value)); } catch (_) {}
+    if (key === SCHEDULE_KEY || key === CHECKLIST_KEY) window.ET27Cloud?.plannerChanged?.();
   };
   const appStore = (name, fallback) => readJSON(`27xsolved-${name}`, fallback);
   const uid = () => crypto.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -163,7 +164,7 @@
     return `
       <div class="sectionHead ui-section-head">
         <div><h2>Horario semanal</h2><p>Lunes a viernes. Tocá un bloque para editarlo.</p></div>
-        <button class="secondary small" type="button" data-ui-schedule-add>+ Agregar materia</button>
+        <div class="ui-schedule-head-actions"><button class="secondary small" type="button" data-ui-schedule-add>+ Agregar materia</button><button class="textButton small" type="button" data-h27-collapse="schedule">Ocultar</button></div>
       </div>
       <form class="ui-schedule-form" data-ui-schedule-form hidden>
         <input type="hidden" name="id">
@@ -233,7 +234,31 @@
       </article>`;
   }
 
+  // Tareas sueltas (inicio nuevo): sólo la lista, sin fechas ni calendario.
+  function checklistMarkup() {
+    const checklist = checklistData();
+    const pending = checklist.filter(item => !item.done).length;
+    return `
+      <div class="sectionHead ui-section-head">
+        <div><h2>Tareas</h2><p>${pending ? `${pending} pendiente${pending === 1 ? '' : 's'}` : 'Anotá lo que no querés olvidarte.'}</p></div>
+        <button class="textButton small" type="button" data-h27-collapse="tasks">Ocultar</button>
+      </div>
+      <form class="ui-checklist-form" data-ui-checklist-form><input name="task" maxlength="160" placeholder="Agregar una tarea…" required><button class="secondary small">Agregar</button></form>
+      <div class="ui-checklist-list">${checklist.length ? checklist.map(item => `
+        <label class="ui-check-item ${item.done ? 'done' : ''}"><input type="checkbox" data-ui-check="${esc(item.id)}" ${item.done ? 'checked' : ''}><span>${esc(item.text)}</span><button type="button" data-ui-check-delete="${esc(item.id)}" aria-label="Eliminar tarea">×</button></label>`).join('') : ''}</div>`;
+  }
+
+  function renderChecklist(root = document) {
+    const host = $('.ui-checklist-host', root);
+    if (!host) return;
+    const signature = JSON.stringify(checklistData());
+    if (host.dataset.signature === signature && host.children.length) return;
+    host.dataset.signature = signature;
+    host.innerHTML = checklistMarkup();
+  }
+
   function renderHomeSecondary(root = document) {
+    renderChecklist(root);
     const host = $('.ui-home-secondary', root);
     if (!host) return;
     const signature = JSON.stringify([upcomingEvents(), checklistData()]);
@@ -243,6 +268,12 @@
   }
 
   function patchHome() {
+    // El inicio lo arma home-2026.js. Acá sólo se mantienen el horario y las tareas si están visibles.
+    if (window.ET27Home) {
+      renderSchedule(document);
+      renderChecklist(document);
+      return;
+    }
     const hero = $('.homeGreeting');
     if (!hero) return;
     const content = hero.closest('.content');
@@ -514,6 +545,13 @@
     }
   });
 
+  document.addEventListener('et27-planner-updated', () => {
+    $$('.ui-weekly-schedule-section,.ui-checklist-host').forEach(node => { node.dataset.signature = ''; });
+    renderSchedule(document);
+    renderChecklist(document);
+  });
+  window.ET27Planner = { renderSchedule, renderChecklist, scheduleData, checklistData };
+
   let usageStarted = false;
   function startUsageTracking() {
     if (usageStarted) return;
@@ -557,3 +595,4 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
   else init();
 })();
+

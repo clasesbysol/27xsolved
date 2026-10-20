@@ -417,6 +417,7 @@
     hasPractice,
     hasAnswers,
     hasEvaluations,
+    guestPreview:GUEST_PREVIEW,
     refresh:load
   };
 

@@ -80,6 +80,8 @@
     if (!content) return;
     const intro = $$('.pageIntro', content).find(node => /Mis materias|Plan y materias/i.test($('h1', node)?.textContent || ''));
     if (!intro) return;
+    // El inicio nuevo (home-2026.js) reemplaza esta vista por la grilla de años.
+    if (window.ET27Home) return;
 
     setText($('h1', intro), 'Plan y materias');
     setText($('.eyebrow', intro), '1.º · 4.º · 5.º · 6.º año');

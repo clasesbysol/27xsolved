@@ -44,6 +44,7 @@
     openYear:null,openSubject:null,
     duration:'1m',customDate:'',
     users:[],grants:[],listLoaded:false,listError:'',
+    year:null,originalYear:null,years:{},yearsAvailable:null,
     busy:false,loadingEmail:false,msg:'',msgType:'info',
   };
 
@@ -144,7 +145,8 @@
   function summary(email){
     const levels=levelsFromGrants(st.grants.filter(g=>String(g.email).toLowerCase()===email));
     const parts=allSubjects().filter(s=>levels[s.db]!=='none').map(s=>`${s.name} (${levels[s.db]==='custom'?customSummary(st.grants.filter(g=>String(g.email).toLowerCase()===email&&g.subject===s.db),s.db):levelShort(levels[s.db])})`);
-    return parts.length?parts.join(' · '):'Sin materias habilitadas';
+    const year=st.years?.[email];
+    return `${year?`${year}.º año · `:''}${parts.length?parts.join(' · '):'Sin materias habilitadas'}`;
   }
 
   function customSummary(rows,db){
@@ -168,6 +170,7 @@
         api('access_grants?select=email,subject,unit_no,grant_type,grant_key')
       ]);
       st.users=(users||[]).filter(u=>u.role!=='admin');
+      await loadYears();
       st.grants=grants||[];
       st.listError='';
     }catch(e){st.listError=e.message}
@@ -188,6 +191,7 @@
       st.original={...st.levels};
       st.custom=customFromGrants(grants||[]);
       st.originalCustom=JSON.parse(JSON.stringify(st.custom));
+      await loadYear(email);
       st.loadedEmail=email;
       st.duration=st.profile?'keep':'1m';st.customDate='';
       if(!st.profile)setMsg('Alumno nuevo: elegí materias y guardá.','info',true);
@@ -272,6 +276,42 @@
   }
   function setMsg(text,type='info',silent){st.msg=text;st.msgType=type;if(!silent)draw()}
 
+  // ---------- Año del alumno (student_profiles) ----------
+  async function loadYears(){
+    try{
+      const rows=await api('student_profiles?select=email,year');
+      st.years={};(rows||[]).forEach(r=>{st.years[String(r.email).toLowerCase()]=r.year||null});
+      st.yearsAvailable=true;
+    }catch(_){st.yearsAvailable=false}
+  }
+  async function loadYear(email){
+    st.year=null;st.originalYear=null;
+    try{
+      const rows=await api(`student_profiles?select=year&email=eq.${enc(email)}`);
+      st.year=st.originalYear=(rows||[])[0]?.year||null;st.yearsAvailable=true;
+    }catch(_){st.yearsAvailable=false}
+  }
+  async function saveWithYear(){
+    const email=st.loadedEmail;
+    if(!email||st.busy)return;
+    const yearChanged=st.yearsAvailable&&st.year!==st.originalYear;
+    const otherChanged=allSubjects().some(s=>isChanged(s.db))||!(st.profile&&st.duration==='keep');
+    if(yearChanged){
+      try{
+        await window.ET27Cloud?.adminSetYear?.(email,st.year,st.originalYear);
+        st.originalYear=st.year;st.years[email]=st.year;
+        if(!otherChanged){setMsg(`✓ Año guardado: ${st.year}.º para ${email}.`,'success');return}
+      }catch(e){setMsg(`No pude guardar el año: ${e.message}`,'error');return}
+    }
+    save();
+  }
+  function yearMarkupPick(){
+    if(st.yearsAvailable===false)return '';
+    const ys=(window.ET27_ACADEMIC_CATALOG?.years||[]).map(y=>y.year);
+    return `<div class="xa-block"><b class="xa-label">Año del alumno <small>· el alumno también lo puede cambiar</small></b>
+      <div class="xa-pills">${ys.map(y=>`<button type="button" data-xa-year-pick="${y}" class="${st.year===y?'is-on':''}">${y}.º</button>`).join('')}<button type="button" data-xa-year-pick="0" class="${!st.year?'is-on':''}">Sin año</button></div></div>`;
+  }
+
   // ---------- Vista ----------
   function subjectMarkup(s){
     const level=st.levels[s.db]||'none';
@@ -311,6 +351,7 @@
   function editorMarkup(){
     if(!st.loadedEmail)return `<p class="xa-hint">Escribí el email y tocá <b>Buscar</b> para ver o asignar sus materias.</p>`;
     return `<div class="xa-current"><span>Editando</span><b>${esc(st.loadedEmail)}</b></div>
+      ${yearMarkupPick()}
       ${durationMarkup()}
       <div class="xa-block"><b class="xa-label">Materias</b><div class="xa-years">${years().map(yearMarkup).join('')}</div></div>
       <button type="button" class="primary xa-save" data-xa-save ${st.busy?'disabled':''}>${st.busy?'Guardando…':'Guardar acceso'}</button>`;
@@ -352,7 +393,8 @@
       if(t.dataset.xaYear){const y=Number(t.dataset.xaYear);st.openYear=st.openYear===y?null:y;st.openSubject=null;draw();return}
       if(t.dataset.xaSubject){st.openSubject=st.openSubject===t.dataset.xaSubject?null:t.dataset.xaSubject;draw();return}
       if(t.dataset.xaDuration){st.duration=t.dataset.xaDuration;st.customDate='';draw();return}
-      if(t.hasAttribute('data-xa-save')){save();return}
+      if(t.hasAttribute('data-xa-save')){saveWithYear();return}
+      if(t.dataset.xaYearPick){st.year=Number(t.dataset.xaYearPick)||null;draw();return}
       if(t.dataset.xaUpto){const [db,n]=t.dataset.xaUpto.split('|');const ids=SECTIONED[db]().filter(x=>x.n<=Number(n)).map(x=>x.id);st.custom[db]={t:[...ids],e:[...ids]};st.msg='';draw();return}
       if(t.dataset.xaEdit){st.openYear=null;st.openSubject=null;loadEmail(t.dataset.xaEdit);el.scrollIntoView({behavior:'smooth',block:'start'});return}
       if(t.dataset.xaToggle){toggleUser(t.dataset.xaToggle,t.dataset.active!=='1');return}
