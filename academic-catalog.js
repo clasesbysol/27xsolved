@@ -1,4 +1,4 @@
-// Catálogo académico 27xSOLved · 1.º, 4.º, 5.º y 6.º año.
+// Catálogo académico 27xSOLved · 1.º a 6.º año.
 window.ET27_ACADEMIC_CATALOG = {
   version: 2,
   years: [
@@ -7,6 +7,14 @@ window.ET27_ACADEMIC_CATALOG = {
       subjects: [
         { id: 'matematica-1', name: 'Matemática', kind: 'Materia', status: 'Examen 2 cargado', letter: 'M1', href: './matematica-1.html' }
       ]
+    },
+    {
+      year: 2,
+      subjects: []
+    },
+    {
+      year: 3,
+      subjects: []
     },
     {
       year: 4,
