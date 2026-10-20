@@ -43,10 +43,12 @@
   const isReady=s=>s.id==='matematica-1'||s.status==='Disponible'||/cargad[oa]/i.test(s.status||'');
 
   // ---------- Quién mira ----------
+  // El modo profe sólo se activa con el administrador verificado por Supabase (access-control.js).
   function role(){
-    const st=window.ET27Access?.state||{};
+    const acc=window.ET27Access;
+    const st=acc?.state||{};
     const cloud=window.ET27Cloud?.me||{};
-    if(st.admin||cloud.admin)return'admin';
+    if(acc?.isVerifiedAdmin?.())return'admin';
     if(st.authenticated||cloud.authenticated)return'student';
     return'guest';
   }
@@ -207,11 +209,12 @@
   function openSubject(id,fromYear){
     const s=findSubject(id);if(!s)return;
     if(!canOpen(s))return openLocked(s,fromYear);
-    const opts=options(s);
+    // El TP / Laboratorio tiene sus propios permisos (sección "tp" de la materia).
+    const opts=options(s).map(o=>({...o,locked:o.id==='tp'&&role()!=='admin'&&!window.ET27Access?.reach?.(s.tp.id)}));
     if(opts.length===1){go(s,opts[0]);return}
     const back=fromYear?`<button type="button" class="h27-back" data-h27-year="${s.year}">‹ ${s.year}.º año</button>`:'';
     openModal(`<header class="h27-dHead h27-sHead" style="--yc:${color(s.year)}">${back}<span class="h27-mark">${esc(s.letter||'')}</span><div><h2>${esc(s.name)}</h2><p>${s.year}.º año</p></div>${closeBtn}</header>
-      <div class="h27-choices">${opts.map(o=>`<button type="button" class="h27-choice" data-h27-go="${esc(s.id)}|${o.id}"><span aria-hidden="true">${o.icon}</span><strong>${esc(o.label)}</strong><small>${esc(o.note||'')}</small></button>`).join('')}</div>`,{label:s.name});
+      <div class="h27-choices">${opts.map(o=>o.locked?`<button type="button" class="h27-choice is-locked" disabled aria-disabled="true"><span aria-hidden="true">🔒</span><strong>${esc(o.label)}</strong><small>Todavía no habilitado</small></button>`:`<button type="button" class="h27-choice" data-h27-go="${esc(s.id)}|${o.id}"><span aria-hidden="true">${o.icon}</span><strong>${esc(o.label)}</strong><small>${esc(o.note||'')}</small></button>`).join('')}</div>`,{label:s.name});
   }
   function openLocked(s,fromYear){
     const guest=role()==='guest';
@@ -226,7 +229,8 @@
   }
   function openNotice(){
     openModal(`<header class="h27-dHead"><div><h2>Antes de empezar</h2></div></header>
-      <p class="h27-lockText">Tu profe puede ver <b>cuándo entrás a la app</b> y <b>qué temas abrís</b>, para saber qué se está usando y acompañarte mejor. Tu horario y tus tareas son privados.</p>
+      <p class="h27-lockText">Tu profesor puede ver <b>cuándo ingresás a la aplicación</b> y <b>qué temas abrís</b>, para administrar los accesos y acompañar el estudio. Tus tareas y tu horario personal son privados.</p>
+      <p class="h27-noticeDetail">Qué ve tu profe: tus ingresos, los temas que abrís, el último tema que estabas mirando y el año que elegiste (y si lo cambiaste). Qué no ve: tu horario semanal y tus tareas; se guardan en tu cuenta sólo para que los tengas en todos tus dispositivos y no aparecen en el panel del profe.</p>
       <button type="button" class="primary h27-wide" data-h27-ack>Entendido</button>`,{label:'Aviso',onClose:()=>window.ET27Cloud?.ackNotice?.()});
   }
 
@@ -316,6 +320,7 @@
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal)closeModal()});
   document.addEventListener('et27-year-changed',()=>schedule(true));
   document.addEventListener('et27-access-ready',()=>schedule(true));
+  document.addEventListener('et27-access-changed',()=>schedule(true));
   document.addEventListener('et27-planner-updated',()=>schedule(true));
 
   // Machete de Analítica Cualitativa: ./?view=cualitativa&machete=1 abre las tablas del apéndice.
@@ -336,6 +341,13 @@
     Promise.allSettled([window.ET27Access?.ready,window.ET27Cloud?.ready]).then(()=>schedule(true));
     schedule(true);
   }
-  window.ET27Home={planPage,yearGrid,openYear,openSubject,subjectsOf,refresh:()=>schedule(true)};
+  // Tarjeta "Tu año" en Ajustes / Configuración (la dibuja app.js; acá se mantiene al día).
+  function syncYearSettings(){
+    const y=myYear();
+    $$('[data-et27-year-buttons]').forEach(n=>{n.innerHTML=pickYearButtons(y)});
+    $$('[data-et27-year-now]').forEach(n=>{n.textContent=y?`✓ Guardado: ${y}.º año`:'Todavía no elegiste tu año.'});
+  }
+  document.addEventListener('et27-year-changed',syncYearSettings);
+  window.ET27Home={planPage,yearGrid,openYear,openSubject,subjectsOf,pickYearButtons,refresh:()=>schedule(true)};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();

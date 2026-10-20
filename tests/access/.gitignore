@@ -1,0 +1,4 @@
+node_modules/
+supabase.esm.js
+sb-entry.js
+package-lock.json

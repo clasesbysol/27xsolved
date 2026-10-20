@@ -18,7 +18,8 @@
     }catch(_){}
     return false;
   }
-  function isAdmin(){return adminEmailInStorage(localStorage)||adminEmailInStorage(sessionStorage)}
+  // Sólo el administrador verificado por Supabase (access-control.js). Un mail guardado en localStorage no alcanza.
+  function isAdmin(){return !!window.ET27Access?.isVerifiedAdmin?.()}
 
   let mathAttempts=0;
   function fallbackMath(root=document){
@@ -195,9 +196,10 @@
     const admin=isAdmin();
     document.querySelectorAll('#ejercicios .exercise-item').forEach((card,i)=>{
       const ex=DATA.exercises?.[i];
-      if(!ex||card.dataset.u4done)return;
+      const upgrade=admin&&card.dataset.u4done&&card.querySelector('.u4-locked');
+      if(!ex||(card.dataset.u4done&&!upgrade))return;
       card.dataset.u4done='1';
-      const old=card.querySelector('.solution-placeholder');
+      const old=card.querySelector('.solution-placeholder, .u4-locked');
       if(!old)return;
       if(!admin){
         old.className='u4-locked';
@@ -225,4 +227,5 @@
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(enhance,0));
   else setTimeout(enhance,0);
   setTimeout(enhance,320);
+  document.addEventListener('et27-access-ready',()=>setTimeout(enhance,0));
 })();

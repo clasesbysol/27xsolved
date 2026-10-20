@@ -443,7 +443,7 @@
   function isAdminPhysics(){
     const pill=document.querySelector('.pill');
     const title=document.querySelector('.unitHero h1');
-    return Boolean(pill && pill.textContent.trim()==='Administrador' && title && title.textContent.trim()==='Física Aplicada');
+    return Boolean(!!window.ET27Access?.isVerifiedAdmin?.() && title && title.textContent.trim()==='Física Aplicada');
   }
 
   function renderMath(root,attempt=0){

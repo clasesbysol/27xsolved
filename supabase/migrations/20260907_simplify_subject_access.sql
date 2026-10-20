@@ -1,3 +1,5 @@
+-- ⚠ NO VOLVER A EJECUTAR: ya se aplicó en septiembre de 2026. Su DELETE borraría los permisos
+--   granulares nuevos (grant_type='node') de Química General y Física Aplicada.
 -- 27xSOLved · permisos simples por materia.
 -- Convención en access_grants:
 --   unit/*            = acceso a la materia

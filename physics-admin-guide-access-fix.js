@@ -28,8 +28,10 @@
     return document.querySelector('.unitHero h1')?.textContent.trim()==='Física Aplicada';
   }
 
+  // Sólo el administrador verificado por Supabase (access-control.js). Ni un mail en localStorage
+  // ni un botón con el texto “Panel de control” alcanzan para ver los guiones docentes.
   function isAdmin(){
-    return hasAdminUi()||adminEmailInStorage(localStorage)||adminEmailInStorage(sessionStorage);
+    return !!window.ET27Access?.isVerifiedAdmin?.();
   }
 
   function syncMarker(){

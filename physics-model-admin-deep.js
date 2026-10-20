@@ -35,7 +35,7 @@
   function isAdminPhysics(){
     const title=document.querySelector('.unitHero h1');
     if(!title||title.textContent.trim()!=='Física Aplicada')return false;
-    return hasAdminBadge()||adminEmailInStorage(localStorage)||adminEmailInStorage(sessionStorage);
+    return !!window.ET27Access?.isVerifiedAdmin?.(); // administrador verificado por Supabase (access-control.js)
   }
 
   const G={};

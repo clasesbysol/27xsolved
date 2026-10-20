@@ -125,3 +125,37 @@ html.h27-locked{overflow:hidden}
 #xa-root .xa-search{display:flex;gap:8px;min-width:0}
 #xa-root .xa-search input{flex:1;min-width:0;width:auto}
 #xa-root .xa-listHead{flex-wrap:wrap;gap:6px}
+
+/* Aviso de actividad: detalle de qué se registra */
+.h27-noticeDetail{margin:10px 0 0;font-size:.84rem;line-height:1.5;color:var(--muted)}
+
+/* Registro e ingreso con correo y contraseña (pantalla de bienvenida) */
+.newWelcome .emailAuth{grid-column:1/-1;display:grid;gap:12px;max-width:620px;margin-top:22px;padding-top:20px;border-top:1px solid var(--border)}
+.emailAuth .authChoice p{margin:0 0 4px;font-size:.92rem;line-height:1.5;color:var(--muted)}
+.emailAuth .authChoice p b{color:var(--text)}
+.authModes{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.authModeBtn{border:1px solid var(--border);background:var(--surface2,var(--surface));color:var(--text);border-radius:12px;padding:10px 14px;font:inherit;font-size:.88rem;font-weight:800;cursor:pointer}
+.authModeBtn.selected{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--surface));color:var(--accent)}
+.emailAuthForm{display:grid;gap:12px;padding:18px;border:1px solid var(--border);border-radius:16px;background:var(--surface)}
+.emailAuthForm h2{margin:0;font-size:1.1rem}
+.emailAuthForm label{display:grid;gap:6px;font-size:.86rem;font-weight:800}
+.emailAuthForm input[type=email],.emailAuthForm input[type=password]{font:inherit;font-weight:600;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:var(--surface2,var(--surface));color:var(--text)}
+.authNotice{padding:12px 14px;border-radius:12px;border:1px solid color-mix(in srgb,#F7B500 45%,var(--border));background:color-mix(in srgb,#F7B500 12%,var(--surface));font-size:.86rem;line-height:1.5}
+.authNotice ul{margin:6px 0 0;padding-left:18px;display:grid;gap:4px}
+.authYear{border:0;margin:0;padding:0;display:grid;gap:8px}
+.authYear legend{font-size:.86rem;font-weight:800;margin-bottom:6px}
+.authYear>div{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.authYear label{display:block;cursor:pointer}
+.authYear input{position:absolute;opacity:0;pointer-events:none}
+.authYear span{display:grid;place-items:center;min-height:44px;border:1px solid var(--border);border-radius:12px;font-weight:900;background:var(--surface2,var(--surface))}
+.authYear input:checked+span{background:var(--accent);border-color:var(--accent);color:#fff}
+.authYear input:focus-visible+span{outline:3px solid color-mix(in srgb,var(--accent) 38%,transparent)}
+.authActions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+@media(max-width:520px){.authYear>div{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* Ajustes / Configuración: año del alumno */
+.yearSettingsCard .h27-years{margin:12px 0 8px}
+.yearSettingsCard [data-et27-year-now]{color:var(--muted);font-weight:800}
+.passwordCard .emailAuthForm{padding:0;border:0;background:transparent}
+
+.h27-choice.is-locked{opacity:.55;cursor:not-allowed}

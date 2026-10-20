@@ -48,7 +48,8 @@
     const meta=s.user?.user_metadata||claims.user_metadata||{};
     const name=String(meta.full_name||meta.name||'').trim();
     const expired=claims.exp&&claims.exp*1000<Date.now()-60000;
-    return{authenticated:!!email,guest:false,admin:email===String(CFG.adminEmail||'').toLowerCase(),email,name,token:s.access_token,expired};
+    const metaYear=Number(meta.year)>=1&&Number(meta.year)<=7?Number(meta.year):null; // año elegido al crear la cuenta con correo
+    return{authenticated:!!email,guest:false,admin:email===String(CFG.adminEmail||'').toLowerCase(),email,name,metaYear,token:s.access_token,expired};
   }
 
   let available=true; // false si las tablas nuevas no existen todavía
@@ -80,7 +81,9 @@
     const rows=await safe(api(`student_profiles?select=*&email=eq.${enc(me.email)}`));
     if(Array.isArray(rows)&&rows[0]){profile={...profile,...rows[0]};saveLocal();}
     else if(Array.isArray(rows)){
-      await safe(api('student_profiles',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({email:me.email,full_name:me.name||null,year:profile.year||null,year_set_by:profile.year?'student':null})}));
+      const year=profile.year||me.metaYear||null;
+      if(year&&!profile.year){profile={...profile,year,year_set_by:'student'};saveLocal()}
+      await safe(api('student_profiles',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({email:me.email,full_name:me.name||null,year,year_set_by:year?'student':null})}));
     }
     if(Array.isArray(rows)&&me.name&&rows[0]&&!rows[0].full_name)safe(patchProfile({full_name:me.name}));
     return profile;

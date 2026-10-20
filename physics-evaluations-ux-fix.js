@@ -29,7 +29,7 @@
       const t=(el.textContent||'').trim().toLowerCase();
       return t==='administrador'||t==='panel de control'||t.includes('panel admin');
     });
-    return badge||adminEmailInStorage(localStorage)||adminEmailInStorage(sessionStorage);
+    return badge&&!!window.ET27Access?.isVerifiedAdmin?.(); // administrador verificado por Supabase (access-control.js)
   }
 
   const profiles=`

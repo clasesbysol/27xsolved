@@ -1,4 +1,6 @@
 -- CBC x SOLved · esquema canónico de acceso granular
+-- Permisos por árbol de contenidos (grant_type='node'), correo confirmado y has_cbc_node_access:
+-- ver supabase/migrations/20261020_granular_access_tree.sql (aplicarla después de este archivo).
 -- Aplicar en Supabase después de revisar contra la base real. max_unit se conserva sólo por compatibilidad.
 create table if not exists public.access_profiles (
   email text primary key,
@@ -16,7 +18,7 @@ create table if not exists public.access_grants (
   email text not null references public.access_profiles(email) on update cascade on delete cascade,
   subject text not null default 'chemistry',
   unit_no integer not null check (unit_no between 1 and 13),
-  grant_type text not null check (grant_type in ('unit','chapter','guide','practice','evaluation','partial','resource')),
+  grant_type text not null check (grant_type in ('unit','chapter','guide','practice','evaluation','partial','resource','node')),
   grant_key text not null default '*',
   created_at timestamptz not null default now(),
   primary key (email,subject,unit_no,grant_type,grant_key)

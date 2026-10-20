@@ -1,14 +1,17 @@
-// 27xSOLved · acceso unificado por materia.
-// Niveles por materia: none · theory (solo teórica) · theory_eval (teórica + evaluaciones) · full (completa).
-// Ver admin-access.js para la convención de filas en access_grants (resource/theory = nivel teórico).
+// 27xSOLved · control de acceso unificado (única autoridad de permisos en el navegador).
+//
+// · La identidad se verifica con Supabase (/auth/v1/user): un token armado a mano en
+//   localStorage no sirve, porque el servidor valida la firma. Sólo cuenta un correo confirmado.
+// · Los permisos se leen de access_grants (RLS: cada alumno lee sólo los suyos) y se traducen al
+//   árbol de contenidos de cada materia (access-tree.js). localStorage nunca es autoridad.
+// · Lo no habilitado se QUITA del DOM (no se oculta con CSS) y se reemplaza por un aviso.
+// · app.js y las páginas de cada materia consultan ET27Access.can(materia, ruta).
 (function(){
   'use strict';
 
   const CFG=window.CBCLASES_CONFIG||{};
-  const ALIASES={
-    'quimica-general-4':'chemistry',
-    'fisica-aplicada-4':'physics_applied'
-  };
+  const T=()=>window.ET27AccessTree;
+  const ALIASES={'quimica-general-4':'chemistry','fisica-aplicada-4':'physics_applied'};
   const REVERSE={chemistry:'quimica-general-4',physics_applied:'fisica-aplicada-4'};
   const PAGE_SUBJECTS={
     'matematica-1-inicio.html':'matematica-1',
@@ -30,42 +33,54 @@
   const PREVIEW_ROOTS='.subject-main, .math-main, main.hub';
   let pageReady=document.readyState==='complete';
   window.addEventListener('load',()=>{pageReady=true;setTimeout(()=>schedule?.(),50)},{once:true});
-  let state={authenticated:false,admin:false,active:false,email:'',profile:null,grants:[],error:null};
+  const EMPTY={authenticated:false,verified:false,admin:false,active:false,email:'',profile:null,grants:[],error:null};
+  let state={...EMPTY};
   let loaded=false;
-  const pageFile=href=>{try{return new URL(href,location.href).pathname.split('/').pop()}catch(_){return''}};
+  let loadedAt=0;
+  const pageFile=href=>{try{return new URL(href,location.href).pathname.split('/').pop()||'index.html'}catch(_){return''}};
+  const FILE=pageFile(location.href);
 
   function canonicalSubject(id){return ALIASES[id]||id||''}
   function catalogSubjectId(subject){return REVERSE[subject]||subject||''}
 
-  function storedSession(){
+  // ---------- Sesión ----------
+  function sessionKeys(){
     const projectRef=(()=>{try{return new URL(CFG.supabaseUrl).hostname.split('.')[0]}catch(_){return''}})();
     const preferred=projectRef?`sb-${projectRef}-auth-token`:'';
     const keys=[];
     if(preferred)keys.push(preferred);
-    for(let i=0;i<localStorage.length;i++){
-      const k=localStorage.key(i);
-      if(k&&/^sb-.+-auth-token$/.test(k)&&!keys.includes(k))keys.push(k);
-    }
-    for(const key of keys){
+    try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&/^sb-.+-auth-token$/.test(k)&&!keys.includes(k))keys.push(k)}}catch(_){}
+    return keys;
+  }
+  function storedSession(){
+    for(const key of sessionKeys()){
       try{
         let raw=JSON.parse(localStorage.getItem(key)||'null');
         if(typeof raw==='string')raw=JSON.parse(raw);
-        const token=raw?.access_token||raw?.currentSession?.access_token||raw?.session?.access_token;
-        if(token)return {token,raw,key};
+        const s=raw?.currentSession||raw?.session||raw;
+        if(s?.access_token)return{token:s.access_token,refresh:s.refresh_token||'',raw,key};
       }catch(_err){}
     }
     return null;
   }
+  const hasAppClient=()=>!!document.getElementById('app');
 
-  function tokenEmail(auth){
-    const direct=auth?.raw?.user?.email||auth?.raw?.currentSession?.user?.email||auth?.raw?.session?.user?.email;
-    if(direct)return String(direct).trim().toLowerCase();
-    try{
-      let payload=auth.token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
-      while(payload.length%4)payload+='=';
-      const decoded=JSON.parse(decodeURIComponent(escape(atob(payload))));
-      return String(decoded?.email||'').trim().toLowerCase();
-    }catch(_){return''}
+  async function verifyUser(auth){
+    const res=await fetch(`${CFG.supabaseUrl}/auth/v1/user`,{headers:{apikey:CFG.supabaseAnonKey,Authorization:`Bearer ${auth.token}`},cache:'no-store'});
+    if(res.status===401||res.status===403)return null;
+    if(!res.ok)throw new Error(`No pude verificar la sesión (${res.status}).`);
+    return res.json();
+  }
+  // En páginas sueltas (sin el cliente de Supabase de app.js) renovamos el token vencido.
+  async function refreshSession(auth){
+    if(!auth?.refresh||hasAppClient())return null;
+    const res=await fetch(`${CFG.supabaseUrl}/auth/v1/token?grant_type=refresh_token`,{method:'POST',headers:{apikey:CFG.supabaseAnonKey,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:auth.refresh}),cache:'no-store'});
+    if(!res.ok)return null;
+    const s=await res.json();
+    if(!s?.access_token)return null;
+    if(!s.expires_at&&s.expires_in)s.expires_at=Math.floor(Date.now()/1000)+Number(s.expires_in);
+    try{localStorage.setItem(auth.key,JSON.stringify(s))}catch(_){}
+    return{token:s.access_token,refresh:s.refresh_token||'',raw:s,key:auth.key};
   }
 
   async function api(path,auth){
@@ -85,23 +100,62 @@
     return now>=starts&&now<=expires;
   }
 
+  // ---------- Permisos ----------
   function subjectGrants(id){
-    const subject=canonicalSubject(id);
+    const subject=canonicalSubject(T()?.resolve(id).subject||id);
     return state.grants.filter(g=>g.subject===subject);
+  }
+  const pathCache=new Map();
+  function granted(subjectId){
+    const rows=subjectGrants(subjectId);
+    const sig=JSON.stringify(rows);
+    const hit=pathCache.get(subjectId);
+    if(hit&&hit.sig===sig)return hit.set;
+    const tree=T();
+    const nodes=rows.filter(g=>g.grant_type==='node').map(g=>g.grant_key);
+    const legacy=tree?tree.legacyPaths(subjectId,rows.filter(g=>g.grant_type!=='node')):[];
+    const set=new Set([...nodes,...legacy]);
+    pathCache.set(subjectId,{sig,set});
+    return set;
+  }
+  function target(id,path){
+    const r=T()?.resolve(id)||{subject:id,prefix:''};
+    const p=!path||path==='*'?'':path;
+    const full=r.prefix?(p?`${r.prefix}/${p}`:r.prefix):(p||'*');
+    return{subject:r.subject,path:full};
+  }
+  // ¿El alumno puede abrir exactamente este nodo (y todo lo de adentro)?
+  function can(id,path='*'){
+    if(state.admin)return true;
+    if(!state.active||!T())return false;
+    const t=target(id,path);
+    return T().covers(granted(t.subject),t.path);
+  }
+  // ¿Hay algo habilitado en este nodo o dentro de él? (para mostrar la puerta de entrada)
+  function reach(id,path='*'){
+    if(state.admin)return true;
+    if(!state.active||!T())return false;
+    const t=target(id,path);
+    return T().touches(granted(t.subject),t.path);
+  }
+  // Permisos anteriores al árbol: en algunas materias el nivel "teórica" mostraba las consignas
+  // de los ejercicios sin las resoluciones. Se respeta hasta que el profe vuelva a guardar.
+  function statementsOnly(id,path){
+    if(state.admin||can(id,path))return false;
+    const t=target(id,path);
+    if(!T()?.legacyStatements(t.subject))return false;
+    const rows=subjectGrants(t.subject);
+    return rows.some(g=>g.grant_type!=='node')&&!rows.some(g=>g.grant_type==='node')&&reach(id,path.split('/').slice(0,-1).join('/')||'*');
   }
   function level(id){
     if(state.admin)return'full';
-    if(!state.active)return'none';
-    const rows=subjectGrants(id);
-    if(!rows.length)return'none';
-    const theory=rows.some(g=>g.grant_type==='resource'&&g.grant_key==='theory');
-    if(!theory&&rows.some(g=>g.grant_type==='unit'&&g.grant_key==='*'))return'full';
-    return rows.some(g=>g.grant_type==='evaluation')?'theory_eval':'theory';
+    if(!reach(id))return'none';
+    return can(id)?'full':'partial';
   }
-  const hasSubject=id=>level(id)!=='none';
-  const hasPractice=id=>level(id)==='full';
-  const hasAnswers=id=>level(id)==='full';
-  const hasEvaluations=id=>level(id)==='full'||level(id)==='theory_eval';
+  const hasSubject=id=>reach(id);
+  const hasPractice=id=>can(id);
+  const hasAnswers=id=>can(id);
+  const hasEvaluations=id=>can(id);
 
   function subjectFromHref(href){
     try{
@@ -145,6 +199,14 @@
       .et27-locked-actions a.primary{background:#15579D;color:#fff}
       .et27-locked-inline{display:grid;place-items:center;padding:40px 0}
       .et27-locked-inline .et27-locked-card{background:var(--surface,#fff);color:inherit;border-color:var(--border,#d7e5e4)}
+      .et27-section-lock{display:flex;gap:12px;align-items:flex-start;margin:6px 0;padding:16px 18px;border:1px dashed var(--border,var(--m-border,#c9d8e2));border-radius:16px;background:var(--surface2,var(--m-soft,#f5f8fb));color:inherit}
+      .et27-section-lock>span{font-size:22px;line-height:1}
+      .et27-section-lock b{display:block;margin-bottom:3px}.et27-section-lock small{opacity:.8;line-height:1.45}
+      a.et27-nav-locked,button.et27-nav-locked{opacity:.55;position:relative;cursor:not-allowed}
+      a.et27-nav-locked::after{content:"🔒";position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:.8em}
+      .examChoice.et27-choice-locked,.choice.et27-choice-locked{opacity:.55;cursor:not-allowed}
+      html[data-theme='dark'] .et27-locked-page{background:#101822;color:#edf3f8}
+      html[data-theme='dark'] .et27-locked-card{background:#152536;border-color:#3b566f}
       html.et27-pending body{visibility:hidden}
       .academic-subject-card.et27-guest-locked{opacity:.62}
       .et27-preview-cta{width:auto;margin:28px 0;box-shadow:none;background:var(--surface,#fff);color:inherit}
@@ -159,12 +221,17 @@
     const subject=catalogSubjects().find(s=>s.id===subjectId);
     const name=subject?.name||'esta materia';
     const message=state.authenticated
-      ?`Tu cuenta no tiene acceso a ${name}. Si creés que es un error, pedile al administrador que te la habilite.`
-      :`${name} es contenido para alumnos con cuenta. Ingresá con Google para pedir acceso, o mirá las muestras gratis en Plan y materias.`;
+      ?(reach(subjectId)?`Tu profe todavía no te habilitó esta parte de ${name}. Lo demás que tenés habilitado sigue disponible desde la materia.`:`Tu cuenta no tiene acceso a ${name}. Si creés que es un error, pedile al profe que te la habilite.`)
+      :`${name} es contenido para alumnos con cuenta. Ingresá para pedir acceso, o mirá las muestras gratis en Plan y materias.`;
     const actions=state.authenticated
       ?`<a class="primary" href="./">Volver al inicio</a><a href="./?view=subjects">Ver mis materias</a>`
-      :`<a class="primary" href="./" data-et27-login>Ingresar con Google</a><a href="./?view=subjects">Ver muestras gratis</a>`;
+      :`<a class="primary" href="./" data-et27-login>Ingresar</a><a href="./?view=subjects">Ver muestras gratis</a>`;
     return `<section class="et27-locked-card" data-et27-lock="${escapeHtml(subjectId)}"><div class="et27-locked-icon" aria-hidden="true">🔒</div><small>27xSOLved · acceso</small><h1>${escapeHtml(name)}</h1><p>${escapeHtml(message)}</p><div class="et27-locked-actions">${actions}</div></section>`;
+  }
+  // Aviso que reemplaza a una sección no habilitada (el contenido original se elimina del DOM).
+  function sectionLockHtml(title,kind){
+    const what=kind==='exercises'?'Este bloque de ejercicios':'Esta parte';
+    return `<div class="et27-section-lock" data-et27-section-lock><span aria-hidden="true">🔒</span><div><b>${escapeHtml(title||'Contenido no habilitado')}</b><small>${what} todavía no está habilitada para tu cuenta. Tu profe la puede habilitar desde el panel de accesos.</small></div></div>`;
   }
 
   // ---------- Muestra para invitados ----------
@@ -174,7 +241,7 @@
 
   function previewCta(subjectId){
     const name=catalogSubjects().find(s=>s.id===subjectId)?.name||'esta materia';
-    return `<section class="et27-preview-cta et27-locked-card" data-et27-preview-cta><div class="et27-locked-icon" aria-hidden="true">✨</div><small>Muestra gratis</small><h2>Hasta acá llega la muestra de ${escapeHtml(name)}</h2><p>El resto del contenido (teoría completa, ejercicios resueltos y modelos de evaluación) está disponible para alumnos con cuenta habilitada.</p><div class="et27-locked-actions"><a class="primary" href="./" data-et27-login>Ingresar con Google</a><a href="./?view=subjects">Volver a materias</a></div></section>`;
+    return `<section class="et27-preview-cta et27-locked-card" data-et27-preview-cta><div class="et27-locked-icon" aria-hidden="true">✨</div><small>Muestra gratis</small><h2>Hasta acá llega la muestra de ${escapeHtml(name)}</h2><p>El resto del contenido (teoría completa, ejercicios resueltos y modelos de evaluación) está disponible para alumnos con cuenta habilitada.</p><div class="et27-locked-actions"><a class="primary" href="./" data-et27-login>Ingresar</a><a href="./?view=subjects">Volver a materias</a></div></section>`;
   }
 
   // Deja sólo las primeras ~PREVIEW_WORDS palabras del contenido y quita el resto del DOM.
@@ -245,20 +312,62 @@
     });
     const shell=document.querySelector('[data-academic-plan]');
     if(shell&&!visible&&!shell.querySelector('.et27-access-notice')){
-      shell.insertAdjacentHTML('afterbegin','<div class="et27-access-notice"><b>No tenés materias habilitadas todavía.</b><span>Cuando el administrador te asigne una materia, va a aparecer acá automáticamente.</span></div>');
+      shell.insertAdjacentHTML('afterbegin','<div class="et27-access-notice"><b>No tenés materias habilitadas todavía.</b><span>Cuando el profe te habilite contenidos, van a aparecer acá automáticamente.</span></div>');
     }
-  }
-
-  function toggleSection(selector,allowed){
-    document.querySelectorAll(selector).forEach(node=>{if(node.hidden!==!allowed)node.hidden=!allowed});
-    const id=selector.startsWith('#')?selector:'';
-    if(id)document.querySelectorAll(`a[href="${id}"]`).forEach(a=>{if(a.hidden!==!allowed)a.hidden=!allowed});
   }
 
   function lockWholePage(subjectId){
     if(document.body.dataset.et27Locked==='1')return;
     document.body.dataset.et27Locked='1';
     document.body.innerHTML=`<main class="et27-locked-page">${lockedCard(subjectId)}</main>`;
+  }
+
+  // Reemplaza el contenido de una sección no habilitada. Idempotente: si otro script vuelve a
+  // escribir adentro, se vuelve a bloquear.
+  function lockSection(el,title,kind){
+    const lock=el.querySelector(':scope > [data-et27-section-lock]');
+    if(lock&&el.children.length===1&&el.dataset.et27Locked==='1')return;
+    el.dataset.et27Locked='1';
+    el.removeAttribute('data-searchable');
+    el.innerHTML=sectionLockHtml(title,kind);
+  }
+  function markNav(id,locked){
+    document.querySelectorAll(`a[href="#${CSS.escape(id)}"]`).forEach(a=>{
+      a.classList.toggle('et27-nav-locked',locked);
+      if(locked)a.setAttribute('aria-disabled','true');else a.removeAttribute('aria-disabled');
+    });
+  }
+  function nodeTitle(subjectId,path,el){
+    const node=T()?.find(T().resolve(subjectId).subject,path);
+    const heading=el?.querySelector('h2,h3')?.textContent?.trim();
+    return{title:node?.label||heading||'Contenido no habilitado',kind:node?.kind||''};
+  }
+
+  // Aplica el árbol a una página estática: cada sección del mapa se deja o se reemplaza.
+  // Las secciones que no figuran en el mapa sólo se muestran con la materia completa.
+  function patchSections(subjectId,map,rootSel,prefixPath){
+    const root=document.querySelector(rootSel);
+    if(!root)return{allowed:0,total:0};
+    let allowed=0,total=0;
+    const mapped=new Set(Object.keys(map||{}));
+    Object.entries(map||{}).forEach(([id,path])=>{
+      const el=document.getElementById(id);
+      if(!el||!root.contains(el))return;
+      total+=1;
+      const full=prefixPath?`${prefixPath}`:path;
+      const ok=can(subjectId,prefixPath?'*':full);
+      if(ok){allowed+=1;markNav(id,false);return}
+      const {title,kind}=nodeTitle(subjectId,full,el);
+      lockSection(el,title,kind);markNav(id,true);
+    });
+    root.querySelectorAll(':scope > section[id], :scope > .lesson-section[id]').forEach(el=>{
+      if(mapped.has(el.id))return;
+      if([...mapped].some(id=>el.querySelector(`#${CSS.escape(id)}`)))return; // contenedor de secciones mapeadas
+      total+=1;
+      if(can(subjectId)){allowed+=1;return}
+      lockSection(el,el.querySelector('h2')?.textContent?.trim()||'Contenido nuevo',''); markNav(el.id,true);
+    });
+    return{allowed,total};
   }
 
   // Química y Física viven dentro de la app principal: se bloquea sólo el contenido, sin redirigir.
@@ -280,36 +389,57 @@
     document.querySelector('.periodicFab')?.remove();
   }
 
-  // Páginas estáticas propias (Matemática de 1.º, resúmenes de Química y Física).
-  // En Matemática: teoría = todo salvo práctica, desafío y modelos de examen.
-  function patchMathPage(subjectId){
+  // ---------- Páginas estáticas de Matemática (y resúmenes sueltos) ----------
+  const MATH_HUB_TARGETS={
+    'matematica-1-examen-1.html':['clases/ex1','previas/ex1'],
+    'matematica-1-examen-1.html#teoria':['clases/ex1'],
+    'matematica-1.html':['clases/ex2','previas/ex2'],
+    'matematica-1.html#ruta':['clases/ex2']
+  };
+  function patchMathHub(subjectId){
+    document.querySelectorAll('a.examChoice,a.choice').forEach(a=>{
+      const href=a.getAttribute('href')||'';
+      if(href.startsWith('#'))return;
+      let key='';try{const u=new URL(href,location.href);key=pageFile(u.href)+(u.hash||'')}catch(_){return}
+      const paths=MATH_HUB_TARGETS[key]||MATH_HUB_TARGETS[key.split('#')[0]];
+      if(!paths)return;
+      const ok=paths.some(p=>reach(subjectId,p));
+      a.classList.toggle('et27-choice-locked',!ok);
+      if(!ok){a.dataset.et27Href=a.dataset.et27Href||href;a.removeAttribute('href');a.setAttribute('aria-disabled','true');a.title='Todavía no está habilitado para tu cuenta'}
+    });
+  }
+  function patchStaticPage(subjectId){
     if(!hasSubject(subjectId)){
       if(isPreview(subjectId)){previewDone=previewCut(subjectId);return}
       return lockWholePage(subjectId);
     }
-    if(subjectId!=='matematica-1')return;
-    toggleSection('#practica',hasPractice(subjectId));
-    toggleSection('#desafio',hasPractice(subjectId));
-    toggleSection('#modelos',hasEvaluations(subjectId));
+    const standalone=T()?.standalone(subjectId,FILE);
+    if(standalone==='*'&&!can(subjectId))return lockWholePage(subjectId);
+    if(standalone)return; // '@rules': hoja de fórmulas, disponible con cualquier acceso
+    if(FILE==='matematica-1-inicio.html')return patchMathHub(subjectId);
+    const map=T()?.pageMap(subjectId,FILE);
+    if(!map)return;
+    const res=patchSections(subjectId,map,'.math-main, main');
+    if(res.total&&!res.allowed&&!state.admin)lockWholePage(subjectId);
   }
 
+  // ---------- materia.html (Procesos, materias en esqueleto y TP) ----------
   function patchGenericSections(subjectId){
     if(!hasSubject(subjectId)){
       if(isPreview(subjectId)){previewDone=previewCut(subjectId);return}
       return lockGenericPage(subjectId);
     }
-    toggleSection('#ejercicios',hasPractice(subjectId));
-    const evalAllowed=hasEvaluations(subjectId);
-    const evalSection=document.querySelector('#parciales');
-    if(evalSection)evalSection.hidden=!evalAllowed;
-    document.querySelectorAll('a[href="#parciales"]').forEach(a=>a.hidden=!evalAllowed);
-    document.documentElement.dataset.et27Answers=hasAnswers(subjectId)?'1':'0';
-    document.documentElement.dataset.et27Evaluations=evalAllowed?'1':'0';
+    const r=T()?.resolve(subjectId)||{subject:subjectId,prefix:''};
+    const map=r.prefix?Object.fromEntries(Object.keys(T().pageMap('__standard__','materia.html')||{}).map(k=>[k,k])):T()?.pageMap(r.subject,'materia.html');
+    patchSections(subjectId,map,'.subject-main',r.prefix?'tp':'');
+    document.documentElement.dataset.et27Answers=can(subjectId,'u4/ejercicios')?'1':'0';
+    document.documentElement.dataset.et27Evaluations=can(subjectId,'u4/parciales')?'1':'0';
     if(subjectId==='procesos-operaciones-4')patchProcessAnswers();
   }
 
   function patchProcessAnswers(){
-    const allowed=hasAnswers('procesos-operaciones-4');
+    if(state.admin)return; // el modo profe ya muestra la resolución docente
+    const allowed=can('procesos-operaciones-4','u4/ejercicios');
     if(!allowed)return;
     const data=window.ET27_PROCESOS_U4;
     if(!data?.exercises?.length)return;
@@ -334,13 +464,13 @@
     });
   }
 
+  // Física: los modelos de evaluación los inserta physics-model-evaluations.js.
   function patchPhysics(){
-    const evalAllowed=hasEvaluations('fisica-aplicada-4');
-    const answersAllowed=hasAnswers('fisica-aplicada-4');
-    const evaluations=document.querySelector('#physics-model-evaluations');
-    if(evaluations)evaluations.hidden=!evalAllowed;
-    document.querySelectorAll('#physics-model-evaluations .modelStudentAnswer').forEach(node=>node.hidden=!answersAllowed);
-    document.querySelectorAll('#physics-exercises .exerciseCard > .solutionCard').forEach(node=>node.hidden=!answersAllowed&&!state.admin);
+    const box=document.querySelector('#physics-model-evaluations');
+    if(!box||state.admin)return;
+    if(can('fisica-aplicada-4','tension/evaluaciones'))return;
+    lockSection(box,'Modelos de evaluación','exercises');
+    document.querySelectorAll('[data-physics-scroll="evaluations"],a[href="#physics-model-evaluations"]').forEach(n=>n.classList.add('et27-nav-locked'));
   }
 
   function applyDomPermissions(){
@@ -349,8 +479,8 @@
     patchAcademicPlan();
     const genericId=new URLSearchParams(location.search).get('subject')||'';
     if(genericId&&document.getElementById('subjectApp'))patchGenericSections(genericId);
-    const pageSubject=PAGE_SUBJECTS[pageFile(location.href)];
-    if(pageSubject)patchMathPage(pageSubject);
+    const pageSubject=PAGE_SUBJECTS[FILE];
+    if(pageSubject)patchStaticPage(pageSubject);
     lockAppContent();
     patchPhysics();
     if(guestPreviewPage&&previewDone)releaseGate();
@@ -358,41 +488,47 @@
 
   async function load(){
     addStyles();
-    const auth=storedSession();
+    let auth=storedSession();
     if(!auth){
-      state={authenticated:false,admin:false,active:false,email:'',profile:null,grants:[],error:null};
-      applyDomPermissions();
-      return state;
-    }
-    const email=tokenEmail(auth);
-    const admin=email&&email===String(CFG.adminEmail||'').trim().toLowerCase();
-    if(admin){
-      state={authenticated:true,admin:true,active:true,email,profile:{email,active:true,role:'admin'},grants:[],error:null};
-      applyDomPermissions();
+      state={...EMPTY};
       return state;
     }
     try{
+      let user=await verifyUser(auth);
+      if(!user){
+        const renewed=await refreshSession(auth);
+        if(renewed){auth=renewed;user=await verifyUser(auth)}
+      }
+      if(!user){state={...EMPTY,error:'La sesión venció. Volvé a ingresar.'};return state}
+      const email=String(user.email||'').trim().toLowerCase();
+      const confirmed=!!(user.email_confirmed_at||user.confirmed_at);
+      if(!email||!confirmed){state={...EMPTY,authenticated:!!email,email,error:'Confirmá tu correo para ver tus materias.'};return state}
+      const admin=email===String(CFG.adminEmail||'').trim().toLowerCase();
+      if(admin){
+        state={authenticated:true,verified:true,admin:true,active:true,email,profile:{email,active:true,role:'admin'},grants:[],error:null};
+        return state;
+      }
       const [profiles,grants]=await Promise.all([
         api(`/rest/v1/access_profiles?select=email,active,role,access_starts_at,access_expires_at&email=eq.${encodeURIComponent(email)}`,auth),
         api(`/rest/v1/access_grants?select=subject,unit_no,grant_type,grant_key&email=eq.${encodeURIComponent(email)}`,auth)
       ]);
       const profile=Array.isArray(profiles)?profiles[0]||null:null;
-      state={authenticated:true,admin:false,active:profileIsActive(profile),email,profile,grants:Array.isArray(grants)?grants:[],error:null};
+      state={authenticated:true,verified:true,admin:false,active:profileIsActive(profile),email,profile,grants:Array.isArray(grants)?grants:[],error:null};
     }catch(error){
       console.error('27xSOLved access check',error);
-      state={authenticated:true,admin:false,active:false,email,profile:null,grants:[],error:error?.message||'No se pudo comprobar el acceso.'};
+      const email=String(auth?.raw?.user?.email||'').toLowerCase();
+      state={...EMPTY,authenticated:!!email,email,error:error?.message||'No se pudo comprobar el acceso.'};
     }
-
-    applyDomPermissions();
     return state;
   }
+  const signatureOf=s=>JSON.stringify([s.authenticated,s.admin,s.active,s.email,s.profile?.access_expires_at||null,s.grants.map(g=>`${g.subject}|${g.unit_no}|${g.grant_type}|${g.grant_key}`).sort()]);
 
-  const pageSubjectId=PAGE_SUBJECTS[pageFile(location.href)]||new URLSearchParams(location.search).get('subject')||'';
+  const pageSubjectId=PAGE_SUBJECTS[FILE]||new URLSearchParams(location.search).get('subject')||'';
   const guestPreviewPage=!storedSession()&&Object.values(GUEST_PREVIEW).includes(pageSubjectId);
   function releaseGate(){document.documentElement.classList.remove('et27-pending')}
   const needsGate=(
-    Boolean(PAGE_SUBJECTS[pageFile(location.href)])||
-    (Boolean(new URLSearchParams(location.search).get('subject'))&&!!document.getElementById('subjectApp'))||
+    Boolean(PAGE_SUBJECTS[FILE])||
+    (Boolean(new URLSearchParams(location.search).get('subject'))&&FILE==='materia.html')||
     ['chemistry','physics','unit','inorganic','cualitativa'].includes(new URLSearchParams(location.search).get('view')||'')
   );
   if(needsGate){
@@ -400,29 +536,61 @@
     // Red de seguridad: si algo tarda, se corta igual antes de mostrar.
     setTimeout(()=>{if(guestPreviewPage){pageReady=true;applyDomPermissions()}releaseGate()},10000);
   }
+  function announce(type){
+    document.dispatchEvent(new CustomEvent(type,{detail:{authenticated:state.authenticated,admin:state.admin,active:state.active}}));
+  }
+  let refreshing=null;
+  // Vuelve a leer los permisos (al volver a la pestaña, al cambiar la sesión o a pedido).
+  async function refresh(){
+    if(refreshing)return refreshing;
+    const before=signatureOf(state);
+    refreshing=load().then(()=>{
+      loadedAt=Date.now();
+      const changed=signatureOf(state)!==before;
+      if(changed){
+        pathCache.clear();
+        // En páginas estáticas el contenido quitado no se puede restituir: se recarga.
+        if(!document.getElementById('app')&&loaded&&(document.querySelector('[data-et27-locked="1"],[data-et27-lock]')||!state.active))location.reload();
+        applyDomPermissions();
+        announce('et27-access-changed');
+      }
+      return state;
+    }).finally(()=>{refreshing=null});
+    return refreshing;
+  }
   const ready=load().finally(()=>{
-    loaded=true;
+    loaded=true;loadedAt=Date.now();
     applyDomPermissions();
     if(!guestPreviewPage)releaseGate();
-    document.dispatchEvent(new CustomEvent('et27-access-ready',{detail:{authenticated:state.authenticated,admin:state.admin,active:state.active}}));
+    announce('et27-access-ready');
   });
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&loaded&&Date.now()-loadedAt>30000)refresh()});
 
   window.ET27Access={
     ready,
     get state(){return state},
+    get loaded(){return loaded},
+    isVerifiedAdmin:()=>loaded&&state.verified&&state.admin,
     canonicalSubject,
     catalogSubjectId,
+    can,
+    reach,
+    statementsOnly,
+    granted:id=>new Set(state.admin?['*']:granted(T()?.resolve(id).subject||id)),
     level,
     hasSubject,
     hasPractice,
     hasAnswers,
     hasEvaluations,
+    sectionLockHtml,
     guestPreview:GUEST_PREVIEW,
-    refresh:load
+    refresh
   };
 
   document.addEventListener('click',e=>{
     if(e.target.closest?.('[data-et27-login]')){try{localStorage.removeItem('cbc-mode')}catch(_){}}
+    const lockedChoice=e.target.closest?.('.et27-choice-locked,a.et27-nav-locked');
+    if(lockedChoice){e.preventDefault();e.stopPropagation()}
   },true);
 
   let scheduled=false;

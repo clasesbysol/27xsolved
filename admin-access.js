@@ -1,34 +1,25 @@
-// 27xSOLved · Panel de control de accesos (reemplaza admin-access-fix.js y admin-access-summary.js).
-// Flujo: email → año → materia → nivel (sin acceso / teórica / teórica + evaluaciones / completa).
-// Usa las tablas existentes access_profiles y access_grants; no requiere cambios en Supabase.
+// 27xSOLved · Panel de control de accesos (árbol de contenidos por materia).
+// Flujo: alumno (email) → año → materia → secciones / unidades / capítulos / bloques de ejercicios.
 //
-// Convención en access_grants (unit_no 1 salvo que se indique). Sólo usa tipos que la base acepta
-// desde siempre (unit, resource, evaluation):
-//   completa            → unit/* + resource/answers + evaluation/*
-//   teórica             → resource/theory  (Física: + resource/methods; Química: + unit/* de 1–13,
-//                         porque la base sólo entrega capítulos con unit/*; las respuestas siguen
-//                         protegidas por resource/answers y la app oculta los ejercicios)
-//   teórica + evaluac.  → lo anterior + evaluation/*
-// Regla de lectura: resource/theory marca teórica; si no está y hay unit/* es completa.
+// · Cada materia muestra su propio árbol (access-tree.js), armado con los títulos reales.
+// · Tildar un nivel habilita todo lo que tiene adentro (incluido lo que se agregue después);
+//   destildar un hijo deja al padre en estado parcial (casillero con guion).
+// · Guardado en access_grants:
+//     materia completa → filas clásicas unit/* + resource/answers + evaluation/* (compatibles)
+//     selección parcial → una fila grant_type='node' por ruta (migración 20261020)
+// · Los permisos anteriores (niveles "teórica", "teórica + evaluaciones", "por sección") se
+//   muestran traducidos al árbol y sólo se reescriben si se modifica esa materia.
+// · Se guarda primero lo nuevo y después se borra lo viejo: si algo falla, el alumno no pierde acceso.
 (function(){
   'use strict';
 
   const CFG=window.CBCLASES_CONFIG||{};
+  const T=()=>window.ET27AccessTree;
   const ALIASES={'quimica-general-4':'chemistry','fisica-aplicada-4':'physics_applied'};
-  const LEVELS=[
-    {id:'none',label:'Sin acceso',short:''},
-    {id:'theory',label:'Solo teórica',short:'Teórica'},
-    {id:'theory_eval',label:'Teórica + evaluaciones',short:'Teórica + eval.'},
-    {id:'full',label:'Materia completa',short:'Completa'},
-    {id:'custom',label:'Por sección',short:'Por sección'}
-  ];
-  // Materias con acceso por sección (teoría y ejercicios por separado).
-  const SECTIONED={'quimica-analitica-cualitativa-5':()=>(window.ET27_QAC5?.units||[]).slice().sort((a,b)=>a.n-b.n).map(u=>({id:u.id,n:u.n,label:u.short||u.title}))};
+  const MIGRATION='supabase/migrations/20261020_granular_access_tree.sql';
 
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const dbSubject=id=>ALIASES[id]||id;
-  const levelLabel=id=>LEVELS.find(l=>l.id===id)?.label||'Sin acceso';
-  const levelShort=id=>LEVELS.find(l=>l.id===id)?.short||'';
 
   function years(){
     return (window.ET27_ACADEMIC_CATALOG?.years||[])
@@ -36,12 +27,11 @@
       .filter(y=>y.subjects.length);
   }
   function allSubjects(){return years().flatMap(y=>y.subjects.map(s=>({...s,year:y.year,db:dbSubject(s.id)})))}
-  function subjectByDb(db){return allSubjects().find(s=>s.db===db)}
 
   // ---------- Estado (sobrevive a los re-render de app.js) ----------
   const st={
-    email:'',loadedEmail:'',levels:{},original:{},custom:{},originalCustom:{},profile:null,
-    openYear:null,openSubject:null,
+    email:'',loadedEmail:'',sel:{},orig:{},legacy:{},profile:null,
+    openYear:null,openSubject:null,open:new Set(),filter:{},
     duration:'1m',customDate:'',
     users:[],grants:[],listLoaded:false,listError:'',
     year:null,originalYear:null,years:{},yearsAvailable:null,
@@ -72,56 +62,40 @@
     });
     const text=await res.text();
     let data=null;if(text){try{data=JSON.parse(text)}catch(_){data=text}}
-    if(!res.ok)throw new Error(data?.message||data?.hint||data?.details||`Error ${res.status}`);
+    if(!res.ok){const err=new Error(data?.message||data?.hint||data?.details||`Error ${res.status}`);err.code=data?.code||'';throw err}
     return data;
   }
   const enc=encodeURIComponent;
   const inList=values=>`in.(${values.map(v=>`"${String(v).replace(/"/g,'')}"`).join(',')})`;
-
-  // ---------- Niveles <-> permisos ----------
-  function levelFromRows(rows){
-    if(!rows.length)return 'none';
-    if(rows.some(g=>g.grant_type==='chapter'||g.grant_type==='practice'))return 'custom';
-    const theory=rows.some(g=>g.grant_type==='resource'&&g.grant_key==='theory');
-    if(!theory&&rows.some(g=>g.grant_type==='unit'&&g.grant_key==='*'))return 'full';
-    return rows.some(g=>g.grant_type==='evaluation')?'theory_eval':'theory';
-  }
-  function customFromGrants(grants){
-    const out={};
-    Object.keys(SECTIONED).forEach(db=>{const rows=grants.filter(g=>g.subject===db);out[db]={t:rows.filter(g=>g.grant_type==='chapter').map(g=>g.grant_key).sort(),e:rows.filter(g=>g.grant_type==='practice').map(g=>g.grant_key).sort()}});
-    return out;
-  }
-  const customKey=db=>JSON.stringify(st.custom[db]||{t:[],e:[]});
-  const origCustomKey=db=>JSON.stringify(st.originalCustom[db]||{t:[],e:[]});
-  const isChanged=db=>(st.levels[db]||'none')!==(st.original[db]||'none')||((st.levels[db]==='custom')&&customKey(db)!==origCustomKey(db));
-  function levelsFromGrants(grants){
-    const out={};
-    allSubjects().forEach(s=>{out[s.db]=levelFromRows(grants.filter(g=>g.subject===s.db))});
-    return out;
-  }
-  function rowsFor(db,level){
-    const out=[];
-    const add=(unit_no,grant_type,grant_key)=>out.push({subject:db,unit_no,grant_type,grant_key});
-    if(level==='none')return out;
-    if(level==='custom'){
-      const c=st.custom[db]||{t:[],e:[]};
-      c.t.forEach(k=>add(1,'chapter',k));
-      c.e.forEach(k=>add(1,'practice',k));
-      return out;
-    }
-    const units=db==='chemistry'?[...Array(13)].map((_,i)=>i+1):[1];
-    if(level==='full'){
-      units.forEach(u=>add(u,'unit','*'));
-      add(1,'resource','answers');add(1,'evaluation','*');
-      return out;
-    }
-    add(1,'resource','theory');
-    if(level==='theory_eval')add(1,'evaluation','*');
-    if(db==='physics_applied')add(1,'resource','methods');
-    if(db==='chemistry')units.forEach(u=>add(u,'unit','*'));
-    return out;
-  }
   const key=g=>`${g.subject}|${Number(g.unit_no)}|${g.grant_type}|${g.grant_key}`;
+  const migrationMissing=e=>e?.code==='23514'||/grant_type_check|node_key_check|check constraint/i.test(e?.message||'');
+
+  // ---------- Permisos <-> árbol ----------
+  function pathsFromRows(subjectId,rows){
+    const nodes=rows.filter(g=>g.grant_type==='node').map(g=>g.grant_key);
+    const legacy=T().legacyPaths(subjectId,rows.filter(g=>g.grant_type!=='node'));
+    return new Set(T().compress(subjectId,new Set([...nodes,...legacy])));
+  }
+  const setKey=set=>JSON.stringify([...(set||[])].sort());
+  const sel=id=>st.sel[id]||(st.sel[id]=new Set());
+  const isChanged=id=>setKey(st.sel[id])!==setKey(st.orig[id]);
+  function loadSelection(grants){
+    st.sel={};st.orig={};st.legacy={};
+    allSubjects().forEach(s=>{
+      const rows=grants.filter(g=>g.subject===s.db);
+      st.sel[s.id]=pathsFromRows(s.id,rows);
+      st.orig[s.id]=new Set(st.sel[s.id]);
+      st.legacy[s.id]=rows.length>0&&!rows.some(g=>g.grant_type==='node')&&T().legacyLevel(rows)!=='full'&&T().legacyLevel(rows)!==null;
+    });
+  }
+  function subjectStatus(id,set){
+    set=set||sel(id);
+    if(!set.size)return{t:'Sin acceso',off:true};
+    if(set.has('*'))return{t:'Completa',off:false};
+    const root=T().tree(id),all=T().leaves(root).filter(n=>n.path!=='*');
+    const on=all.filter(n=>T().covers(set,n.path)).length;
+    return{t:`Parcial · ${on}/${all.length}`,off:false};
+  }
 
   // ---------- Fechas ----------
   function expiryFor(existing){
@@ -142,24 +116,12 @@
     if(!u.access_expires_at)return{t:'Sin vencimiento',bad:false};
     return new Date(u.access_expires_at)<Date.now()?{t:'Vencido',bad:true}:{t:`Vence ${fmt(u.access_expires_at)}`,bad:false};
   }
-  function summary(email){
-    const levels=levelsFromGrants(st.grants.filter(g=>String(g.email).toLowerCase()===email));
-    const parts=allSubjects().filter(s=>levels[s.db]!=='none').map(s=>`${s.name} (${levels[s.db]==='custom'?customSummary(st.grants.filter(g=>String(g.email).toLowerCase()===email&&g.subject===s.db),s.db):levelShort(levels[s.db])})`);
-    const year=st.years?.[email];
-    return `${year?`${year}.º año · `:''}${parts.length?parts.join(' · '):'Sin materias habilitadas'}`;
-  }
-
-  function customSummary(rows,db){
-    const secs=SECTIONED[db]?SECTIONED[db]():[];const lab=id=>(secs.find(x=>x.id===id)||{}).label||id;
-    const t=rows.filter(g=>g.grant_type==='chapter').map(g=>lab(g.grant_key)),e=rows.filter(g=>g.grant_type==='practice').map(g=>lab(g.grant_key));
-    return `teoría: ${t.join(', ')||'—'} · ejercicios: ${e.join(', ')||'—'}`;
-  }
-  function sectionGrid(db){
-    const secs=SECTIONED[db]();const c=st.custom[db]||(st.custom[db]={t:[],e:[]});
-    const box=(kind,id)=>`<input type="checkbox" data-xa-sec="${esc(db)}|${kind}|${esc(id)}" ${c[kind].includes(id)?'checked':''}>`;
-    return `<div class="xa-secs"><div class="xa-secQuick"><span>Atajos: hasta…</span>${secs.map(x=>`<button type="button" data-xa-upto="${esc(db)}|${x.n}">${esc(x.label)}</button>`).join('')}<button type="button" data-xa-upto="${esc(db)}|0">Nada</button></div>
-      <table class="xa-secTable"><thead><tr><th>Sección</th><th>Teoría y clase</th><th>Ejercicios resueltos</th></tr></thead><tbody>${secs.map(x=>`<tr><td><b>${x.n}</b> · ${esc(x.label)}</td><td>${box('t',x.id)}</td><td>${box('e',x.id)}</td></tr>`).join('')}</tbody></table>
-      <small class="xa-secNote">“Hasta” habilita teoría y ejercicios de esa sección y de todas las anteriores. Después podés destildar los ejercicios que no quieras dar.</small></div>`;
+  function summaryParts(email){
+    const rows=st.grants.filter(g=>String(g.email).toLowerCase()===email);
+    return allSubjects().map(s=>{
+      const set=pathsFromRows(s.id,rows.filter(g=>g.subject===s.db));
+      return set.size?{s,text:T().describe(s.id,set)}:null;
+    }).filter(Boolean);
   }
 
   // ---------- Acciones ----------
@@ -187,22 +149,20 @@
         api(`access_grants?select=subject,unit_no,grant_type,grant_key&email=eq.${enc(email)}`)
       ]);
       st.profile=(profiles||[])[0]||null;
-      st.levels=levelsFromGrants(grants||[]);
-      st.original={...st.levels};
-      st.custom=customFromGrants(grants||[]);
-      st.originalCustom=JSON.parse(JSON.stringify(st.custom));
+      loadSelection(grants||[]);
       await loadYear(email);
       st.loadedEmail=email;
       st.duration=st.profile?'keep':'1m';st.customDate='';
-      if(!st.profile)setMsg('Alumno nuevo: elegí materias y guardá.','info',true);
+      const mine=st.year?years().find(y=>y.year===st.year):null;
+      if(mine)st.openYear=mine.year;
+      if(!st.profile)setMsg('Alumno nuevo: elegí los contenidos y guardá.','info',true);
     }catch(e){setMsg(`No pude cargar ese alumno: ${e.message}`,'error',true)}
     st.loadingEmail=false;draw();
   }
   async function save(){
     const email=st.loadedEmail;
     if(!email||st.busy)return;
-    const changed=allSubjects().filter(s=>isChanged(s.db));
-    for(const s of changed){if(st.levels[s.db]==='custom'){const c=st.custom[s.db]||{t:[],e:[]};if(!c.t.length&&!c.e.length){setMsg(`Elegí al menos una sección de ${s.name} o cambiá el nivel.`,'error');return}}}
+    const changed=allSubjects().filter(s=>isChanged(s.id));
     const durationChanged=!(st.profile&&st.duration==='keep');
     if(!changed.length&&!durationChanged){setMsg('No hay cambios para guardar.','info');return}
     st.busy=true;setMsg('Guardando…','info');
@@ -214,55 +174,26 @@
         body:JSON.stringify({email,active:true,access_starts_at:starts,access_expires_at:expires})
       });
       if(changed.length){
-        const dbs=changed.map(s=>s.db);
-        const wanted=[...new Map(changed.flatMap(s=>rowsFor(s.db,st.levels[s.db]||'none')).map(r=>[key(r),{email,...r}])).values()];
+        const dbs=[...new Set(changed.map(s=>s.db))];
+        const wanted=[...new Map(changed.flatMap(s=>T().rowsFor(s.db,s.id,sel(s.id))).map(r=>[key(r),{email,...r}])).values()];
         const current=await api(`access_grants?select=subject,unit_no,grant_type,grant_key&email=eq.${enc(email)}&subject=${enc(inList(dbs))}`)||[];
         const currentKeys=new Set(current.map(key)),wantedKeys=new Set(wanted.map(key));
         const toInsert=wanted.filter(r=>!currentKeys.has(key(r)));
         const toDelete=current.filter(r=>!wantedKeys.has(key(r)));
-        if(toInsert.length)await api('access_grants',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify(toInsert)});
-        await Promise.all(toDelete.map(r=>api(`access_grants?email=eq.${enc(email)}&subject=eq.${enc(r.subject)}&unit_no=eq.${Number(r.unit_no)}&grant_type=eq.${enc(r.grant_type)}&grant_key=eq.${enc(r.grant_key)}`,{method:'DELETE',headers:{Prefer:'return=minimal'}})));
+        // 1) primero lo nuevo (si falla, no se borra nada)
+        if(toInsert.length){
+          try{await api('access_grants',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify(toInsert)})}
+          catch(e){if(migrationMissing(e))throw new Error(`Para guardar selecciones parciales falta aplicar la migración ${MIGRATION} en Supabase (SQL Editor → pegar el archivo → Run). Mientras tanto podés habilitar materias completas. No se modificó ningún permiso.`);throw e}
+        }
+        // 2) después se quita lo que ya no corresponde
+        for(const r of toDelete)await api(`access_grants?email=eq.${enc(email)}&subject=eq.${enc(r.subject)}&unit_no=eq.${Number(r.unit_no)}&grant_type=eq.${enc(r.grant_type)}&grant_key=eq.${enc(r.grant_key)}`,{method:'DELETE',headers:{Prefer:'return=minimal'}});
         const saved=await api(`access_grants?select=subject,unit_no,grant_type,grant_key&email=eq.${enc(email)}&subject=${enc(inList(dbs))}`)||[];
-        if(wanted.map(key).sort().join()!==saved.map(key).sort().join())throw new Error('Los permisos guardados no coinciden con lo elegido. Volvé a guardar.');
+        if(wanted.map(key).sort().join()!==saved.map(key).sort().join())throw new Error('Los permisos guardados no coinciden con lo elegido. Revisá la conexión y volvé a guardar.');
+        changed.forEach(s=>{st.orig[s.id]=new Set(sel(s.id));st.legacy[s.id]=false});
       }
-      st.original={...st.levels};
-      st.loadedEmail=email;
-      st.duration=st.profile?'keep':'1m';st.customDate='';
-      if(!st.profile)setMsg('Alumno nuevo: elegí materias y guardá.','info',true);
-    }catch(e){setMsg(`No pude cargar ese alumno: ${e.message}`,'error',true)}
-    st.loadingEmail=false;draw();
-  }
-  async function save(){
-    const email=st.loadedEmail;
-    if(!email||st.busy)return;
-    const changed=allSubjects().filter(s=>isChanged(s.db));
-    for(const s of changed){if(st.levels[s.db]==='custom'){const c=st.custom[s.db]||{t:[],e:[]};if(!c.t.length&&!c.e.length){setMsg(`Elegí al menos una sección de ${s.name} o cambiá el nivel.`,'error');return}}}
-    const durationChanged=!(st.profile&&st.duration==='keep');
-    if(!changed.length&&!durationChanged){setMsg('No hay cambios para guardar.','info');return}
-    st.busy=true;setMsg('Guardando…','info');
-    try{
-      const starts=st.duration==='keep'&&st.profile?.access_starts_at?st.profile.access_starts_at:new Date().toISOString();
-      const expires=expiryFor(st.profile);
-      await api('access_profiles?on_conflict=email',{
-        method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},
-        body:JSON.stringify({email,active:true,access_starts_at:starts,access_expires_at:expires})
-      });
-      if(changed.length){
-        const dbs=changed.map(s=>s.db);
-        let rows=[];
-        for(const s of changed)rows=rows.concat(await rowsFor(s.db,st.levels[s.db]||'none'));
-        rows=[...new Map(rows.map(r=>[key(r),{email,...r}])).values()];
-        await api(`access_grants?email=eq.${enc(email)}&subject=${enc(inList(dbs))}`,{method:'DELETE',headers:{Prefer:'return=minimal'}});
-        if(rows.length)await api('access_grants',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify(rows)});
-        const saved=await api(`access_grants?select=subject,unit_no,grant_type,grant_key&email=eq.${enc(email)}&subject=${enc(inList(dbs))}`);
-        const a=rows.map(key).sort().join(),b=(saved||[]).map(key).sort().join();
-        if(a!==b)throw new Error('Los permisos guardados no coinciden con lo elegido. Revisá la conexión y volvé a guardar.');
-      }
-      st.original={...st.levels};
-      st.originalCustom=JSON.parse(JSON.stringify(st.custom));
       st.profile={...(st.profile||{}),email,active:true,access_starts_at:starts,access_expires_at:expires};
       st.duration='keep';
-      setMsg(`✓ Guardado para ${email}.`,'success',true);
+      setMsg(`✓ Guardado para ${email}. El alumno ve los cambios la próxima vez que abra o vuelva a la app.`,'success',true);
       await loadList();
     }catch(e){setMsg(`No se pudo guardar: ${e.message}`,'error',true)}
     st.busy=false;draw();
@@ -295,12 +226,12 @@
     const email=st.loadedEmail;
     if(!email||st.busy)return;
     const yearChanged=st.yearsAvailable&&st.year!==st.originalYear;
-    const otherChanged=allSubjects().some(s=>isChanged(s.db))||!(st.profile&&st.duration==='keep');
+    const otherChanged=allSubjects().some(s=>isChanged(s.id))||!(st.profile&&st.duration==='keep');
     if(yearChanged){
       try{
         await window.ET27Cloud?.adminSetYear?.(email,st.year,st.originalYear);
         st.originalYear=st.year;st.years[email]=st.year;
-        if(!otherChanged){setMsg(`✓ Año guardado: ${st.year}.º para ${email}.`,'success');return}
+        if(!otherChanged){setMsg(`✓ Año guardado: ${st.year?`${st.year}.º`:'sin año'} para ${email}.`,'success');return}
       }catch(e){setMsg(`No pude guardar el año: ${e.message}`,'error');return}
     }
     save();
@@ -308,36 +239,68 @@
   function yearMarkupPick(){
     if(st.yearsAvailable===false)return '';
     const ys=(window.ET27_ACADEMIC_CATALOG?.years||[]).map(y=>y.year);
-    return `<div class="xa-block"><b class="xa-label">Año del alumno <small>· el alumno también lo puede cambiar</small></b>
+    return `<div class="xa-block"><b class="xa-label">Año del alumno <small>· el alumno también lo puede cambiar; cambiar el año no modifica sus permisos</small></b>
       <div class="xa-pills">${ys.map(y=>`<button type="button" data-xa-year-pick="${y}" class="${st.year===y?'is-on':''}">${y}.º</button>`).join('')}<button type="button" data-xa-year-pick="0" class="${!st.year?'is-on':''}">Sin año</button></div></div>`;
   }
 
-  // ---------- Vista ----------
+  // ---------- Vista: árbol ----------
+  const openKey=(id,path)=>`${id}|${path}`;
+  function matches(n,q){if(!q)return true;const t=n.label.toLocaleLowerCase('es');return t.includes(q)||(n.children||[]).some(c=>matches(c,q))}
+  function nodeMarkup(id,n,depth,q){
+    if(!matches(n,q))return'';
+    const set=sel(id),state=T().state(id,set,n),has=!!n.children?.length;
+    const open=has&&(st.open.has(openKey(id,n.path))||!!q);
+    const leaves=has?T().leaves(n):[];
+    const on=has?leaves.filter(x=>T().covers(set,x.path)).length:0;
+    const tag=n.kind==='exercises'?'<em class="xa-tag is-ex">Ejercicios</em>':n.pending?'<em class="xa-tag">Pendiente</em>':'';
+    return `<li class="xa-node" style="--d:${depth}">
+      <div class="xa-nodeRow ${state==='on'?'is-on':state==='partial'?'is-partial':''}">
+        ${has?`<button type="button" class="xa-tw" data-xa-tw="${esc(openKey(id,n.path))}" aria-expanded="${open}" aria-label="${open?'Contraer':'Desplegar'} ${esc(n.label)}">${open?'▾':'▸'}</button>`:'<span class="xa-tw" aria-hidden="true"></span>'}
+        <label class="xa-check"><input type="checkbox" data-xa-node="${esc(id)}" data-xa-path="${esc(n.path)}" ${state==='on'?'checked':''} ${state==='partial'?'data-xa-partial="1"':''} aria-checked="${state==='on'?'true':state==='partial'?'mixed':'false'}"><span>${esc(n.label)}</span></label>
+        ${tag}${has?`<small class="xa-count">${on}/${leaves.length}</small>`:''}
+      </div>
+      ${open?`<ul class="xa-tree">${n.children.map(c=>nodeMarkup(id,c,depth+1,q)).join('')}</ul>`:''}
+    </li>`;
+  }
+  function treeMarkup(s){
+    const root=T().tree(s.id),set=sel(s.id),state=T().state(s.id,set,root);
+    const q=String(st.filter[s.id]||'').trim().toLocaleLowerCase('es');
+    const legacy=st.legacy[s.id]&&!isChanged(s.id);
+    return `<div class="xa-treeBox">
+      <div class="xa-treeTools">
+        <label class="xa-check xa-rootCheck"><input type="checkbox" data-xa-node="${esc(s.id)}" data-xa-path="*" ${state==='on'?'checked':''} ${state==='partial'?'data-xa-partial="1"':''}><span><b>Toda la materia</b> <small>(incluye lo que se agregue después)</small></span></label>
+        <div class="xa-quick"><button type="button" data-xa-quick="${esc(s.id)}|theory">Solo teoría</button><button type="button" data-xa-quick="${esc(s.id)}|expand">Desplegar todo</button><button type="button" data-xa-quick="${esc(s.id)}|collapse">Contraer</button><button type="button" data-xa-quick="${esc(s.id)}|none">Nada</button></div>
+      </div>
+      ${legacy?'<p class="xa-note">Este alumno tiene un permiso del sistema anterior; acá se ve traducido al árbol. Sólo se reescribe si cambiás algo de esta materia.</p>':''}
+      ${root.rules?`<p class="xa-note is-ok">✓ ${esc(root.rules)}</p>`:''}
+      ${T().leaves(root).length>12?`<input type="search" class="xa-filter" data-xa-filter="${esc(s.id)}" placeholder="Buscar un tema dentro de ${esc(s.name)}…" value="${esc(st.filter[s.id]||'')}">`:''}
+      ${root.children.length?`<ul class="xa-tree is-root">${root.children.map(c=>nodeMarkup(s.id,c,0,q)).join('')}</ul>`:'<p class="xa-note">Esta materia todavía no tiene contenido cargado: podés habilitarla completa.</p>'}
+    </div>`;
+  }
   function subjectMarkup(s){
-    const level=st.levels[s.db]||'none';
-    const dirty=isChanged(s.db);
-    const levels=LEVELS.filter(l=>l.id!=='custom'||SECTIONED[s.db]);
-    const open=st.openSubject===s.db;
+    const status=subjectStatus(s.id);
+    const dirty=isChanged(s.id);
+    const open=st.openSubject===s.id;
     return `<div class="xa-subject ${open?'is-open':''}">
-      <button type="button" class="xa-row" data-xa-subject="${esc(s.db)}" aria-expanded="${open}">
+      <button type="button" class="xa-row" data-xa-subject="${esc(s.id)}" aria-expanded="${open}">
         <span class="xa-mark">${esc(s.letter||'')}</span>
         <span class="xa-name">${esc(s.name)}</span>
-        <span class="xa-chip ${level==='none'?'is-off':''}">${esc(level==='none'?'Sin acceso':levelShort(level))}${dirty?' •':''}</span>
+        <span class="xa-chip ${status.off?'is-off':''}">${esc(status.t)}${dirty?' •':''}</span>
         <b class="xa-caret" aria-hidden="true">›</b>
       </button>
-      ${open?`<div class="xa-levels" role="radiogroup" aria-label="Acceso a ${esc(s.name)}">${levels.map(l=>`<label class="xa-level ${level===l.id?'is-on':''}"><input type="radio" name="xa-${esc(s.db)}" value="${l.id}" data-xa-level="${esc(s.db)}" ${level===l.id?'checked':''}><span>${esc(l.label)}</span></label>`).join('')}</div>${level==='custom'&&SECTIONED[s.db]?sectionGrid(s.db):''}`:''}
+      ${open?treeMarkup(s):''}
     </div>`;
   }
   function yearMarkup(y){
     const open=st.openYear===y.year;
-    const count=y.subjects.filter(s=>(st.levels[dbSubject(s.id)]||'none')!=='none').length;
+    const count=y.subjects.filter(s=>sel(s.id).size).length;
     return `<section class="xa-year ${open?'is-open':''}">
       <button type="button" class="xa-row xa-yearRow" data-xa-year="${y.year}" aria-expanded="${open}">
-        <span class="xa-name">${y.year}.º año</span>
-        <span class="xa-chip ${count?'':'is-off'}">${count?`${count} habilitada${count>1?'s':''}`:`${y.subjects.length} materia${y.subjects.length>1?'s':''}`}</span>
+        <span class="xa-name">${y.year}.º año${st.year===y.year?' <small>· año del alumno</small>':''}</span>
+        <span class="xa-chip ${count?'':'is-off'}">${count?`${count} con acceso`:`${y.subjects.length} materia${y.subjects.length>1?'s':''}`}</span>
         <b class="xa-caret" aria-hidden="true">›</b>
       </button>
-      ${open?`<div class="xa-subjects">${y.subjects.map(s=>subjectMarkup({...s,db:dbSubject(s.id)})).join('')}</div>`:''}
+      ${open?`<div class="xa-subjects">${y.subjects.map(s=>subjectMarkup({...s,year:y.year,db:dbSubject(s.id)})).join('')}</div>`:''}
     </section>`;
   }
   function durationMarkup(){
@@ -348,27 +311,32 @@
       <div class="xa-pills">${opts.map(([k,l])=>`<button type="button" data-xa-duration="${k}" class="${st.duration===k?'is-on':''}">${l}</button>`).join('')}</div>
       <label class="xa-date">Otra fecha <input type="date" data-xa-date value="${esc(st.customDate)}"></label></div>`;
   }
+  function currentSummary(){
+    const parts=allSubjects().filter(s=>sel(s.id).size).map(s=>`<li><b>${esc(s.name)}</b><span>${esc(T().describe(s.id,sel(s.id)))}</span></li>`);
+    return `<div class="xa-block"><b class="xa-label">Lo que tiene habilitado${allSubjects().some(s=>isChanged(s.id))?' <small>· con los cambios sin guardar</small>':''}</b>${parts.length?`<ul class="xa-summary">${parts.join('')}</ul>`:'<p class="xa-hint">Todavía nada.</p>'}</div>`;
+  }
   function editorMarkup(){
-    if(!st.loadedEmail)return `<p class="xa-hint">Escribí el email y tocá <b>Buscar</b> para ver o asignar sus materias.</p>`;
+    if(!st.loadedEmail)return `<p class="xa-hint">Escribí el email y tocá <b>Buscar</b>, o tocá <b>Editar</b> en la lista de alumnos.</p>`;
     return `<div class="xa-current"><span>Editando</span><b>${esc(st.loadedEmail)}</b></div>
       ${yearMarkupPick()}
       ${durationMarkup()}
-      <div class="xa-block"><b class="xa-label">Materias</b><div class="xa-years">${years().map(yearMarkup).join('')}</div></div>
+      <div class="xa-block"><b class="xa-label">Contenidos <small>· desplegá una materia y tildá exactamente lo que querés habilitar</small></b><div class="xa-years">${years().map(yearMarkup).join('')}</div></div>
+      ${currentSummary()}
       <button type="button" class="primary xa-save" data-xa-save ${st.busy?'disabled':''}>${st.busy?'Guardando…':'Guardar acceso'}</button>`;
   }
   function listMarkup(){
     if(!st.listLoaded)return `<div class="xa-empty">Cargando alumnos…</div>`;
     if(st.listError)return `<div class="xa-msg" data-type="error">No pude cargar la lista: ${esc(st.listError)}</div>`;
     if(!st.users.length)return `<div class="xa-empty">Todavía no agregaste alumnos.</div>`;
-    return st.users.map(u=>{const s=statusOf(u);const email=String(u.email).toLowerCase();return `<div class="xa-user">
-      <div class="xa-userInfo"><b>${esc(u.email)}</b><small>${esc(summary(email))}</small></div>
+    return st.users.map(u=>{const s=statusOf(u);const email=String(u.email).toLowerCase();const year=st.years?.[email];const parts=summaryParts(email);return `<div class="xa-user">
+      <div class="xa-userInfo"><b>${esc(u.email)}</b><small>${year?`${year}.º año · `:''}${parts.length?parts.map(p=>`${esc(p.s.name)}: ${esc(p.text)}`).join(' · '):'Sin contenidos habilitados'}</small></div>
       <div class="xa-userActions"><span class="xa-status ${s.bad?'is-bad':''}">${esc(s.t)}</span>
       <button type="button" class="secondary small" data-xa-edit="${esc(email)}">Editar</button>
       <button type="button" class="ghost small" data-xa-toggle="${esc(email)}" data-active="${u.active?'1':'0'}">${u.active?'Suspender':'Reactivar'}</button></div></div>`}).join('');
   }
   function markup(){
     return `<section class="xa-card">
-      <div class="xa-head"><h2>Accesos por alumno</h2><p>Email → año → materia → nivel de acceso.</p></div>
+      <div class="xa-head"><h2>Accesos por alumno</h2><p>Alumno → año → materia → sección → unidad → capítulo → bloque de ejercicios.</p></div>
       <form class="xa-search" data-xa-search>
         <input type="email" data-xa-email placeholder="alumno@gmail.com" value="${esc(st.email)}" autocomplete="off" autocapitalize="off" spellcheck="false">
         <button type="submit" class="primary" ${st.loadingEmail?'disabled':''}>${st.loadingEmail?'Buscando…':'Buscar'}</button>
@@ -382,30 +350,56 @@
   let root=null;
   function draw(){
     if(!root||!document.contains(root))return;
-    const focused=document.activeElement?.matches?.('[data-xa-email]');
+    const active=document.activeElement;
+    const focusSel=active?.matches?.('[data-xa-email]')?'[data-xa-email]':active?.dataset?.xaFilter?`[data-xa-filter="${CSS.escape(active.dataset.xaFilter)}"]`:'';
+    const caret=active&&'selectionStart' in active?active.selectionStart:null;
     root.innerHTML=markup();
-    if(focused)root.querySelector('[data-xa-email]')?.focus();
+    root.querySelectorAll('[data-xa-partial]').forEach(i=>{i.indeterminate=true});
+    if(focusSel){const el=root.querySelector(focusSel);if(el){el.focus();try{if(caret!==null)el.setSelectionRange(caret,caret)}catch(_){}}}
+  }
+
+  function quick(id,what){
+    const root=T().tree(id);
+    if(what==='none')st.sel[id]=new Set();
+    else if(what==='theory'){
+      const set=new Set(T().leaves(root).filter(n=>n.path!=='*'&&n.kind!=='exercises').map(n=>n.path));
+      st.sel[id]=new Set(T().compress(id,set));
+    }else if(what==='expand'){T().walk(root,n=>{if(n.children?.length&&n.path!=='*')st.open.add(openKey(id,n.path))})}
+    else if(what==='collapse'){[...st.open].forEach(k=>{if(k.startsWith(`${id}|`))st.open.delete(k)})}
   }
 
   function bindRoot(el){
     el.addEventListener('click',e=>{
       const t=e.target.closest('button');if(!t||!el.contains(t))return;
       if(t.dataset.xaYear){const y=Number(t.dataset.xaYear);st.openYear=st.openYear===y?null:y;st.openSubject=null;draw();return}
-      if(t.dataset.xaSubject){st.openSubject=st.openSubject===t.dataset.xaSubject?null:t.dataset.xaSubject;draw();return}
+      if(t.dataset.xaSubject){
+        const id=t.dataset.xaSubject;st.openSubject=st.openSubject===id?null:id;
+        if(st.openSubject)T().tree(id).children.forEach(c=>{if(c.children?.length)st.open.add(openKey(id,c.path))});
+        draw();return;
+      }
+      if(t.dataset.xaTw){const k=t.dataset.xaTw;st.open.has(k)?st.open.delete(k):st.open.add(k);draw();return}
+      if(t.dataset.xaQuick){const i=t.dataset.xaQuick.lastIndexOf('|');quick(t.dataset.xaQuick.slice(0,i),t.dataset.xaQuick.slice(i+1));st.msg='';draw();return}
       if(t.dataset.xaDuration){st.duration=t.dataset.xaDuration;st.customDate='';draw();return}
       if(t.hasAttribute('data-xa-save')){saveWithYear();return}
       if(t.dataset.xaYearPick){st.year=Number(t.dataset.xaYearPick)||null;draw();return}
-      if(t.dataset.xaUpto){const [db,n]=t.dataset.xaUpto.split('|');const ids=SECTIONED[db]().filter(x=>x.n<=Number(n)).map(x=>x.id);st.custom[db]={t:[...ids],e:[...ids]};st.msg='';draw();return}
       if(t.dataset.xaEdit){st.openYear=null;st.openSubject=null;loadEmail(t.dataset.xaEdit);el.scrollIntoView({behavior:'smooth',block:'start'});return}
       if(t.dataset.xaToggle){toggleUser(t.dataset.xaToggle,t.dataset.active!=='1');return}
     });
     el.addEventListener('change',e=>{
       const t=e.target;
-      if(t.dataset?.xaLevel){st.levels[t.dataset.xaLevel]=t.value;if(t.value==='custom'&&!st.custom[t.dataset.xaLevel])st.custom[t.dataset.xaLevel]={t:[],e:[]};st.msg='';draw();return}
-      if(t.dataset?.xaSec){const [db,kind,id]=t.dataset.xaSec.split('|');const c=st.custom[db]||(st.custom[db]={t:[],e:[]});c[kind]=t.checked?[...new Set([...c[kind],id])].sort():c[kind].filter(x=>x!==id);if(kind==='e'&&t.checked&&!c.t.includes(id))c.t=[...c.t,id].sort();st.msg='';draw();return}
+      if(t.dataset?.xaNode){
+        const id=t.dataset.xaNode,path=t.dataset.xaPath;
+        // Un casillero parcial al tocarlo se completa (habilita todo lo de adentro).
+        const on=t.dataset.xaPartial?true:t.checked;
+        st.sel[id]=T().toggle(id,sel(id),path,on);
+        st.msg='';draw();return;
+      }
       if(t.hasAttribute?.('data-xa-date')){st.customDate=t.value;st.duration=t.value?'custom':(st.profile?'keep':'1m');draw()}
     });
-    el.addEventListener('input',e=>{if(e.target.matches('[data-xa-email]'))st.email=e.target.value});
+    el.addEventListener('input',e=>{
+      if(e.target.matches('[data-xa-email]'))st.email=e.target.value;
+      if(e.target.dataset?.xaFilter!==undefined&&e.target.matches('[data-xa-filter]')){st.filter[e.target.dataset.xaFilter]=e.target.value;draw()}
+    });
     el.addEventListener('submit',e=>{if(e.target.matches('[data-xa-search]')){e.preventDefault();loadEmail(st.email)}});
   }
 
@@ -426,13 +420,13 @@
       :root[data-theme="dark"] .xa-msg[data-type="error"]{background:#2b1c1c;color:#ffb4b4;border-color:#704040}
       .xa-current{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}.xa-current span{font-size:.75rem;font-weight:900;text-transform:uppercase;color:var(--muted,#5b6b7a)}
       .xa-block{display:grid;gap:8px}.xa-label{font-size:.9rem}.xa-label small{font-weight:700;color:var(--muted,#5b6b7a)}
-      .xa-pills{display:flex;flex-wrap:wrap;gap:6px}.xa-pills button{border:1px solid var(--border,#d8e5f0);background:var(--surface2,#f5f8fb);color:inherit;border-radius:999px;padding:7px 12px;font:inherit;font-size:.8rem;font-weight:800;cursor:pointer}
+      .xa-pills{display:flex;flex-wrap:wrap;gap:6px}.xa-pills button,.xa-quick button{border:1px solid var(--border,#d8e5f0);background:var(--surface2,#f5f8fb);color:inherit;border-radius:999px;padding:7px 12px;font:inherit;font-size:.8rem;font-weight:800;cursor:pointer}
       .xa-pills button.is-on{background:var(--accent,#15579D);border-color:var(--accent,#15579D);color:#fff}
       .xa-date{display:flex;align-items:center;gap:8px;font-size:.8rem;font-weight:800;color:var(--muted,#5b6b7a)}.xa-date input{font:inherit;padding:6px 8px;border:1px solid var(--border,#d8e5f0);border-radius:9px;background:var(--surface2,#f5f8fb);color:inherit}
       .xa-years{display:grid;gap:8px}
       .xa-year{border:1px solid var(--border,#d8e5f0);border-radius:14px;overflow:hidden}
       .xa-row{width:100%;display:flex;align-items:center;gap:10px;padding:12px 14px;border:0;background:transparent;color:inherit;font:inherit;text-align:left;cursor:pointer}
-      .xa-yearRow{background:var(--surface2,#f5f8fb);font-weight:900}
+      .xa-yearRow{background:var(--surface2,#f5f8fb);font-weight:900}.xa-yearRow small{font-weight:800;color:var(--accent,#15579D)}
       .xa-name{flex:1;min-width:0;font-weight:800}
       .xa-caret{transition:transform .15s;color:var(--muted,#5b6b7a)}.is-open>.xa-row .xa-caret{transform:rotate(90deg)}
       .xa-chip{font-size:.72rem;font-weight:900;padding:4px 9px;border-radius:999px;background:color-mix(in srgb,var(--accent,#15579D) 12%,transparent);color:var(--accent,#15579D);white-space:nowrap}
@@ -440,21 +434,31 @@
       .xa-subjects{display:grid}
       .xa-subject{border-top:1px solid var(--border,#d8e5f0)}
       .xa-mark{flex:none;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:.7rem;font-weight:900;background:var(--surface2,#f5f8fb)}
-      .xa-levels{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 14px 14px}
-      .xa-level{display:flex;align-items:center;gap:8px;padding:10px;border:1px solid var(--border,#d8e5f0);border-radius:11px;font-size:.82rem;font-weight:800;cursor:pointer}
-      .xa-level.is-on{border-color:var(--accent,#15579D);background:color-mix(in srgb,var(--accent,#15579D) 9%,transparent)}
-      .xa-secs{display:grid;gap:8px;padding:0 14px 14px}
-      .xa-secQuick{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.xa-secQuick span{font-size:.75rem;font-weight:900;color:var(--muted,#5b6b7a)}
-      .xa-secQuick button{border:1px solid var(--border,#d8e5f0);background:var(--surface2,#f5f8fb);color:inherit;border-radius:999px;padding:5px 10px;font:inherit;font-size:.75rem;font-weight:800;cursor:pointer}
-      .xa-secTable{width:100%;border-collapse:collapse;font-size:.82rem}.xa-secTable th{text-align:left;font-size:.7rem;color:var(--muted,#5b6b7a);padding:6px}.xa-secTable td{padding:7px 6px;border-top:1px solid var(--border,#d8e5f0)}
-      .xa-secTable input{width:18px;height:18px}.xa-secNote{color:var(--muted,#5b6b7a)}
-      .xa-save{justify-self:start}.xa-save[disabled]{opacity:.7;cursor:wait}
+      .xa-treeBox{display:grid;gap:10px;padding:0 14px 16px}
+      .xa-treeTools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:12px;background:var(--surface2,#f5f8fb)}
+      .xa-quick{display:flex;flex-wrap:wrap;gap:6px}.xa-quick button{padding:5px 10px;font-size:.75rem}
+      .xa-note{margin:0;font-size:.8rem;color:var(--muted,#5b6b7a);line-height:1.45}.xa-note.is-ok{color:var(--accent,#15579D);font-weight:800}
+      .xa-filter{padding:9px 12px;border:1px solid var(--border,#d8e5f0);border-radius:10px;font:inherit;font-size:.85rem;background:var(--surface,#fff);color:inherit}
+      .xa-tree{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+      .xa-tree .xa-tree{margin-left:22px;padding-left:8px;border-left:1px dashed var(--border,#d8e5f0)}
+      .xa-nodeRow{display:flex;align-items:center;gap:6px;min-height:38px;padding:3px 6px;border-radius:9px}
+      .xa-nodeRow.is-on{background:color-mix(in srgb,var(--accent,#15579D) 7%,transparent)}
+      .xa-tw{flex:none;width:26px;height:26px;border:0;border-radius:7px;background:transparent;color:var(--muted,#5b6b7a);font:inherit;font-size:.9rem;cursor:pointer;display:grid;place-items:center}
+      button.xa-tw:hover{background:var(--surface2,#f5f8fb)}
+      .xa-check{display:flex;align-items:center;gap:9px;flex:1;min-width:0;cursor:pointer;font-size:.86rem;font-weight:700;line-height:1.3}
+      .xa-check input{flex:none;width:19px;height:19px;accent-color:var(--accent,#15579D);cursor:pointer}
+      .xa-check span{min-width:0;overflow-wrap:anywhere}.xa-rootCheck{flex:1 1 260px}.xa-rootCheck small{font-weight:700;color:var(--muted,#5b6b7a)}
+      .xa-tag{flex:none;font-style:normal;font-size:.66rem;font-weight:900;text-transform:uppercase;letter-spacing:.03em;padding:3px 7px;border-radius:999px;background:var(--surface2,#f5f8fb);color:var(--muted,#5b6b7a)}
+      .xa-tag.is-ex{background:#fff3d6;color:#7a5200}:root[data-theme="dark"] .xa-tag.is-ex{background:#3a2f12;color:#ffd77a}
+      .xa-count{flex:none;font-size:.72rem;font-weight:900;color:var(--muted,#5b6b7a)}
+      .xa-summary{margin:0;padding:0;list-style:none;display:grid;gap:6px}.xa-summary li{display:grid;gap:2px;padding:9px 12px;border-radius:11px;background:var(--surface2,#f5f8fb);font-size:.84rem}.xa-summary span{color:var(--muted,#5b6b7a)}
+      .xa-save{justify-self:start;position:sticky;bottom:12px;z-index:2}.xa-save[disabled]{opacity:.7;cursor:wait}
       .xa-user{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid var(--border,#d8e5f0)}
       .xa-userInfo{display:grid;gap:3px;min-width:0}.xa-userInfo b{overflow-wrap:anywhere}.xa-userInfo small{color:var(--muted,#5b6b7a)}
       .xa-userActions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
       .xa-status{font-size:.72rem;font-weight:900;color:var(--muted,#5b6b7a)}.xa-status.is-bad{color:#b54848}
       .solutionAdmin{display:none!important}
-      @media(max-width:640px){.xa-user{flex-direction:column}.xa-userActions{justify-content:flex-start}.xa-levels{grid-template-columns:1fr}}
+      @media(max-width:640px){.xa-user{flex-direction:column}.xa-userActions{justify-content:flex-start}.xa-tree .xa-tree{margin-left:12px}.xa-treeBox{padding:0 8px 14px}}
     `;
     document.head.appendChild(s);
   }
@@ -463,13 +467,14 @@
   function mount(){
     const editor=document.querySelector('#app .adminEditor');
     if(!editor)return;
+    if(!window.ET27Access?.isVerifiedAdmin?.())return; // sólo el administrador verificado
     addStyles();
     root=document.createElement('div');
     root.id='xa-root';
     editor.replaceWith(root);
     document.querySelectorAll('#app .adminList').forEach(n=>n.remove());
     const hero=document.querySelector('#app .hero.compact p');
-    if(hero)hero.textContent='Buscá al alumno por email y elegí, materia por materia, qué puede ver y hasta cuándo.';
+    if(hero)hero.textContent='Buscá al alumno por email, desplegá cada materia y tildá exactamente los contenidos que puede ver.';
     bindRoot(root);
     draw();
     loadList();
@@ -478,5 +483,6 @@
   let queued=false;
   const schedule=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;mount()})};
   new MutationObserver(schedule).observe(document.documentElement,{childList:true,subtree:true});
+  document.addEventListener('et27-access-ready',schedule);
   schedule();
 })();
