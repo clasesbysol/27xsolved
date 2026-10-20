@@ -167,17 +167,30 @@ async function loadAdmin(){if(!sb||!isAdmin())return;users=(await sb.from('acces
 
 function expiryFromMode(){if(durationMode==='forever')return null;let d=new Date();if(durationMode==='custom'){if(!customDate)return undefined;d=new Date(`${customDate}T23:59:59`);return d.toISOString()}const months=Number(durationMode[0]);d.setMonth(d.getMonth()+months);d.setHours(23,59,59,999);return d.toISOString()}
 function draftGrantsFromForm(){const out=[];document.querySelectorAll('[data-full-unit]:checked').forEach(x=>out.push({subject:x.dataset.subject||'chemistry',unit_no:Number(x.dataset.fullUnit),grant_type:'unit',grant_key:'*'}));document.querySelectorAll('[data-grant-section]:checked').forEach(x=>{const [subject,u,t,k]=x.dataset.grantSection.split('|');if(!document.querySelector(`[data-full-unit="${u}"][data-subject="${subject}"]`)?.checked)out.push({subject,unit_no:Number(u),grant_type:t,grant_key:k})});return out}
+let savingAccess=false;
 async function saveAccess(){
-  const email=document.querySelector('#accessEmail')?.value.trim().toLowerCase();if(!email)return;
-  const expiry=expiryFromMode();if(durationMode==='custom'&&expiry===undefined){msg='Elegí una fecha de vencimiento.';render();return}
-  const grants=draftGrantsFromForm();
-  const starts=editing?.email===email&&durationMode==='keep'?editing.access_starts_at:new Date().toISOString();
-  const finalExpiry=durationMode==='keep'?editing?.access_expires_at??null:expiry;
-  const {error}=await sb.from('access_profiles').upsert({email,active:true,role:editing?.role==='admin'?'admin':'student',access_starts_at:starts,access_expires_at:finalExpiry},{onConflict:'email'});
-  if(error){msg=error.message;render();return}
-  await sb.from('access_grants').delete().eq('email',email);
-  if(grants.length){const rows=grants.map(g=>({email,...g}));const e=(await sb.from('access_grants').insert(rows)).error;if(e){msg=e.message;render();return}}
-  editing=null;durationMode='1m';customDate='';await loadAdmin();render();
+ if(savingAccess||!sb)return;
+ const email=document.querySelector('#accessEmail')?.value.trim().toLowerCase();
+ if(!validEmail(email)){msg='Ingresá un correo válido.';render();return}
+ const expiry=expiryFromMode();
+ if(durationMode==='custom'&&expiry===undefined){msg='Elegí una fecha de vencimiento.';render();return}
+ const grants=draftGrantsFromForm();
+ if(!grants.length){msg='Seleccioná al menos una materia o sección.';render();return}
+ const starts=editing?.email===email&&durationMode==='keep'?editing.access_starts_at:new Date().toISOString();
+ const finalExpiry=durationMode==='keep'?editing?.access_expires_at??null:expiry;
+ savingAccess=true;
+ const button=document.querySelector('[data-a="saveAccess"]');
+ if(button){button.disabled=true;button.textContent='Guardando…'}
+ try{
+  const {data,error}=await sb.rpc('save_student_access',{p_email:email,p_role:editing?.role==='admin'?'admin':'student',p_starts:starts,p_expires:finalExpiry,p_grants:grants});
+  if(error)throw error;
+  if(Number(data)!==grants.length)throw new Error('No se confirmó la cantidad de permisos guardados.');
+  await loadAdmin();
+  if(allGrants.filter(g=>g.email===email).length!==grants.length)throw new Error('No se pudieron verificar los permisos guardados.');
+  editing=null;durationMode='1m';customDate='';
+  msg='Acceso guardado correctamente para '+email+' ('+grants.length+' permisos).';
+ }catch(error){console.error('Error al guardar permisos:',error);msg='No se guardaron los permisos: '+(error?.message||'Error desconocido')}
+ finally{savingAccess=false;render()}
 }
 async function toggleUser(email,active){await sb.from('access_profiles').update({active}).eq('email',email);await loadAdmin();render()}
 function editUser(email){editing=users.find(u=>u.email===email)||null;durationMode='keep';customDate='';render();setTimeout(()=>document.querySelector('#accessEmail')?.scrollIntoView({behavior:'smooth',block:'center'}),50)}
