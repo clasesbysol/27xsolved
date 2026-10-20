@@ -185,6 +185,24 @@ ${fix('Interpretación de órdenes ',`<p>Para identificar el orden, se suman los
 <p>Se usa el <b>método de comparación de experimentos</b>: se comparan dos experimentos en los que <b>cambia una sola concentración</b> y se mira cuánto cambia la velocidad. ${ref('ejercicios 7, 8, 9 y 10')}</p>
 ${table(['Si duplicar [A]…','el orden en A es'],[['no cambia v','0'],['duplica v','1'],['cuadruplica v','2']])}
 <p>En general: si [A] se multiplica por f y v se multiplica por f<sup>m</sup>, el orden es m. ${simple('Triplicar [A] y que v se triplique también es orden 1')}</p>
+
+<h3>Método de velocidades iniciales: resolución completa</h3>
+<p>Para v = k[A]<sup>m</sup>[B]<sup>n</sup>, los exponentes m y n se determinan experimentalmente. Compará dos experimentos donde una concentración permanezca fija. Si A cambia por un factor f y la velocidad por un factor g, entonces g = f<sup>m</sup> y m = log(g)/log(f). Repetí con B. El orden global es m + n; finalmente calculá k = v/([A]<sup>m</sup>[B]<sup>n</sup>) y verificá otra fila. <b>Los órdenes no se deducen de los coeficientes de la ecuación global.</b></p>
+<h3>Cuatro ejercicios modelo con tablas experimentales</h3>
+<h4>Ejemplo 1 · Primer orden en ambos reactivos</h4>
+<p>Para A + B → productos, determinar la ley de velocidad, orden total y k.</p>
+${table(['Experimento','[A] (M)','[B] (M)','v inicial (M/s)'],[['1','0,10','0,10','0,0020'],['2','0,20','0,10','0,0040'],['3','0,10','0,30','0,0060']])}
+<p><b>Paso 1:</b> de 1 a 2, A se duplica y v se duplica (B fija): m = 1. <b>Paso 2:</b> de 1 a 3, B se triplica y v se triplica (A fija): n = 1. <b>Paso 3:</b> v = k[A][B]; orden global = 2. <b>Paso 4:</b> k = 0,0020/(0,10·0,10) = <b>0,20 M⁻¹ s⁻¹</b>.</p>
+<h4>Ejemplo 2 · Orden cero y segundo orden</h4>
+${table(['Experimento','[A] (M)','[B] (M)','v inicial (M/s)'],[['1','0,10','0,10','0,0030'],['2','0,20','0,10','0,0030'],['3','0,10','0,20','0,0120']])}
+<p><b>Paso 1:</b> de 1 a 2, duplicar A no cambia v: m = 0. <b>Paso 2:</b> de 1 a 3, duplicar B cuadruplica v: n = 2. <b>Paso 3:</b> v = k[B]²; orden global = 2. <b>Paso 4:</b> k = 0,0030/(0,10)² = <b>0,30 M⁻¹ s⁻¹</b>.</p>
+<h4>Ejemplo 3 · Orden fraccionario</h4>
+${table(['Experimento','[A] (M)','[B] (M)','v inicial (M/s)'],[['1','0,10','0,10','0,0040'],['2','0,40','0,10','0,0080'],['3','0,10','0,20','0,0080']])}
+<p><b>Paso 1:</b> A se cuadruplica y v se duplica: 2 = 4<sup>m</sup> ⇒ m = ½. <b>Paso 2:</b> B se duplica y v se duplica: n = 1. <b>Paso 3:</b> v = k[A]<sup>½</sup>[B]; orden global = 3/2. <b>Paso 4:</b> k = 0,0040/(√0,10 · 0,10) ≈ <b>0,1265 M⁻½ s⁻¹</b>.</p>
+<h4>Ejemplo 4 · Cambian simultáneamente las concentraciones</h4>
+${table(['Experimento','[A] (M)','[B] (M)','v inicial (M/s)'],[['1','0,10','0,10','0,0010'],['2','0,20','0,20','0,0080'],['3','0,40','0,20','0,0320']])}
+<p><b>Paso 1:</b> comparar 3 y 2: B constante, A se duplica y v se cuadruplica ⇒ m = 2. <b>Paso 2:</b> comparar 2 y 1: ambas concentraciones se duplican y v aumenta 8 veces: 8 = 2²·2<sup>n</sup> ⇒ n = 1. <b>Paso 3:</b> v = k[A]²[B]; orden global = 3. <b>Paso 4:</b> k = 0,0010/(0,10²·0,10) = <b>1,0 M⁻² s⁻¹</b>.</p>
+
 <h3>Unidades de la constante k</h3>
 <p>Como v está en M/s y las concentraciones en M, las unidades de k dependen del orden total:</p>
 ${table(['Orden total','Ley','Unidades de k'],[['0',m(R`v=k`),'M/s'],['1',m(R`v=k[A]`),'s⁻¹'],['2',m(R`v=k[A]^2`),'M⁻¹ s⁻¹'],['3',m(R`v=k[A]^2[B]`),'M⁻² s⁻¹']])}
@@ -199,6 +217,17 @@ ${calc('qgLaw','Ley de velocidad',field('k','k',3.408)+field('a','[A] (M)',0.3)+
   add('mecanismos','Mecanismos de reacción','CLASE 19/10 · 06',`
 <p>Muchas reacciones no ocurren en un solo choque, sino en varios <b>pasos</b>. El conjunto de pasos es el <b>mecanismo de reacción</b>. Sumando los pasos se obtiene la <b>ecuación global</b>.</p>
 <p>En estos ejemplos, R, R′ y R″ son <b>cadenas hidrocarbonadas</b>.</p>
+
+<h3>Pasos elementales, paso lento y perfiles de energía</h3>
+<p>Un mecanismo es una secuencia de <b>pasos elementales</b>. La suma de sus ecuaciones, cancelando las especies comunes, da la ecuación global. Un <b>intermediario</b> se forma en una etapa y se consume en otra; no aparece en la ecuación global. El <b>paso lento</b> limita la rapidez del mecanismo. En un perfil de energía con varias etapas hay un máximo (estado de transición) por etapa y un mínimo entre máximos (intermediario). La energía de activación de cada etapa se mide desde el mínimo anterior hasta el máximo correspondiente.</p>
+<p><b>Importante:</b> la ley de velocidad de un paso elemental puede escribirse a partir de su molecularidad; esto NO puede hacerse directamente con la ecuación global. Si hay un equilibrio rápido antes del paso lento, hay que utilizarlo para eliminar los intermediarios de la ley.</p>
+<h3>Ejemplo · Monóxido de nitrógeno y oxígeno</h3>
+<p>Reacción global: <b>2 NO(g) + O₂(g) → 2 NO₂(g)</b>. Consideremos el siguiente mecanismo propuesto:</p>
+${chain([R`2NO_{(g)}\rightleftharpoons N_2O_{2(g)}`,'paso 1: formación reversible del intermediario'],[R`N_2O_{2(g)}+O_{2(g)}\rightarrow2NO_{2(g)}`,'paso 2: consumo del intermediario'])}
+<p>Al sumar las dos etapas, el N₂O₂ se cancela: es el <b>intermediario</b>, porque se forma y luego se consume. El producto final es NO₂. El mecanismo no permite decidir cuál paso es lento sin información adicional.</p>
+<p><b>Si</b> el primer paso está en equilibrio rápido y el segundo es lento, entonces v = k₂[N₂O₂][O₂]. Como [N₂O₂] = K₁[NO]², resulta <b>v = k₂K₁[NO]²[O₂]</b>. Esta deducción depende de las hipótesis del mecanismo, no solamente de la ecuación global.</p>
+${figure(`<svg viewBox="0 0 640 260" role="img" aria-label="Perfil de energía exotérmico con dos estados de transición y un intermediario"><line x1="45" y1="228" x2="612" y2="228" stroke="currentColor"/><line x1="45" y1="228" x2="45" y2="15" stroke="currentColor"/><text x="55" y="20" fill="currentColor">Energía potencial</text><text x="430" y="252" fill="currentColor">Avance de reacción →</text><path d="M70 175 H125 C170 175 170 40 220 40 C270 40 270 145 325 145 C380 145 375 92 420 92 C470 92 475 205 525 205 H590" fill="none" stroke="#15579D" stroke-width="4"/><text x="70" y="165" fill="currentColor">Reactivos</text><text x="280" y="166" fill="currentColor">Intermediario</text><text x="510" y="195" fill="currentColor">Productos</text><text x="190" y="30" fill="currentColor">TS₁</text><text x="410" y="80" fill="currentColor">TS₂</text></svg>`,'Perfil energético de dos etapas: dos máximos y un intermediario. Los productos quedan a menor energía que los reactivos (exotérmica).')}
+
 <h3>Vocabulario</h3>
 ${table(['Término','Qué es'],[['<b>Nucleófilo</b> (Nu⁻)','Especie con un par de electrones disponible que “busca” un centro positivo (carga − o un par libre, como en el NH₃).'],['<b>Electrófilo</b> (E⁺)','Especie con defecto de electrones que “busca” electrones (carga + o parcial +, como el carbocatión R₃C⁺).'],['<b>Carbocatión</b>','Carbono con solo tres enlaces y carga positiva.'],['<b>Intermediario de reacción</b>','Especie que se genera en un paso de reacción y se consume en el siguiente: no aparece en la ecuación global.']])}
 ${fix('Identificación de especies ',`<p>En la sustitución nucleofílica, se distinguen el grupo saliente y el electrófilo. El Br⁻ es el <b>grupo saliente</b> (se lleva el par de electrones del enlace); el <b>electrófilo</b> es el carbocatión R₃C⁺. En el equilibrio NH₃ ⇌ NH₄⁺: el <b>NH₃</b> es un nucleófilo neutro porque tiene un par de electrones libre; cuando lo usa para tomar un H⁺, se forma el NH₄⁺.</p>`)}
