@@ -20,6 +20,16 @@
 - Preparado para Supabase Auth + Google y seguridad RLS.
 - Sin sincronización de progreso, favoritos o resaltados para alumnos: sólo persisten localmente preferencias visuales y la sesión de acceso.
 
+## Inicio nuevo (v1.2.0)
+
+- **Arranque:** solcito amarillo con forma de balón que se llena mientras busca actualizaciones (`boot-splash.js`). Se ve una vez por apertura.
+- **Modo profe (admin):** el inicio es la grilla de años por color → ventana con las materias del año → cartel **Teoría / TP / Machete** (`home-2026.js`). "Plan y materias" usa la misma grilla para todos.
+- **Alumnos:** ven su año (lo eligen o se lo asignás en Accesos; pueden cambiarlo y el cambio queda registrado), sus materias habilitadas y las demás en gris con candado, "Seguir donde dejaste" y la etiqueta **Nuevo**. Horario semanal y tareas son opcionales (botoncitos) y se guardan en su cuenta.
+- **Panel de control → Actividad de alumnos:** último ingreso, temas abiertos y ranking por materia (`admin-activity.js`). Los alumnos ven un aviso la primera vez.
+- **Química General · Unidad 5: Cinética química** (`quimica-general-4-cinetica.js`), con la teoría en el orden de la carpeta. El material fuente está en `assets/quimica-general/cinetica/`.
+
+**Paso único en Supabase:** ejecutar `supabase/migrations/20261019_home_students_activity.sql` en el SQL Editor. Hasta que se ejecute, la app funciona igual pero el año, horario y tareas quedan solo en el dispositivo y no se registra actividad.
+
 ## Probar la interfaz
 
 Como no hay build, alcanza con servir la carpeta con cualquier servidor estático. Por ejemplo:

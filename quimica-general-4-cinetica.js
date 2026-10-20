@@ -1,0 +1,407 @@
+// 27xSOLved · Química General de 4.º año — Unidad 5: Cinética química.
+// Teoría en el orden de la carpeta del curso (clases del 13/10 y 19/10), completada con el material
+// teórico de la guía. Después, la guía de ejercitación con sus consignas textuales y las resoluciones aportadas.
+// Se agrega al final de las unidades de window.ET27_QG4 (se carga después de quimica-general-4-content.js).
+(function(){
+  'use strict';
+  const K=window.ET27Kit,QG=window.ET27_QG4;if(!K||!QG)return;
+  const {M,m,chain,key,sym,simple,note,fix,example,step,table,figure,cards,calc,field,fmt}=K;
+  const R=String.raw;
+
+  // ---------- Calculadoras ----------
+  const val=(root,name)=>{const el=root.querySelector(`[name="${name}"]`);return el?Number(String(el.value).replace(',','.')):NaN};
+  K.calcs.qgRate=root=>{
+    const c1=val(root,'c1'),c2=val(root,'c2'),t1=val(root,'t1'),t2=val(root,'t2'),nu=val(root,'nu');
+    const kind=root.querySelector('[name="kind"]')?.value||'r';
+    if(!(t2>t1)||!(nu>0))return '<small>Revisá los datos: t₂ tiene que ser mayor que t₁ y el coeficiente, positivo.</small>';
+    const dc=c2-c1,dt=t2-t1,sign=kind==='r'?-1:1,v=sign*dc/dt/nu;
+    return `<b>v ≈ ${fmt(v,3)} M/s</b><br><small>Δ[ ] = ${fmt(dc,3)} M · Δt = ${fmt(dt,4)} s · ${kind==='r'?'reactivo: signo −':'producto: signo +'} · dividido por ${fmt(nu,3)}${v<0?' · ¡Ojo! Dio negativa: revisá si es reactivo o producto.':''}</small>`;
+  };
+  K.calcs.qgLaw=root=>{
+    const k=val(root,'k'),a=val(root,'a'),mo=val(root,'mo'),b=val(root,'b'),no=val(root,'no');
+    const v=k*Math.pow(a,mo)*Math.pow(b,no),tot=mo+no;
+    const units=tot===0?'M/s':tot===1?'s⁻¹':`M<sup>${fmt(1-tot,3)}</sup>·s⁻¹`;
+    return `<b>v ≈ ${fmt(v,3)} M/s</b><br><small>Orden total = ${fmt(mo,3)} + ${fmt(no,3)} = ${fmt(tot,3)} · unidades de k (tiempo en s): ${units}</small>`;
+  };
+
+  // ---------- Esquemas ----------
+  const DATA={t:[0,4000,8000,12000,16000],N2O5:[2.15,1.88,1.64,1.43,1.25],NO2:[0,0.54,1.02,1.44,1.80],O2:[0,0.135,0.255,0.36,0.45]};
+  const X=t=>70+t/16000*520,Y=c=>220-c/2.2*175;
+  // Curva suave (Catmull-Rom → Bézier): pasa por todos los puntos sin ondular.
+  const curve=(arr)=>{
+    const p=DATA.t.map((t,i)=>[X(t),Y(arr[i])]);
+    let d=`M${p[0][0]} ${p[0][1]}`;
+    for(let i=0;i<p.length-1;i++){
+      const p0=p[Math.max(0,i-1)],p1=p[i],p2=p[i+1],p3=p[Math.min(p.length-1,i+2)];
+      const c1=[p1[0]+(p2[0]-p0[0])/6,p1[1]+(p2[1]-p0[1])/6],c2=[p2[0]-(p3[0]-p1[0])/6,p2[1]-(p3[1]-p1[1])/6];
+      d+=` C${c1[0].toFixed(1)} ${c1[1].toFixed(1)} ${c2[0].toFixed(1)} ${c2[1].toFixed(1)} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+    }
+    return d;
+  };
+  const svgGraph=`<svg viewBox="0 0 640 280" role="img" aria-label="Concentración en función del tiempo para la descomposición del N₂O₅: el reactivo baja y los productos NO₂ y O₂ suben">
+    <defs><marker id="cinArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10z" class="svgAccentFill"/></marker></defs>
+    <line x1="70" y1="225" x2="610" y2="225" class="svgLine" marker-end="url(#cinArr)"/>
+    <line x1="70" y1="225" x2="70" y2="10" class="svgLine" marker-end="url(#cinArr)"/>
+    <text x="606" y="212" text-anchor="end" class="svgText">t (s)</text>
+    <text x="78" y="22" class="svgText">conc. (M)</text>
+    ${DATA.t.slice(1).map(t=>`<line x1="${X(t)}" y1="221" x2="${X(t)}" y2="229" class="svgLine"/><text x="${X(t)}" y="248" text-anchor="middle" class="svgText" font-size="12">${t}</text>`).join('')}
+    ${[0.5,1,1.5,2].map(c=>`<line x1="66" y1="${Y(c)}" x2="74" y2="${Y(c)}" class="svgLine"/><text x="60" y="${Y(c)+4}" text-anchor="end" class="svgText" font-size="12">${String(c).replace('.',',')}</text>`).join('')}
+    <line x1="${X(0)}" y1="${Y(2.15)}" x2="${X(11000)}" y2="${Y(2.15-0.0000713*11000)}" stroke="#c0392b" stroke-width="2" stroke-dasharray="6 5"/>
+    <path d="${curve(DATA.N2O5)}" fill="none" stroke="#15579D" stroke-width="3.5"/>
+    <path d="${curve(DATA.NO2)}" fill="none" stroke="#F38C1B" stroke-width="3.5"/>
+    <path d="${curve(DATA.O2)}" fill="none" stroke="#1E9E6A" stroke-width="3.5"/>
+    ${['N2O5','NO2','O2'].map((s,j)=>DATA[s].map((c,i)=>`<circle cx="${X(DATA.t[i])}" cy="${Y(c)}" r="4" fill="${['#15579D','#F38C1B','#1E9E6A'][j]}"/>`).join('')).join('')}
+    <text x="${X(16000)-4}" y="${Y(1.25)+24}" text-anchor="end" class="svgText strong" fill="#15579D">N₂O₅ (reactivo)</text>
+    <text x="${X(16000)-4}" y="${Y(1.80)-10}" text-anchor="end" class="svgText strong" fill="#F38C1B">NO₂</text>
+    <text x="${X(16000)-4}" y="${Y(0.45)-10}" text-anchor="end" class="svgText strong" fill="#1E9E6A">O₂</text>
+    <text x="${X(11000)}" y="${Y(2.15-0.0000713*11000)+18}" text-anchor="middle" class="svgText" font-size="12" fill="#c0392b">tangente en t = 0</text>
+  </svg>`;
+
+  const svgEnergy=`<svg viewBox="0 0 640 260" role="img" aria-label="Diagrama de energía: con catalizador la barrera de energía de activación es más baja; reactivos y productos quedan en el mismo nivel">
+    <defs><marker id="cinArr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" class="svgAccentFill"/></marker></defs>
+    <line x1="60" y1="230" x2="610" y2="230" class="svgLine" marker-end="url(#cinArr2)"/>
+    <line x1="60" y1="230" x2="60" y2="20" class="svgLine" marker-end="url(#cinArr2)"/>
+    <text x="600" y="252" text-anchor="end" class="svgText">avance de la reacción</text>
+    <text x="68" y="24" class="svgText">energía</text>
+    <path d="M80 160 H180 C250 160 260 40 320 40 C380 40 390 195 460 195 H590" fill="none" stroke="#15579D" stroke-width="3.5"/>
+    <path d="M180 160 C250 160 260 105 320 105 C380 105 390 195 460 195" fill="none" stroke="#1E9E6A" stroke-width="3.5" stroke-dasharray="8 6"/>
+    <line x1="150" y1="160" x2="150" y2="44" stroke="#15579D" stroke-width="2" marker-start="url(#cinArr2)" marker-end="url(#cinArr2)"/>
+    <text x="142" y="100" text-anchor="end" class="svgText" fill="#15579D">Eₐ sin catalizador</text>
+    <line x1="235" y1="160" x2="235" y2="110" stroke="#1E9E6A" stroke-width="2" marker-start="url(#cinArr2)" marker-end="url(#cinArr2)"/>
+    <text x="243" y="140" class="svgText" fill="#1E9E6A">Eₐ con catalizador</text>
+    <text x="90" y="152" class="svgText strong">reactivos</text>
+    <text x="580" y="187" text-anchor="end" class="svgText strong">productos</text>
+  </svg>`;
+
+  const sections=[];
+  const add=(k,label,kicker,html)=>sections.push({key:`qg5-${k}`,label,kicker,html});
+  const ref=t=>`<span class="simple">(${t})</span>`;
+
+  // ---------- 1. Qué estudia la cinética (carpeta 13/10) ----------
+  add('velocidad','Cinética química y velocidad de reacción','CLASE 13/10 · 01',`
+<p>La <b>cinética química</b> es la parte de la química que estudia la <b>velocidad de las reacciones</b>: qué tan rápido desaparecen los reactivos y aparecen los productos, y de qué depende esa rapidez.</p>
+<p>En la carpeta, la velocidad se presenta primero como el <b>cambio de la cantidad de moles por unidad de tiempo</b>, y enseguida como cambio de <b>concentración</b> por unidad de tiempo, dividido por el coeficiente estequiométrico:</p>
+${chain([R`v=\frac{\Delta n}{\Delta t}`,'Δn: diferencia de número de moles'],[R`v=\frac{1}{\nu_i}\cdot\frac{\Delta C_i}{\Delta t}`,'νᵢ: coeficiente estequiométrico de la especie i'])}
+<p>Es decir:</p>
+${key(R`v=\frac{\text{cambio de concentración}}{\text{cambio de tiempo}}`,'Velocidad de reacción')}
+<p>Con la concentración en mol/L (M) y el tiempo en segundos, la velocidad queda en <b>M/s</b> (mol·L⁻¹·s⁻¹). ${simple('Si el tiempo está en minutos, queda en M/min: así aparece en el ejercicio 8 de la guía')}</p>
+${fix('Sobre “siempre se expresa en M/s”',`<p>El material de la guía dice que la velocidad “siempre se expresa en M/s”. Vale cuando el tiempo está en segundos; la unidad general es <b>concentración / tiempo</b>. En la guía aparecen también mol dm⁻³ s⁻¹ (que es lo mismo que M/s) y mol dm⁻³ min⁻¹.</p>`)}
+<h3>Expresiones de velocidad según la estequiometría</h3>
+<p>Para una reacción general:</p>
+${M(R`aA+bB\rightarrow cC+dD`)}
+${key(R`v=-\frac{1}{a}\frac{d[A]}{dt}=-\frac{1}{b}\frac{d[B]}{dt}=\frac{1}{c}\frac{d[C]}{dt}=\frac{1}{d}\frac{d[D]}{dt}`,'La fórmula más importante de la primera parte')}
+<h4>¿Por qué es así?</h4>
+<ul class="kitList">
+ <li>Los <b>reactivos disminuyen</b>: su variación es negativa, por eso llevan <b>signo −</b> (así la velocidad da positiva).</li>
+ <li>Los <b>productos aumentan</b>: llevan <b>signo +</b>.</li>
+ <li>Se <b>divide por el coeficiente estequiométrico</b> porque la velocidad de la reacción es una sola, pero las concentraciones cambian en proporciones fijas según los coeficientes.</li>
+</ul>
+${note('Δ o d: velocidad media o instantánea',`<p>En la carpeta se escribe con Δ (Δ[ ]/Δt): es la <b>velocidad media</b> en un intervalo. En la guía se escribe con d (d[ ]/dt): es la <b>velocidad instantánea</b>, el límite cuando el intervalo se hace muy chico. ${simple('Gráficamente, la media es la pendiente de una recta entre dos puntos; la instantánea, la pendiente de la tangente en un punto')} Para escribir las expresiones de velocidad, las dos se arman igual.</p>`)}
+<h3>Velocidad de desaparición y de formación</h3>
+<p>Antes de dividir por los coeficientes, cada especie tiene su propia velocidad:</p>
+${chain([R`v(A)=-\frac{d[A]}{dt}`,'velocidad de desaparición de un reactivo'],[R`v(P)=+\frac{d[P]}{dt}`,'velocidad de formación de un producto'])}
+<p>Recién al dividirlas por su coeficiente todas dan el mismo número: la <b>velocidad de la reacción</b>.</p>
+`);
+
+  // ---------- 2. Primeros ejemplos de la carpeta ----------
+  add('ejemplos','Primeros ejemplos: Na + Cl₂ y descomposición del N₂O₅','CLASE 13/10 · 02',`
+<h3>1) Sodio y cloro</h3>
+<p>En la carpeta: <b>“Balancear se necesita”</b>. Antes de escribir velocidades, la ecuación tiene que estar balanceada:</p>
+${M(R`2\,\mathrm{Na_{(s)}}+\mathrm{Cl_{2(g)}}\rightarrow2\,\mathrm{NaCl_{(s)}}`)}
+${chain([R`v_{\mathrm{Na}}=-\frac12\cdot\frac{\Delta[\mathrm{Na}]}{\Delta t}`],[R`v_{\mathrm{Cl_2}}=-1\cdot\frac{\Delta[\mathrm{Cl_2}]}{\Delta t}`],[R`v_{\mathrm{NaCl}}=\frac12\cdot\frac{\Delta[\mathrm{NaCl}]}{\Delta t}`])}
+<p>Anotación de la carpeta: <b>v<sub>NaCl</sub> = v<sub>Na</sub> = v<sub>Cl₂</sub></b>. Una vez divididas por los coeficientes, las tres expresiones dan la misma velocidad de reacción.</p>
+${fix('Coeficiente del NaCl',`<p>En la carpeta se lee “2 Na + Cl₂ → NaCl”. Falta el <b>2</b> delante del NaCl para que quede balanceada; por eso la expresión del NaCl lleva ½.</p>`)}
+${note('Un detalle para más adelante',`<p>Na y NaCl son sólidos: en la práctica, la velocidad se sigue con especies en solución o en fase gaseosa, cuya concentración sí cambia. El ejemplo sirve para practicar cómo se arman los signos y los coeficientes.</p>`)}
+
+<h3>Ejercicio: calcular la velocidad de reacción</h3>
+<p>Descomposición del pentóxido de dinitrógeno:</p>
+${M(R`\mathrm{N_2O_{5(g)}}\rightarrow2\,\mathrm{NO_{2(g)}}+\tfrac12\,\mathrm{O_{2(g)}}`)}
+<p>En la carpeta: <b>“Balancear las ecuaciones: se sabe que se forma 0,5 mol de O₂”</b> (por cada mol de N₂O₅).</p>
+${table(['t (s)','[N₂O₅] (M)','[NO₂] (M)','[O₂] (M)'],[['0','2,15','0','0'],['4000','1,88','0,54','0,135'],['8000','1,64','1,02','0,255'],['12000','1,43','1,44','0,36'],['16000','1,25','1,80','0,45']])}
+${fix('Sobre la tabla de la carpeta',`<p>Las columnas de NO₂ y O₂ se leen claras y respetan la proporción 2 : ½ (el O₂ es siempre la cuarta parte del NO₂). En cambio, la columna del N₂O₅ en la foto no baja de forma pareja (se lee 1,88; 1,28; 1,64; 1,43; 1,35). Como por cada mol de NO₂ que se forma se gasta medio mol de N₂O₅, los valores de esa columna se recalcularon a partir del NO₂: <b>[N₂O₅] = 2,15 − ½·[NO₂]</b>. Los datos de t = 0 y t = 4000 s, que son los que se usan en la cuenta, coinciden con la carpeta.</p>`)}
+${step('1. Expresión de la velocidad',chain(R`v=-\frac{\Delta[\mathrm{N_2O_5}]}{\Delta t}=\frac12\frac{\Delta[\mathrm{NO_2}]}{\Delta t}=2\,\frac{\Delta[\mathrm{O_2}]}{\Delta t}`))}
+${step('2. Con el reactivo (0 → 4000 s)',chain(R`v=-\frac{1{,}88-2{,}15}{4000-0}\ \mathrm{\frac{M}{s}}`,R`v=\frac{0{,}27}{4000}\ \mathrm{\frac{M}{s}}`,R`v=6{,}75\cdot10^{-5}\ \mathrm{M/s}`))}
+${step('3. Control con los productos',chain([R`v=\frac12\cdot\frac{0{,}54-0}{4000-0}=6{,}75\cdot10^{-5}\ \mathrm{M/s}`,'con NO₂'],[R`v=2\cdot\frac{0{,}135-0}{4000-0}=6{,}75\cdot10^{-5}\ \mathrm{M/s}`,'con O₂']))}
+${note('Resultado',`<p>Con cualquiera de las tres especies, la velocidad media entre 0 y 4000 s es <b>v = 6,75 · 10⁻⁵ M/s</b>, el mismo valor que en la carpeta.</p>`)}
+${fix('Sobre los coeficientes y las unidades de la carpeta',`<p>En la hoja 2 la expresión aparece como “−½ Δ[N₂O₅]/Δt = ½ Δ[NO₂]/Δt = Δ[O₂]/Δt”, con los coeficientes repasados en rojo. El resultado 6,75 · 10⁻⁵ que figura en la carpeta corresponde a escribir la ecuación <b>por 1 mol de N₂O₅</b>, como arriba. Si en cambio se escribe <b>2 N₂O₅ → 4 NO₂ + O₂</b>, la expresión es ${m(R`v=-\tfrac12\tfrac{\Delta[\mathrm{N_2O_5}]}{\Delta t}=\tfrac14\tfrac{\Delta[\mathrm{NO_2}]}{\Delta t}=\tfrac{\Delta[\mathrm{O_2}]}{\Delta t}`)} y da la mitad: 3,38 · 10⁻⁵ M/s. ${simple('La velocidad “de la reacción” depende de cómo se escribió la ecuación; la velocidad con que se gasta o se forma cada sustancia, no')} La unidad correcta es <b>M/s</b> (mol·L⁻¹·s⁻¹), no “mol/seg”, porque se usan concentraciones.</p>`)}
+<h4>La velocidad no es constante</h4>
+<p>Si se repite la cuenta en cada intervalo de la tabla, la velocidad media va bajando: a medida que se gasta el reactivo, la reacción se hace más lenta.</p>
+${table(['Intervalo (s)','−Δ[N₂O₅] (M)','v media (M/s)'],[['0 – 4000','0,27','6,75 · 10⁻⁵'],['4000 – 8000','0,24','6,00 · 10⁻⁵'],['8000 – 12000','0,21','5,25 · 10⁻⁵'],['12000 – 16000','0,18','4,50 · 10⁻⁵']])}
+${calc('qgRate','Velocidad media a partir de una tabla',`<label><span>Especie</span><select name="kind"><option value="r">Reactivo (signo −)</option><option value="p">Producto (signo +)</option></select></label>`+field('c1','[ ] en t₁ (M)',2.15)+field('c2','[ ] en t₂ (M)',1.88)+field('t1','t₁ (s)',0)+field('t2','t₂ (s)',4000)+field('nu','coeficiente',1),'Viene cargado con el N₂O₅ entre 0 y 4000 s.')}
+`);
+
+  // ---------- 3. Ejercicio N.º 2 de la carpeta ----------
+  add('expresar','Expresar velocidades con ecuaciones a balancear','CARPETA · EJERCICIO N.º 2 · 03',`
+<p><b>Consigna de la carpeta:</b> “Dadas las siguientes ecuaciones expresar las velocidades de reacción según corresponda. Balancear por método ion-electrón.”</p>
+${M(R`\text{a)}\ \ \mathrm{IO_3^-{}_{(ac)}+I^-{}_{(ac)}+H^+\rightarrow I_2+H_2O}`)}
+${M(R`\text{b)}\ \ \mathrm{H_2O_2+IO^-\rightarrow H_2O+O_2+I^-}`)}
+${M(R`\text{c)}\ \ \mathrm{HCrO_4^-+3\,HSO_3^-+5\,H^+\rightarrow Cr^{3+}+3\,SO_4^{2-}+5\,H_2O}`)}
+${fix('Sobre el inciso c)',`<p>En la carpeta las cargas y el coeficiente del cromo no se distinguen bien (se lee algo como “2 Cr”). El cromo del producto es el ion <b>Cr³⁺</b>, y para balancear hace falta un <b>2</b> también delante del HCrO₄⁻ (ver abajo).</p>`)}
+${note('Método',`<ol class="kitList"><li>Balancear la ecuación (ion-electrón).</li><li>Escribir cada especie con signo − (reactivo) o + (producto).</li><li>Dividir por su coeficiente.</li></ol><p>El <b>agua</b>, cuando es el solvente, casi no cambia su concentración: por eso en general no se usa para seguir la velocidad. Igual se puede escribir.</p>`)}
+${example('a) Iodato con ioduro en medio ácido','',
+ step('Semirreacciones',chain([R`\mathrm{2\,IO_3^-+12\,H^++10\,e^-\rightarrow I_2+6\,H_2O}`,'reducción: el I pasa de +5 a 0'],[R`\mathrm{2\,I^-\rightarrow I_2+2\,e^-}\quad(\times5)`,'oxidación: el I pasa de −1 a 0'],[R`\mathrm{2\,IO_3^-+10\,I^-+12\,H^+\rightarrow6\,I_2+6\,H_2O}`,'sumo y simplifico por 2']))+
+ step('Ecuación balanceada',M(R`\mathrm{IO_3^-+5\,I^-+6\,H^+\rightarrow3\,I_2+3\,H_2O}`))+
+ step('Velocidad',M(R`v=-\frac{\Delta[\mathrm{IO_3^-}]}{\Delta t}=-\frac15\frac{\Delta[\mathrm{I^-}]}{\Delta t}=-\frac16\frac{\Delta[\mathrm{H^+}]}{\Delta t}=\frac13\frac{\Delta[\mathrm{I_2}]}{\Delta t}`)),
+ 'IO₃⁻ + 5 I⁻ + 6 H⁺ → 3 I₂ + 3 H₂O')}
+${example('b) Agua oxigenada con hipoiodito','',
+ step('Ya está balanceada',`<p>Contando átomos: H 2 = 2; O 3 = 3; I 1 = 1; carga −1 = −1. El hipoiodito (IO⁻) existe en medio básico; con semirreacciones en medio básico se llega a la misma ecuación:</p>`+chain([R`\mathrm{IO^-+H_2O+2\,e^-\rightarrow I^-+2\,OH^-}`,'reducción: I de +1 a −1'],[R`\mathrm{H_2O_2+2\,OH^-\rightarrow O_2+2\,H_2O+2\,e^-}`,'oxidación: O de −1 a 0'],[R`\mathrm{H_2O_2+IO^-\rightarrow H_2O+O_2+I^-}`,'sumo y cancelo']))+
+ step('Velocidad',M(R`v=-\frac{\Delta[\mathrm{H_2O_2}]}{\Delta t}=-\frac{\Delta[\mathrm{IO^-}]}{\Delta t}=\frac{\Delta[\mathrm{O_2}]}{\Delta t}=\frac{\Delta[\mathrm{I^-}]}{\Delta t}`)),
+ 'Todos los coeficientes son 1')}
+${example('c) Cromato ácido con hidrogenosulfito','',
+ step('Semirreacciones',chain([R`\mathrm{HCrO_4^-+7\,H^++3\,e^-\rightarrow Cr^{3+}+4\,H_2O}\quad(\times2)`,'reducción: Cr de +6 a +3'],[R`\mathrm{HSO_3^-+H_2O\rightarrow SO_4^{2-}+3\,H^++2\,e^-}\quad(\times3)`,'oxidación: S de +4 a +6']))+
+ step('Sumo (6 electrones) y simplifico H⁺ y H₂O',M(R`\mathrm{2\,HCrO_4^-+3\,HSO_3^-+5\,H^+\rightarrow2\,Cr^{3+}+3\,SO_4^{2-}+5\,H_2O}`)+`<p>Control: carga −2 − 3 + 5 = 0 a la izquierda y +6 − 6 = 0 a la derecha.</p>`)+
+ step('Velocidad',M(R`v=-\frac12\frac{\Delta[\mathrm{HCrO_4^-}]}{\Delta t}=-\frac13\frac{\Delta[\mathrm{HSO_3^-}]}{\Delta t}=-\frac15\frac{\Delta[\mathrm{H^+}]}{\Delta t}=\frac12\frac{\Delta[\mathrm{Cr^{3+}}]}{\Delta t}=\frac13\frac{\Delta[\mathrm{SO_4^{2-}}]}{\Delta t}`)),
+ '2 HCrO₄⁻ + 3 HSO₃⁻ + 5 H⁺ → 2 Cr³⁺ + 3 SO₄²⁻ + 5 H₂O')}
+`);
+
+  // ---------- 4. Análisis gráfico (carpeta 19/10) ----------
+  add('grafico','Análisis gráfico','CLASE 19/10 · 04',`
+<p>Con la tabla del N₂O₅ se grafica la <b>concentración (M)</b> en función del <b>tiempo (s)</b>:</p>
+${figure(svgGraph,'El reactivo baja y los productos suben; las curvas se van aplanando. La línea punteada es la tangente en t = 0.')}
+<ul class="kitList">
+ <li>La curva del <b>reactivo (N₂O₅) desciende</b>: se va gastando.</li>
+ <li>Las curvas de los <b>productos (NO₂ y O₂) crecen</b> y tienden a estabilizarse.</li>
+ <li>El NO₂ crece el doble de rápido que lo que baja el N₂O₅, y el O₂ la cuarta parte que el NO₂: son los coeficientes 1 : 2 : ½.</li>
+ <li>Al principio las curvas son más empinadas: la reacción es <b>más rápida al comienzo</b>, cuando hay más reactivo.</li>
+</ul>
+<h3>Media e instantánea en el gráfico</h3>
+<p>La <b>velocidad media</b> entre dos tiempos es la pendiente de la recta que une esos dos puntos de la curva. La <b>velocidad instantánea</b> en un tiempo es la pendiente de la <b>recta tangente</b> a la curva en ese punto (la línea punteada, en t = 0). ${simple('Por eso la velocidad inicial es la más grande: es donde la curva está más inclinada')}</p>
+${fix('Sobre los rótulos del gráfico de la carpeta',`<p>En el gráfico de la carpeta una de las curvas de abajo parece rotulada “N₂O₃”. En esta reacción solo intervienen <b>N₂O₅, NO₂ y O₂</b>: las curvas inferiores corresponden al O₂.</p>`)}
+`);
+
+  // ---------- 5. Ley empírica de velocidad y órdenes ----------
+  add('ley','Ley empírica de velocidad y órdenes de reacción','CLASE 19/10 · 05',`
+<p>La velocidad depende de las <b>concentraciones de los reactivos</b>. La relación entre ambas es la <b>ley de velocidad</b>, y es <b>empírica</b>: se determina con datos experimentales.</p>
+<p>Para una reacción</p>
+${M(R`aA+bB\rightarrow\text{productos}`)}
+${key(R`v=k\,[A]^m\,[B]^n`,'Ley de velocidad')}
+${sym([['k','constante de velocidad (depende de la temperatura)','según el orden'],['m, n','órdenes parciales respecto de A y de B','sin unidad'],['m + n','orden total (orden global)','sin unidad'],[R`[A],[B]`,'concentraciones molares de los reactivos','M']])}
+${fix('Sobre cómo quedó escrita en la carpeta',`<p>En la carpeta se lee “Vel = k · d[A]/dt”, con flechas a “cte de velocidad”, “diferencia de conc.” y “diferencia de tiempo”. Son dos ideas distintas mezcladas: <b>d[A]/dt</b> es la definición de velocidad (sección 01), y la <b>ley de velocidad</b> dice de qué depende esa velocidad: ${m(R`v=k[A]^m[B]^n`)}. La anotación debajo de k (“a temperaturas diferentes, una cte de velocidad distinta”) sí es correcta: <b>k cambia con la temperatura</b>.</p>`)}
+${note('Los órdenes NO salen de la ecuación química',`<p>Los exponentes m y n <b>se miden</b>; no son, en general, los coeficientes estequiométricos. El orden respecto de cada reactivo es un parámetro experimental y suele ser un número entero o racional (0, 1, 2, ½…). ${ref('afirmación ii del ejercicio 6')}</p>`)}
+<h3>Órdenes de velocidad</h3>
+<p>El <b>orden global</b> es la <b>suma de los órdenes</b> respecto de cada reactivo.</p>
+${table(['Ley de velocidad','Orden global'],[[m(R`v=k`),'0'],[m(R`v=k[A]`),'1'],[m(R`v=k[A][B]`),'2 (1 + 1)'],[m(R`v=k[A]^2`),'2'],[m(R`v=k[A][B]^{1/2}`),'3/2 (1 + ½)']])}
+${fix('Sobre la tabla de órdenes de la carpeta',`<p>Dos filas se leen con dudas: “Vel = [A]⁰ → 1” y “Vel = ([A]·[B])<sup>1/2</sup> → 3/2”. Para orden 1 la ley es <b>v = k[A]</b> (exponente 1; [A]⁰ = 1 daría orden 0). Y ([A][B])<sup>1/2</sup> tendría orden ½ + ½ = 1; un ejemplo de orden 3/2 es <b>v = k[A][B]<sup>1/2</sup></b>. Además, todas las leyes llevan la constante k.</p>`)}
+<h3>Cómo descubrir los órdenes (m y n)</h3>
+<p>Se usa el <b>método de comparación de experimentos</b>: se comparan dos experimentos en los que <b>cambia una sola concentración</b> y se mira cuánto cambia la velocidad. ${ref('ejercicios 7, 8, 9 y 10')}</p>
+${table(['Si duplicar [A]…','el orden en A es'],[['no cambia v','0'],['duplica v','1'],['cuadruplica v','2']])}
+<p>En general: si [A] se multiplica por f y v se multiplica por f<sup>m</sup>, el orden es m. ${simple('Triplicar [A] y que v se triplique también es orden 1')}</p>
+<h3>Unidades de la constante k</h3>
+<p>Como v está en M/s y las concentraciones en M, las unidades de k dependen del orden total:</p>
+${table(['Orden total','Ley','Unidades de k'],[['0',m(R`v=k`),'M/s'],['1',m(R`v=k[A]`),'s⁻¹'],['2',m(R`v=k[A]^2`),'M⁻¹ s⁻¹'],['3',m(R`v=k[A]^2[B]`),'M⁻² s⁻¹']])}
+${chain([R`[k]=\frac{\mathrm{M/s}}{\mathrm{M}^{\text{orden total}}}=\mathrm{M}^{\,1-\text{orden total}}\,\mathrm{s}^{-1}`,'regla general'])}
+<h3>Cómo encontrar k</h3>
+<p>Si se conocen la velocidad y las concentraciones de un experimento:</p>
+${key(R`k=\frac{v}{[A]^m\,[B]^n}`,'Despeje de k')}
+${calc('qgLaw','Ley de velocidad',field('k','k',3.408)+field('a','[A] (M)',0.3)+field('mo','orden m',1,'0.5')+field('b','[B] (M)',0.3)+field('no','orden n',1,'0.5'),'Viene cargado con el ejercicio 8 b.')}
+`);
+
+  // ---------- 6. Mecanismos de reacción ----------
+  add('mecanismos','Mecanismos de reacción','CLASE 19/10 · 06',`
+<p>Muchas reacciones no ocurren en un solo choque, sino en varios <b>pasos</b>. El conjunto de pasos es el <b>mecanismo de reacción</b>. Sumando los pasos se obtiene la <b>ecuación global</b>.</p>
+<p>En los ejemplos de la carpeta, R, R′ y R″ son <b>cadenas hidrocarbonadas</b>.</p>
+<h3>Vocabulario</h3>
+${table(['Término','Qué es'],[['<b>Nucleófilo</b> (Nu⁻)','Especie con un par de electrones disponible que “busca” un centro positivo (carga − o un par libre, como en el NH₃).'],['<b>Electrófilo</b> (E⁺)','Especie con defecto de electrones que “busca” electrones (carga + o parcial +, como el carbocatión R₃C⁺).'],['<b>Carbocatión</b>','Carbono con solo tres enlaces y carga positiva.'],['<b>Intermediario de reacción</b>','Especie que se genera en un paso de reacción y se consume en el siguiente: no aparece en la ecuación global.']])}
+${fix('Sobre las anotaciones de la carpeta',`<p>Junto al Br⁻ se lee “especie que se disocia, es un electrófilo”. El Br⁻ es el <b>grupo saliente</b> (se lleva el par de electrones del enlace); el <b>electrófilo</b> es el carbocatión R₃C⁺. Junto a “NH₃ ⇌ NH₄⁺” figuran “nucleófilo / electrófilo”: el <b>NH₃</b> es un nucleófilo neutro porque tiene un par de electrones libre; cuando lo usa para tomar un H⁺, se forma el NH₄⁺.</p>`)}
+<h3>2) Sustitución</h3>
+<p>Un grupo de la molécula (Br) es reemplazado por otro (el nucleófilo). Ocurre en dos pasos:</p>
+${chain([R`\mathrm{R_3C{-}Br\rightleftharpoons R_3C^++Br^-}`,'paso 1: se rompe el enlace C–Br y queda un carbocatión'],[R`\mathrm{R_3C^++Nu^-\rightarrow R_3C{-}Nu}`,'paso 2: el nucleófilo se une al carbocatión'])}
+<p>El enlace C–Br está polarizado: el C tiene carga parcial positiva (δ+) y el Br, carga parcial negativa (δ−).</p>
+${key(R`\mathrm{R_3C{-}Br+Nu^-\rightarrow R_3C{-}Nu+Br^-}`,'Ecuación global · reacción de sustitución')}
+<p><b>Intermediario de reacción:</b> el carbocatión R₃C⁺ (se forma en el paso 1 y se gasta en el 2).</p>
+${note('Conexión con la ley de velocidad',`<p>Si el paso 1 es el <b>lento</b>, es el que manda en la velocidad: la velocidad depende solo de [R₃C–Br] y no del nucleófilo. Es exactamente lo que se mide en el <b>ejercicio 7</b> de la guía: el (CH₃)₃CBr con OH⁻ tiene <b>orden 1</b> en el bromuro y <b>orden 0</b> en el OH⁻ (sustitución SN1). ${simple('Por eso los órdenes se miden: la ecuación global tiene OH⁻, pero la velocidad no depende de él')}</p>`)}
+<h3>Ejercicio N.º 2 de la carpeta: adición</h3>
+<p><b>Consignas:</b> 1) escribir la ecuación global; 2) identificar si hay algún intermediario de reacción; 3) indicar qué tipo de reacción es.</p>
+${chain([R`\mathrm{{>}C{=}C{<}+E^+\rightarrow{-}\overset{|}{\underset{|}{C}}(E){-}C^+{<}}`,'paso 1: el electrófilo se une a uno de los carbonos del doble enlace'],[R`\mathrm{{-}\overset{|}{\underset{|}{C}}(E){-}C^+{<}+Nu^-\rightarrow{-}\overset{|}{\underset{|}{C}}(E){-}\overset{|}{\underset{|}{C}}(Nu){-}}`,'paso 2: el nucleófilo se une al carbocatión'])}
+${example('Respuestas del ejercicio','',
+ step('1. Ecuación global',M(R`\mathrm{{>}C{=}C{<}+E^++Nu^-\rightarrow{-}C(E){-}C(Nu){-}}`)+`<p>Se suman los pasos y se cancela lo que aparece a los dos lados. Anotación de la carpeta: <b>igual cantidad de reactivos con igual cantidad de productos</b> (la ecuación global queda balanceada).</p>`)+
+ step('2. Intermediario',`<p>El <b>carbocatión</b>: se forma en el paso 1 y se consume en el 2.</p>`)+
+ step('3. Tipo de reacción',`<p>Es una <b>adición</b>: dos sustancias se transforman en un único producto nuevo. No es una sustitución, porque no sale ningún grupo de la molécula.</p>`),
+ 'Adición · intermediario: carbocatión')}
+${table(['','Sustitución','Adición'],[['Qué pasa','Un grupo sale y otro entra en su lugar','Se rompe el doble enlace y se suman dos grupos'],['Ejemplo de la carpeta','R₃C–Br + Nu⁻ → R₃C–Nu + Br⁻','C=C + E⁺ + Nu⁻ → E–C–C–Nu'],['Intermediario','carbocatión','carbocatión']])}
+`);
+
+  // ---------- 7. Factores y catalizadores ----------
+  add('factores','Factores que modifican la velocidad y catalizadores','GUÍA · 07',`
+<p>Para que una reacción ocurra, las partículas tienen que <b>chocar</b> con <b>energía suficiente</b> (al menos la <b>energía de activación</b>, E<sub>a</sub>) y con la orientación adecuada: son los <b>choques efectivos</b>.</p>
+${table(['Factor','Efecto sobre la velocidad','Por qué'],[['Concentración de reactivos','Aumenta (si el orden respecto de ese reactivo no es 0)','Más partículas por volumen: más choques por segundo. Lo describe la ley de velocidad.'],['Temperatura','Aumenta','Mayor energía cinética: más choques y más choques con energía ≥ E<sub>a</sub>. Aumenta k.'],['Catalizador','Aumenta','Ofrece otro camino (mecanismo) con menor energía de activación.']])}
+<h3>Catalizadores</h3>
+<ul class="kitList">
+ <li><b>Cambian la velocidad</b> porque modifican el mecanismo: proveen un camino alternativo.</li>
+ <li><b>Disminuyen la energía de activación.</b></li>
+ <li><b>No cambian la constante de equilibrio</b> (ni el estado inicial y final): reactivos y productos quedan en el mismo nivel de energía.</li>
+ <li>No se consumen en la reacción global.</li>
+</ul>
+${figure(svgEnergy,'Con catalizador (línea punteada) la barrera es más baja; reactivos y productos no cambian.')}
+${note('Ejemplos de la guía (ejercicio 9.11)',`<p><b>Jugo de manzana en frío:</b> la fermentación es una reacción catalizada por enzimas; a menor temperatura es más lenta. <b>Madera en oxígeno puro:</b> la combustión depende de la concentración de O₂, que es mayor en oxígeno puro que en el aire (x(O₂) ≈ 0,21).</p>`)}
+`);
+
+  // ---------- 8. Hoja de fórmulas ----------
+  add('formulas','Hoja de fórmulas','PARA IMPRIMIR · 08',`
+${note('Velocidad estequiométrica general','')}
+${M(R`v=-\frac{1}{a}\frac{d[A]}{dt}=-\frac{1}{b}\frac{d[B]}{dt}=\frac{1}{c}\frac{d[C]}{dt}=\frac{1}{d}\frac{d[D]}{dt}`)}
+${note('Ley de velocidad, orden total y k','')}
+${chain([R`v=k[A]^m[B]^n`,'ley de velocidad'],[R`\text{orden total}=m+n`],[R`k=\frac{v}{[A]^m[B]^n}`])}
+${note('Unidades de k (tiempo en s)','<p>Orden 0: M/s · Orden 1: s⁻¹ · Orden 2: M⁻¹ s⁻¹.</p>')}
+${note('Regla experimental para órdenes','<p>Duplicar [A]: si v no cambia → orden 0; si v se duplica → orden 1; si v se cuadruplica → orden 2.</p>')}
+${note('Concentración en función del tiempo (solo por si lo piden)','')}
+${chain([R`[A]=[A]_0-kt`,'orden 0'],[R`\ln[A]=\ln[A]_0-kt`,'orden 1'],[R`\frac{1}{[A]}=\frac{1}{[A]_0}+kt`,'orden 2'])}
+${note('Diluciones y titulaciones (segunda hoja)','')}
+${chain([R`C_1V_1=C_2V_2`],[R`FD=\frac{V_2}{V_1}`],[R`M_1V_1=M_2V_2`,'titulación con relación 1 : 1'])}
+`);
+
+  // ---------- 9. Apoyo: diluciones y titulaciones ----------
+  add('apoyo','Repaso de apoyo: diluciones y titulaciones','SEGUNDA HOJA DE LA GUÍA · 09',`
+<p>El material de la guía incluye, para la segunda hoja, dos herramientas de soluciones que conviene tener a mano.</p>
+<h3>Diluciones</h3>
+<p>Al diluir, la cantidad de soluto no cambia: solo se agrega solvente.</p>
+${chain([R`n=C_1V_1=C_2V_2`,'fórmula base'],[R`FD=\frac{V_2}{V_1}=\frac{C_1}{C_2}`,'factor de dilución'])}
+<h3>Titulaciones</h3>
+<p>En el punto de equivalencia de una titulación ácido-base con relación 1 : 1:</p>
+${chain([R`n(\text{ácido})=n(\text{base})`],[R`n=M\cdot V`],[R`M_1V_1=M_2V_2`])}
+${fix('Cuándo vale M₁V₁ = M₂V₂',`<p>Solo si el ácido y la base reaccionan mol a mol (por ejemplo, HCl + NaOH). Si la relación es otra (H₂SO₄ + 2 NaOH), hay que usar los coeficientes: ${m(R`n_{\mathrm{NaOH}}=2\,n_{\mathrm{H_2SO_4}}`)}.</p>`)}
+<p>No siempre se usa un indicador de pH para detectar el punto final: a veces se usan electrodos (potenciometría), conductimetría, etc.</p>
+`);
+
+  // ---------- 10. Guía ----------
+  add('guia','Guía de ejercitación resuelta','GUÍA DE CINÉTICA · 10',`
+<p>Los ejercicios de la <b>guía de Cinética química</b>, con las consignas tal como están en la hoja. Se conserva la numeración original (incluidas las etiquetas «iv.» y «v.» del ejercicio 7 y «9.11» de la última consigna). Intentá cada uno antes de abrir la resolución.</p>
+${note('Método para los ejercicios de órdenes',`<ol class="kitList"><li>Buscá dos experimentos donde cambie <b>una sola</b> concentración.</li><li>Calculá por cuánto se multiplicó la concentración y por cuánto la velocidad.</li><li>Deducí el orden; repetí con el otro reactivo.</li><li>Armá la ley y despejá k con cualquier experimento.</li></ol>`)}
+<div data-qg-guide></div>
+`);
+
+  // ---------- 11. Tarjetas ----------
+  add('repaso','Tarjetas de repaso','PARA MEMORIZAR · 11',`
+<p>Respondé antes de dar vuelta. Si dudás, volvé a la sección correspondiente.</p>
+${cards([
+ ['Concepto','¿Qué estudia la cinética química?','La velocidad de las reacciones y de qué depende.'],
+ ['Signos','¿Por qué los reactivos llevan signo −?','Porque su concentración disminuye (Δ[ ] negativa); con el signo − la velocidad da positiva.'],
+ ['Coeficientes','¿Por qué se divide por el coeficiente?','Para que todas las especies den la misma velocidad de reacción.'],
+ ['Unidades','Unidad de la velocidad','Concentración / tiempo: M/s (mol·L⁻¹·s⁻¹) si el tiempo está en segundos.'],
+ ['Media vs. instantánea','¿Qué es cada una en el gráfico?','Media: pendiente de la recta entre dos puntos. Instantánea: pendiente de la tangente.'],
+ ['Ley de velocidad','v = ?','v = k[A]<sup>m</sup>[B]<sup>n</sup>. m y n se miden: no salen de la ecuación.'],
+ ['Órdenes','Duplico [A] y v se cuadruplica','Orden 2 respecto de A.'],
+ ['Órdenes','Duplico [A] y v no cambia','Orden 0 respecto de A.'],
+ ['Unidades de k','Orden 0, 1 y 2','M/s · s⁻¹ · M⁻¹ s⁻¹.'],
+ ['Mecanismos','Intermediario de reacción','Se forma en un paso y se consume en el siguiente; no está en la ecuación global.'],
+ ['Mecanismos','Sustitución vs. adición','Sustitución: un grupo sale y otro entra. Adición: dos sustancias forman un único producto.'],
+ ['Catalizador','¿Qué cambia y qué no?','Baja la Eₐ y acelera la reacción. No cambia la constante de equilibrio ni se consume.']
+])}
+`);
+
+  // ---------- Ejercicios de la guía ----------
+  const exercises=[];
+  const ex=(n,title,statement,solution,answer)=>exercises.push({n,title,statement,solution,answer});
+  const given=html=>note('Resolución aportada',html||'<p>Desarrollo del material entregado con la guía.</p>');
+  const official=t=>note('Hoja de respuestas',`<p>${t}</p>`);
+
+  ex(1,'Expresiones de velocidad',
+   `<p>Escribir las expresiones de velocidad para las reacciones siguientes, en función del cambio de concentración de los reactivos y de los productos:</p>
+<p>a) H₂ (g) + I₂ (g) → 2HI (g)</p>
+<p>b) 5Br⁻ (ac) + BrO₃⁻ (ac) + 6H⁺ (ac) → 3Br₂ (ac) + 3H₂O (l)</p>
+<p>c) 2 H₂ (g) + O₂ (g) → 2 H₂O (g)</p>
+<p>d) 4NH₃ (g) + 5O₂ (g) → 4NO (g) + 6H₂O (g)</p>`,
+   step('a) H₂ (g) + I₂ (g) → 2HI (g)','<p>Aplicamos la definición general de velocidad estequiométrica. Los reactivos llevan signo negativo porque su concentración disminuye.</p>'+M(R`v=-\frac{d[H_2]}{dt}=-\frac{d[I_2]}{dt}=\frac{1}{2}\frac{d[HI]}{dt}`))+
+   step('b) 5Br⁻ (ac) + BrO₃⁻ (ac) + 6H⁺ (ac) → 3Br₂ (ac) + 3H₂O (l)','<p>Dividimos cada derivada por su coeficiente para que todas representen la misma velocidad de reacción.</p>'+M(R`v=-\frac{1}{5}\frac{d[Br^-]}{dt}=-\frac{d[BrO_3^-]}{dt}=-\frac{1}{6}\frac{d[H^+]}{dt}=\frac{1}{3}\frac{d[Br_2]}{dt}=\frac{1}{3}\frac{d[H_2O]}{dt}`))+
+   step('c) 2H₂ (g) + O₂ (g) → 2H₂O (g)','<p>Misma lógica: signo negativo en reactivos, positivo en productos.</p>'+M(R`v=-\frac{1}{2}\frac{d[H_2]}{dt}=-\frac{d[O_2]}{dt}=\frac{1}{2}\frac{d[H_2O]}{dt}`))+
+   step('d) 4NH₃ (g) + 5O₂ (g) → 4NO (g) + 6H₂O (g)','<p>Cada término se divide por su coeficiente estequiométrico.</p>'+M(R`v=-\frac{1}{4}\frac{d[NH_3]}{dt}=-\frac{1}{5}\frac{d[O_2]}{dt}=\frac{1}{4}\frac{d[NO]}{dt}=\frac{1}{6}\frac{d[H_2O]}{dt}`))+
+   note('Observación','<p>En b) el H₂O es líquido y es el solvente: su concentración prácticamente no cambia, por lo que en la práctica no se usa para seguir la velocidad.</p>'),
+   'Signo − en reactivos, + en productos, cada término dividido por su coeficiente');
+
+  ex(2,'Velocidades a partir de v<sub>NO</sub>',
+   `<p>Considerar la reacción</p><p>2NO (g) + O₂ (g) → 2NO₂ (g)</p><p>y suponer que, en un instante dado y a cierta temperatura, la vNO = −0,0660 M/s. Calcular:</p><p>a) vNO₂ ; b) vO₂ ; c) la velocidad de la reacción en tales condiciones.</p>`,
+   step('Velocidad de reacción','<p>Primero convertimos la velocidad de desaparición de NO en velocidad de reacción usando su coeficiente 2.</p>'+chain(R`v=-\frac{1}{2}\frac{d[NO]}{dt}`,R`v=-\frac{1}{2}(-0{,}0660)=0{,}0330\ \mathrm{M/s}`))+
+   step('c) Velocidad de reacción',M(R`v=0{,}0330\ \mathrm{M/s}`))+
+   step('a) Para NO₂ (coeficiente 2)',chain(R`v=\frac{1}{2}\frac{d[NO_2]}{dt}`,R`\frac{d[NO_2]}{dt}=2v=0{,}0660\ \mathrm{M/s}`))+
+   step('b) Para O₂ (coeficiente 1)',chain(R`v=-\frac{d[O_2]}{dt}`,R`\frac{d[O_2]}{dt}=-v=-0{,}0330\ \mathrm{M/s}`))+
+   official('9.2: a) 0,0660 M/s; b) −0,0330 M/s; c) 0,0330 M/s.'),
+   'a) 0,0660 M/s; b) −0,0330 M/s; c) 0,0330 M/s');
+
+  ex(3,'Velocidades a partir de v<sub>O₂</sub>',
+   `<p>Considerar la reacción:</p><p>O₂ (g) + 2CO (g) → 2CO₂ (g)</p><p>y suponer que, en un instante dado y a cierta temperatura, la vO₂ = −0,0740 M/s. Calcular:</p><p>a) vCO₂ ; b) vCO; c) la velocidad de la reacción en tales condiciones.</p>`,
+   step('Velocidad de reacción','<p>Primero encontramos la velocidad de reacción usando el coeficiente de O₂ (que es 1):</p>'+M(R`v=-\frac{d[O_2]}{dt}=-(-0{,}0740)=0{,}0740\ \mathrm{M/s}`))+
+   step('c) Velocidad de reacción',M(R`v=0{,}0740\ \mathrm{M/s}`))+
+   step('a) Para CO₂ (coeficiente 2)',chain(R`v=\frac{1}{2}\frac{d[CO_2]}{dt}`,R`\frac{d[CO_2]}{dt}=2v=0{,}148\ \mathrm{M/s}`))+
+   step('b) Para CO (coeficiente 2)',chain(R`v=-\frac{1}{2}\frac{d[CO]}{dt}`,R`\frac{d[CO]}{dt}=-2v=-0{,}148\ \mathrm{M/s}`))+
+   official('9.3: a) 0,148 M/s; b) −0,148 M/s; c) 0,0740 M/s.'),
+   'a) 0,148 M/s; b) −0,148 M/s; c) 0,0740 M/s');
+
+  ex(4,'Unidades de la constante de velocidad',
+   `<p>¿Cuáles son las unidades de la constante de velocidad si el tiempo se expresa en segundos y los órdenes totales son, respectivamente, cero, uno y dos?</p>`,
+   step('Relación','<p>Usamos la relación:</p>'+M(R`v=k[A]^n`)+'<p>Recordamos que v se mide en M/s y [A] en M.</p>')+
+   step('Orden 0',M(R`v=k\qquad [k]=\mathrm{M/s}`))+
+   step('Orden 1',M(R`v=k[A]\qquad [k]=\mathrm{s}^{-1}`))+
+   step('Orden 2',M(R`v=k[A]^2\qquad [k]=\mathrm{M}^{-1}\mathrm{s}^{-1}`))+
+   official('9.4: M/s, s⁻¹ y M⁻¹ s⁻¹, respectivamente.'),
+   'M/s, s⁻¹ y M⁻¹ s⁻¹');
+
+  ex(5,'Ecuación de velocidad y k',
+   `<p>La reacción:</p><p>2NO (g) + 2H₂ (g) → N₂ (g) + 2H₂O (g)</p><p>es de primer orden con respecto a H₂ y de segundo orden con respecto a NO.</p><p>i. ¿Cuál es la ecuación de velocidad?</p><p>ii. Calcular k si la velocidad es 15,0 M/s y las concentraciones de los reactivos son: [NO] = 0,0500 M y [H₂] = 0,100 M.</p>`,
+   step('i) Orden 2 en NO y 1 en H₂',M(R`v=k[NO]^2[H_2]`))+
+   step('ii) Despejamos k',chain(R`k=\frac{v}{[NO]^2[H_2]}`,R`k=\frac{15{,}0}{(0{,}0500)^2(0{,}100)}`,R`(0{,}0500)^2=0{,}00250`,R`0{,}00250\times0{,}100=0{,}000250`,R`k=\frac{15{,}0}{0{,}000250}=6{,}00\times10^4\ \mathrm{M}^{-2}\mathrm{s}^{-1}`))+
+   official('9.5: a) v = k[NO]²[H₂]; b) k = 6,00·10⁴ M⁻² s⁻¹.'),
+   'v = k[NO]²[H₂] · k = 6,00 · 10⁴ M⁻² s⁻¹');
+
+  ex(6,'Correcta o incorrecta',
+   `<p>Indicar si cada una de las afirmaciones siguientes es correcta (C) o incorrecta (I):</p><p>i. “Si la reacción es de orden uno, la velocidad es constante”.</p><p>ii. “El orden de reacción respecto de cada reactivo es un parámetro experimental y suele ser un número entero o racional”.</p><p>iii. “Un catalizador modifica la velocidad de una reacción porque le provee un camino (mecanismo) alternativo con energía de activación diferente”.</p>`,
+   step('i) Incorrecta','<p>En orden 1 la velocidad depende de la concentración y esta disminuye.</p>')+
+   step('ii) Correcta','<p>El orden siempre se obtiene experimentalmente.</p>')+
+   step('iii) Correcta','<p>Un catalizador cambia la energía de activación.</p>')+
+   official('9.6: a) I; b) C; c) C.'),
+   'i. I · ii. C · iii. C');
+
+  ex(7,'Ecuación de velocidad del (CH₃)₃CBr',
+   `<p>Se tienen los datos siguientes para la reacción del 2-bromometilpropano, (CH₃)₃CBr, con iones hidróxido a 55 °C:</p><p>(CH₃)₃CBr (l) + OH⁻ (aq) → (CH₃)₃COH (aq) + Br⁻ (aq)</p>
+${table(['Experimento','[(CH₃)₃CBr]ₜ₌₀','[OH⁻]ₜ₌₀','Veloc. inicial / mol dm⁻³ s⁻¹'],[['1','0,10','0,10','0,0010'],['2','0,20','0,10','0,0020'],['3','0,30','0,10','0,0030'],['4','0,10','0,20','0,0010'],['5','0,10','0,30','0,0010']])}
+<p>iv. Determinar la ecuación de velocidad.</p><p>v. Calcular la velocidad de la reacción si las concentraciones de los reactivos fueran ambas de 0,400 M.</p>`,
+   step('iv. 1) Orden respecto de (CH₃)₃CBr','<p>Comparamos experimentos donde solo cambia la concentración de (CH₃)₃CBr, mientras [OH⁻] permanece constante. La mejor comparación es:</p><ul class="kitList"><li>Experimento 1: [(CH₃)₃CBr] = 0,10 M; v = 0,0010.</li><li>Experimento 2: [(CH₃)₃CBr] = 0,20 M; v = 0,0020.</li></ul><p>(CH₃)₃CBr se duplica y la velocidad también se duplica. Conclusión: <b>orden 1 en (CH₃)₃CBr</b>.</p><p>También lo confirma Exp. 1 → Exp. 3: 0,10 → 0,30 (×3) y 0,0010 → 0,0030 (×3). Consistente con primer orden.</p>')+
+   step('iv. 2) Orden respecto de OH⁻','<p>Comparamos experimentos donde cambia OH⁻ y se mantiene constante (CH₃)₃CBr:</p><ul class="kitList"><li>Experimento 1: [OH⁻] = 0,10 → v = 0,0010.</li><li>Experimento 4: [OH⁻] = 0,20 → v = 0,0010.</li><li>Experimento 5: [OH⁻] = 0,30 → v = 0,0010.</li></ul><p>Aumentar OH⁻ al doble o al triple no cambia la velocidad. Conclusión: <b>orden 0 en OH⁻</b>. Este comportamiento es típico de reacciones SN1, donde la velocidad depende solo del sustrato (ver la sección “Mecanismos de reacción”).</p>')+
+   step('iv. 3) Ley de velocidad',chain(R`v=k[(CH_3)_3CBr]^1[OH^-]^0`,R`v=k[(CH_3)_3CBr]`))+
+   step('iv. 4) Calcular k','<p>Usamos cualquier experimento; elegimos el 1:</p>'+chain(R`v=0{,}0010`,R`[(CH_3)_3CBr]=0{,}10`,R`0{,}0010=k(0{,}10)`,R`k=\frac{0{,}0010}{0{,}10}`,R`k=1{,}0\times10^{-2}\ \mathrm{s}^{-1}`))+
+   step('v. Velocidad si ambas concentraciones fueran 0,400 M',chain(R`v=k[(CH_3)_3CBr]`,R`v=(1{,}0\times10^{-2}\ \mathrm{s}^{-1})(0{,}400\ \mathrm{M})`,R`v=4{,}0\times10^{-3}\ \mathrm{M/s}`,R`v=0{,}0040\ \mathrm{mol\,dm}^{-3}\mathrm{s}^{-1}`))+
+   official('9.7: a) v = 1,0×10⁻² s⁻¹ [(CH₃)₃CBr]; b) v = 0,0040 M/s.'),
+   'v = 1,0 · 10⁻² s⁻¹ · [(CH₃)₃CBr] · v = 0,0040 M/s');
+
+  ex(8,'Ecuación de velocidad del BF₃ con NH₃',
+   `<p>Se midieron los datos siguientes a 350 K para la reacción representada por la ecuación química:</p><p>BF₃(g) + NH₃(g) → BF₃NH₃(g)</p>
+${table(['Experimento','[BF₃]ₜ₌₀','[NH₃]ₜ₌₀','Veloc. inicial / mol dm⁻³ min⁻¹'],[['1','0,500','0,500','0,8520'],['2','0,500','0,250','0,4260'],['3','0,400','0,200','0,2726'],['4','0,700','0,200','0,4771'],['5','0,350','0,200','0,2386']])}
+<p>a) ¿Cuál es la ecuación de velocidad de esta reacción? ¿Y cuál es su orden total?</p><p>b) Calcular la velocidad de la reacción si las concentraciones de los reactivos fueran ambas 0,300 M.</p>`,
+   note('Resolución agregada en 27xSOLved','<p>El material entregado no traía el desarrollo de este ejercicio, solo la respuesta. Se resuelve con el mismo método que el ejercicio 7.</p>')+
+   step('a) 1. Orden respecto de NH₃','<p>Experimentos 1 y 2: [BF₃] queda en 0,500 y [NH₃] pasa de 0,500 a 0,250 (se divide por 2).</p>'+chain(R`\frac{v_2}{v_1}=\frac{0{,}4260}{0{,}8520}=0{,}5`,['\\text{[NH}_3\\text{] a la mitad}\\Rightarrow v\\text{ a la mitad}','orden 1 en NH₃']))+
+   step('a) 2. Orden respecto de BF₃','<p>Experimentos 3 y 4: [NH₃] queda en 0,200 y [BF₃] pasa de 0,400 a 0,700.</p>'+chain(R`\frac{[BF_3]_4}{[BF_3]_3}=\frac{0{,}700}{0{,}400}=1{,}75`,R`\frac{v_4}{v_3}=\frac{0{,}4771}{0{,}2726}\approx1{,}750`,['\\text{v aumenta en la misma proporción}','orden 1 en BF₃']))+
+   step('a) 3. Ley de velocidad y orden total',chain(R`v=k[BF_3][NH_3]`,R`\text{orden total}=1+1=2`))+
+   step('a) 4. Calcular k (experimento 1)',chain(R`k=\frac{v}{[BF_3][NH_3]}`,R`k=\frac{0{,}8520}{(0{,}500)(0{,}500)}`,R`k=3{,}408\ \mathrm{L\,mol^{-1}\,min^{-1}}\approx3{,}41\ \mathrm{L\,mol^{-1}\,min^{-1}}`)+'<p>Con los experimentos 3, 4 y 5 se obtiene lo mismo (3,4075; 3,4079; 3,4086).</p>')+
+   step('b) Velocidad con ambas concentraciones 0,300 M',chain(R`v=3{,}408\cdot(0{,}300)(0{,}300)`,R`v=3{,}408\cdot0{,}0900`,R`v\approx0{,}307\ \mathrm{M/min}`))+
+   official('9.8: a) v = 3,41 L mol⁻¹ min⁻¹ [BF₃][NH₃], orden total 2; b) v = 0,308 M/min.')+
+   fix('Posible diferencia con la hoja de respuestas','<p>Con k = 3,408 (o con 3,41) la cuenta da 0,3067 ≈ <b>0,307 M/min</b>; la hoja de respuestas indica 0,308 M/min. La diferencia está en el último decimal y no cambia el método.</p>'),
+   'v = 3,41 L·mol⁻¹·min⁻¹ [BF₃][NH₃] · orden total 2 · v ≈ 0,307 M/min (hoja: 0,308)');
+
+  ex(9,'Elegir la ecuación de velocidad',
+   `<p>En una reacción del tipo A + B → C, se determinó experimentalmente que al duplicar [B], la velocidad aumentó 4 veces, mientras que al duplicar [A] la velocidad no tuvo variación alguna. Esto significa que la ecuación de velocidad es (elegir la opción que se considere correcta):</p><p>a) v = k[A]²; b) v = k[C]/[A][B]; c) v = k[B]²; d) v = k[A]; e) v = k[A][B].</p>`,
+   step('Órdenes','<ul class="kitList"><li>Al duplicar [B], la velocidad aumenta 4 veces: orden 2 en B.</li><li>Al duplicar [A], la velocidad no cambia: orden 0 en A.</li></ul>')+
+   step('Ley de velocidad',M(R`v=k[B]^2`)+'<p>La opción correcta es c).</p>')+
+   official('9.9: c). Coincide con la resolución.'),
+   'c) v = k[B]²');
+
+  ex(10,'Hidrólisis del acetato de etilo',
+   `<p>Para la reacción:</p><p>CH₃COOC₂H₅(aq) + OH⁻(aq) → CH₃COO⁻(aq) + CH₃CH₂OH(aq)</p><p>se determinó experimentalmente que si se aumenta al doble la concentración de CH₃COOC₂H₅, la velocidad se duplica y si se triplica la concentración de OH⁻ la velocidad se triplica. Elegir la opción que se considere correcta para la ecuación de velocidad entre las opciones siguientes:</p><p>i. v = k[CH₃COOC₂H₅][OH⁻]</p><p>ii. v = k[CH₃COOC₂H₅]¹ᐟ²[OH⁻]</p><p>iii. v = k[CH₃COOC₂H₅]²[OH⁻]</p><p>iv. v = k[CH₃COOC₂H₅][OH⁻]³</p>`,
+   step('Órdenes','<ul class="kitList"><li>Si duplicar [CH₃COOC₂H₅] duplica la velocidad: orden 1.</li><li>Si triplicar [OH⁻] triplica la velocidad: orden 1.</li></ul>')+
+   step('Ecuación de velocidad',M(R`v=k[CH_3COOC_2H_5][OH^-]`)+'<p>La opción correcta es i.</p>')+
+   official('9.10: a) (la primera opción, i). Coincide con la resolución.'),
+   'i. v = k[CH₃COOC₂H₅][OH⁻]');
+
+  ex('9.11','Explicar los hechos',
+   `<p>Explicar los hechos siguientes:</p><p>a) para evitar que el jugo de manzana se fermente y se convierta en sidra, debe mantenerse frío.</p><p>b) La madera se quema muy rápidamente en presencia de oxígeno puro, pero sólo lo hace lentamente en aire.</p>`,
+   step('a) Jugo de manzana','<p>La fermentación es una reacción química catalizada por enzimas. A menor temperatura:</p><ul class="kitList"><li>Baja la energía cinética.</li><li>Baja la frecuencia de choques efectivos.</li><li>Baja la velocidad de reacción.</li></ul><p>Por eso, mantener frío el jugo de manzana detiene o reduce la fermentación y evita que se transforme en sidra.</p>')+
+   step('b) Madera en oxígeno puro','<p>La velocidad de combustión depende de la concentración de oxígeno. Comparación:</p><ul class="kitList"><li>En el aire: x(O₂) ≈ 0,21.</li><li>Oxígeno puro: x(O₂) = 1,00.</li></ul><p>Con presión parcial de oxígeno mucho mayor, la velocidad de combustión aumenta enormemente. Por eso, en oxígeno puro la madera se quema muy rápido y en aire la combustión es mucho más lenta.</p>')+
+   official('9.11: a) a menor temperatura, también lo es la velocidad de fermentación; b) el orden respecto de la concentración de oxígeno debe ser distinto de cero (la proporción de oxígeno en el aire, x(O₂) ≈ 0,2, es menor que en el oxígeno puro, x(O₂) = 1).'),
+   'a) menor T → menor velocidad de fermentación · b) el orden respecto del O₂ es distinto de cero');
+
+  const n=Math.max(0,...QG.units.map(u=>Number(u.n)||0))+1;
+  if(QG.units.some(u=>u.id==='cinetica'))return;
+  QG.units.push({
+    id:'cinetica',n,title:'Cinética química',
+    lead:'Velocidad de reacción, ley de velocidad, órdenes y mecanismos, en el orden en que se dio en clase. Ejemplos de la carpeta, gráfico, hoja de fórmulas y la guía de ejercitación resuelta.',
+    sections,exercises,modelExercises:[]
+  });
+})();
