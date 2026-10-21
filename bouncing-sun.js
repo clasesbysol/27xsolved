@@ -8,7 +8,7 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 function stop(){if(raf)cancelAnimationFrame(raf);raf=0;last=0;if(canvas){canvas.remove();canvas=null}ctx=null;host=null;trail=[]}
 function setup(){
  const view=document.documentElement.dataset.view;
- const target=VIEWS.has(view)?document.querySelector('.appShell .main > main.content'):null;
+ const target=VIEWS.has(view)?document.querySelector('#app.appShell .main main.content'):null;
  if(!target||reduced.matches||document.hidden){stop();return}
  if(target===host&&canvas?.isConnected)return;
  stop();host=target;canvas=document.createElement('canvas');canvas.className='et27-bouncing-sun';canvas.setAttribute('aria-hidden','true');
@@ -16,8 +16,8 @@ function setup(){
  x=28;y=38;vx=Math.SQRT1_2;vy=Math.SQRT1_2;angle=0;trail=[];raf=requestAnimationFrame(frame)
 }
 function resize(){
- const w=Math.max(1,host.clientWidth),h=Math.max(1,host.scrollHeight);
- const ratio=Math.min(devicePixelRatio||1,2);
+ const w=Math.max(1,host.clientWidth),h=Math.max(1,Math.min(window.innerHeight-72,host.clientHeight||window.innerHeight));
+ const ratio=Math.min(devicePixelRatio||1,1.5);
  const cw=Math.round(w*ratio),ch=Math.round(h*ratio);
  if(canvas.width!==cw||canvas.height!==ch){canvas.width=cw;canvas.height=ch;canvas.style.width=w+'px';canvas.style.height=h+'px'}
  ctx.setTransform(ratio,0,0,ratio,0,0);
