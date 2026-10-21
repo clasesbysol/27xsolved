@@ -1,9 +1,13 @@
-/* Solcito rebotando de fondo, detrás del contenido interactivo */
-html[data-view="home"] .appShell .main > main.content,
-html[data-view="calendar"] .appShell .main > main.content,
-html[data-view="settings"] .appShell .main > main.content{position:relative;isolation:isolate}
-html[data-view="home"] .appShell .main > main.content > :not(.et27-bouncing-sun),
-html[data-view="calendar"] .appShell .main > main.content > :not(.et27-bouncing-sun),
-html[data-view="settings"] .appShell .main > main.content > :not(.et27-bouncing-sun){position:relative;z-index:1}
-.et27-bouncing-sun{position:absolute;inset:0;display:block;pointer-events:none;z-index:0;max-width:none;max-height:none}
+/* Fondo animado visible en las pantallas de selección, calendario y ajustes */
+html[data-view="home"] #app.appShell .main > main.content,
+html[data-view="plan"] #app.appShell .main > main.content,
+html[data-view="subjects"] #app.appShell .main > main.content,
+html[data-view="calendar"] #app.appShell .main > main.content,
+html[data-view="settings"] #app.appShell .main > main.content{position:relative;isolation:isolate}
+html[data-view="home"] #app.appShell .main > main.content > :not(.et27-bouncing-sun),
+html[data-view="plan"] #app.appShell .main > main.content > :not(.et27-bouncing-sun),
+html[data-view="subjects"] #app.appShell .main > main.content > :not(.et27-bouncing-sun),
+html[data-view="calendar"] #app.appShell .main > main.content > :not(.et27-bouncing-sun),
+html[data-view="settings"] #app.appShell .main > main.content > :not(.et27-bouncing-sun){position:relative;z-index:1}
+.et27-bouncing-sun{position:absolute;left:0;top:0;display:block;pointer-events:none;z-index:0;max-width:none;max-height:none;background:transparent}
 @media(prefers-reduced-motion:reduce){.et27-bouncing-sun{display:none}}
