@@ -2,7 +2,7 @@
 // Sólo Inicio, Calendario y Ajustes. No interfiere con botones ni formularios.
 (()=>{'use strict';
 const SETTINGS={size:55,speed:289,opacity:.83,rotation:240,trail:true};
-const VIEWS=new Set(['home','calendar','settings']);
+const VIEWS=new Set(['home','plan','subjects','calendar','settings']);
 let canvas=null,ctx=null,host=null,raf=0,last=0,x=28,y=38,vx:Math.SQRT1_2,vy:Math.SQRT1_2,angle=0,trail=[];
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 function stop(){if(raf)cancelAnimationFrame(raf);raf=0;last=0;if(canvas){canvas.remove();canvas=null}ctx=null;host=null;trail=[]}
