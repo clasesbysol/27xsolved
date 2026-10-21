@@ -8,7 +8,7 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 function stop(){if(raf)cancelAnimationFrame(raf);raf=0;last=0;if(canvas){canvas.remove();canvas=null}ctx=null;host=null;trail=[]}
 function setup(){
  const view=document.documentElement.dataset.view;
- const target=VIEWS.has(view)?document.querySelector('#app.appShell .main main.content'):null;
+ const target=VIEWS.has(view)?document.querySelector('#app.appShell .main > main.content'):null;
  if(!target||reduced.matches||document.hidden){stop();return}
  if(target===host&&canvas?.isConnected)return;
  stop();host=target;canvas=document.createElement('canvas');canvas.className='et27-bouncing-sun';canvas.setAttribute('aria-hidden','true');
@@ -50,7 +50,7 @@ function frame(time){
 }
 let pending=false;
 const observer=new MutationObserver(()=>{if(pending)return;pending=true;queueMicrotask(()=>{pending=false;setup()})});
-function start(){observer.observe(document.documentElement,{attributes:true,attributeFilter:['data-view']});const root=document.querySelector('#app')||document.body;observer.observe(root,{childList:true,subtree:false});setup()}
+function start(){observer.observe(document.documentElement,{attributes:true,attributeFilter:['data-view']});const root=document.querySelector('#app')||document.body;observer.observe(root,{childList:true,subtree:false});window.addEventListener('27x:rendered',setup);setup()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 document.addEventListener('visibilitychange',setup);reduced.addEventListener?.('change',setup);
 })();
