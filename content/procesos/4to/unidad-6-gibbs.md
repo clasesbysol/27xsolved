@@ -38,22 +38,20 @@ En condiciones estándar:
 
 Cuando ΔH y ΔS mantienen aproximadamente sus valores, el umbral se obtiene imponiendo ΔG = 0:
 \[
-T_{\\mathrm{umbral}}=rac{\Delta H}{\Delta S}
+T_{\mathrm{umbral}}=\f\frac{\Delta H}{\Delta S}
 \]
 Solo tiene sentido físico si el cociente es positivo y si el modelo de ΔH y ΔS constantes resulta razonable en ese intervalo.
 
 ### 5. Propiedades de formación
 Para cualquier propiedad de reacción X = H, G:
 \[
-\Delta X^\circ_{\\mathrm{rxn}}=\sum
-u\Delta X^\circ_f(	ext{productos})-\sum
-u\Delta X^\circ_f(	ext{reactivos})
+\Delta X^\circ_{\mathrm{rxn}}=\sum\n\nu\Delta X^\circ_f(\t\text{productos})-\sum\n\nu\Delta X^\circ_f(\t\text{reactivos})
 \]
 Para la entropía se usan **entropías molares estándar absolutas**:
 \[
-\Delta S^\circ_{\\mathrm{rxn}}=\sum
-u S^\circ(	ext{productos})-\sum
-u S^\circ(	ext{reactivos})
+\Delta S^\circ_{\mathrm{rxn}}=\sum
+\nu S^\circ(\t\text{productos})-\sum
+\nu S^\circ(\t\text{reactivos})
 \]
 Los coeficientes estequiométricos multiplican cada valor. Los elementos en su estado estándar tienen ΔH°f = ΔG°f = 0, pero **no** S° = 0.
 
@@ -73,78 +71,78 @@ Los coeficientes estequiométricos multiplican cada valor. Los elementos en su e
 ### Ejercicio 1 — Combustión del octano
 **a)** Ecuación balanceada, con agua líquida a temperatura ambiente:
 \[
-2,\\mathrm{C_8H_{18}(l)}+25,\\mathrm{O_2(g)}ightarrow16,\\mathrm{CO_2(g)}+18,\\mathrm{H_2O(l)}
+2\,\mathrm{C_8H_{18}(l)}+25\,\mathrm{O_2(g)}\r\rightarrow16\,\mathrm{CO_2(g)}+18\,\mathrm{H_2O(l)}
 \]
 **b)** Se consumen 25 moles de gas y se forman 16 por la ecuación escrita; se espera ΔS° < 0. Por tanto:
 \[
 \Delta G^\circ=\Delta H^\circ-T\Delta S^\circ
 \]
 \[
-\Delta S^\circ<0\Rightarrow -T\Delta S^\circ>0
+\Delta S^\circ<0\R\rightarrow -T\Delta S^\circ>0
 \]
 \[
-oxed{\Delta G^\circ>\Delta H^\circ}
+\b\boxed{\Delta G^\circ>\Delta H^\circ}
 \]
 Es decir, **ΔG° es menos negativo que ΔH°**. La reacción sigue siendo favorable porque la combustión es muy exotérmica. Advertencia: si se considera vapor de agua en vez de líquido, el análisis de entropía cambia; hay que respetar los estados físicos.
 
 ### Ejercicio 2 — Oxidación de NO
 \[
-2,\\mathrm{NO(g)}+\\mathrm{O_2(g)}ightarrow2,\\mathrm{NO_2(g)}
+2\,\mathrm{NO(g)}+\mathrm{O_2(g)}\r\rightarrow2\,\mathrm{NO_2(g)}
 \]
 Datos para la reacción escrita:
 \[
-\Delta H^\circ=-114,1 \\mathrm{kJ};\quad\Delta S^\circ=-146,54 \\mathrm{J/K}=-0,14654 \\mathrm{kJ/K}
+\Delta H^\circ=-114,1 \mathrm{kJ};\quad\Delta S^\circ=-146,54 \mathrm{J/K}=-0,14654 \mathrm{kJ/K}
 \]
 **a) A 298,15 K**
 \[
 \Delta G^\circ=-114,1-(298,15)(-0,14654)
 \]
 \[
-oxed{\Delta G^\circ=-70,41 \\mathrm{kJ}}
+\b\boxed{\Delta G^\circ=-70,41 \mathrm{kJ}}
 \]
 Espontánea en condiciones estándar.
 
 **b) A 700 °C**
 \[
-T=700+273,15=973,15 \\mathrm{K}
+T=700+273,15=973,15 \mathrm{K}
 \]
 \[
 \Delta G^\circ=-114,1-(973,15)(-0,14654)
 \]
 \[
-oxed{\Delta G^\circ=28,51 \\mathrm{kJ}}
+\b\boxed{\Delta G^\circ=28,51 \mathrm{kJ}}
 \]
 No favorable en sentido directo bajo el modelo dado.
 
 **c) A 50 °C y 2500 °C**
 \[
-T_{50}=323,15 \mathrm K;\quad\Delta G^\circ_{50}=-114,1+0,14654(323,15)=-66,74 \\mathrm{kJ}
+T_{50}=323,15 \mathrm K;\quad\Delta G^\circ_{50}=-114,1+0,14654(323,15)=-66,74 \mathrm{kJ}
 \]
 Favorece NO₂.
 \[
-T_{2500}=2773,15 \mathrm K;\quad\Delta G^\circ_{2500}=-114,1+0,14654(2773,15)=292,30 \\mathrm{kJ}
+T_{2500}=2773,15 \mathrm K;\quad\Delta G^\circ_{2500}=-114,1+0,14654(2773,15)=292,30 \mathrm{kJ}
 \]
 Favorece NO respecto de NO₂. Son predicciones termodinámicas estándar; no describen por sí solas la velocidad de formación ni la composición real del escape.
 
 ### Ejercicio 3 — Temperatura de espontaneidad
 \[
-\Delta H^\circ=-60,0 \\mathrm{kJ};\quad\Delta S^\circ=-0,200 \\mathrm{kJ/K}
+\Delta H^\circ=-60,0 \mathrm{kJ};\quad\Delta S^\circ=-0,200 \mathrm{kJ/K}
 \]
 \[
 \Delta G^\circ=-60,0-T(-0,200)=-60,0+0,200T
 \]
 \[
-0=-60,0+0,200T\Rightarrow T=300 \mathrm K
+0=-60,0+0,200T\R\rightarrow T=300 \mathrm K
 \]
 \[
-oxed{\Delta G^\circ<0	ext{ para }T<300 \mathrm K}
+\b\boxed{\Delta G^\circ<0\t\text{ para }T<300 \mathrm K}
 \]
 Respuesta **d**. A 300 K está en equilibrio; a temperaturas superiores deja de ser favorable.
 
 ### Ejercicio 4 — Descomposición del bicarbonato
 **a)**
 \[
-2,\\mathrm{NaHCO_3(s)}ightarrow\\mathrm{Na_2CO_3(s)}+\\mathrm{CO_2(g)}+\\mathrm{H_2O(g)}
+2\,\mathrm{NaHCO_3(s)}\r\rightarrow\mathrm{Na_2CO_3(s)}+\mathrm{CO_2(g)}+\mathrm{H_2O(g)}
 \]
 **b)** La aparición de dos productos gaseosos a partir de sólidos sugiere ΔS° positiva.
 
@@ -153,21 +151,21 @@ Respuesta **d**. A 300 K está en equilibrio; a temperaturas superiores deja de 
 \Delta S^\circ=(136,0+213,6+188,7)-2(102,1)
 \]
 \[
-oxed{\Delta S^\circ=334,1 \\mathrm{J/K}=0,3341 \\mathrm{kJ/K}}
+\b\boxed{\Delta S^\circ=334,1 \mathrm{J/K}=0,3341 \mathrm{kJ/K}}
 \]
 **d) Entalpía:** usando ΔH°f en kJ/mol:
 \[
 \Delta H^\circ=[-1131,0-393,5-241,8]-2(-947,7)
 \]
 \[
-oxed{\Delta H^\circ=129,1 \\mathrm{kJ}}
+\b\boxed{\Delta H^\circ=129,1 \mathrm{kJ}}
 \]
 **e) Energía libre estándar**
 \[
 \Delta G^\circ=129,1-(298,15)(0,3341)
 \]
 \[
-oxed{\Delta G^\circ=29,49 \\mathrm{kJ}}
+\b\boxed{\Delta G^\circ=29,49 \mathrm{kJ}}
 \]
 La descomposición no es favorable a 298,15 K según estos datos; el bicarbonato resulta termodinámicamente estable **frente a esta descomposición** bajo las condiciones consideradas.
 
@@ -176,79 +174,79 @@ La descomposición no es favorable a 298,15 K según estos datos; el bicarbonato
 0=129,1-T(0,3341)
 \]
 \[
-T=rac{129,1}{0,3341}=oxed{386,41 \mathrm K}
+T=\f\frac{129,1}{0,3341}=\b\boxed{386,41 \mathrm K}
 \]
 \[
-t=386,41-273,15=oxed{113,26,^\circ\mathrm C}
+t=386,41-273,15=\b\boxed{113,26,^\circ\mathrm C}
 \]
 Se favorece la descomposición por encima del umbral, bajo la aproximación de propiedades constantes.
 
 ### Ejercicio 5 — Lluvia ácida y mármol
 \[
-\\mathrm{CaCO_3(s)}+\\mathrm{H_2SO_4(l)}ightarrow\\mathrm{CaSO_4(s)}+\\mathrm{H_2O(l)}+\\mathrm{CO_2(g)}
+\mathrm{CaCO_3(s)}+\mathrm{H_2SO_4(l)}\r\rightarrow\mathrm{CaSO_4(s)}+\mathrm{H_2O(l)}+\mathrm{CO_2(g)}
 \]
 **Entalpía**
 \[
 \Delta H^\circ=[-1433-285,85-393,5]-[-1207-814]
 \]
 \[
-oxed{\Delta H^\circ=-91,35 \\mathrm{kJ}}
+\b\boxed{\Delta H^\circ=-91,35 \mathrm{kJ}}
 \]
 **Entropía**
 \[
 \Delta S^\circ=(107+69,96+213,6)-(92,9+156,9)
 \]
 \[
-oxed{\Delta S^\circ=140,76 \\mathrm{J/K}=0,14076 \\mathrm{kJ/K}}
+\b\boxed{\Delta S^\circ=140,76 \mathrm{J/K}=0,14076 \mathrm{kJ/K}}
 \]
 **Gibbs**
 \[
 \Delta G^\circ=-91,35-(298,15)(0,14076)
 \]
 \[
-oxed{\Delta G^\circ=-133,32 \\mathrm{kJ}}
+\b\boxed{\Delta G^\circ=-133,32 \mathrm{kJ}}
 \]
 Es termodinámicamente espontánea en condiciones estándar. La velocidad de deterioro depende de condiciones ambientales y cinéticas. **Nota:** la guía simplifica el proceso ambiental al representar ácido sulfúrico líquido y sulfato de calcio sólido.
 
 ### Ejercicio 6 — H₂ + CO₂
 La guía imprime:
 \[
-\\mathrm{H_2(g)}+\\mathrm{CO_2(g)}ightarrow\\mathrm{H_2O(l)}+\\mathrm{CO(g)}
+\mathrm{H_2(g)}+\mathrm{CO_2(g)}\r\rightarrow\mathrm{H_2O(l)}+\mathrm{CO(g)}
 \]
 **Inconsistencia de la fuente:** aunque dice H₂O(l), su tabla da ΔH°f = −241,8 kJ/mol y S° = 188,7 J/(mol·K), que corresponden aproximadamente a **H₂O(g)**. Para respetar los valores provistos y obtener resultados internamente coherentes, se resuelve con H₂O(g):
 \[
-\\mathrm{H_2(g)}+\\mathrm{CO_2(g)}ightarrow\\mathrm{H_2O(g)}+\\mathrm{CO(g)}
+\mathrm{H_2(g)}+\mathrm{CO_2(g)}\r\rightarrow\mathrm{H_2O(g)}+\mathrm{CO(g)}
 \]
 **a)**
 \[
-\Delta H^\circ=[-241,8-110,5]-[0-393,5]=41,2 \\mathrm{kJ}
+\Delta H^\circ=[-241,8-110,5]-[0-393,5]=41,2 \mathrm{kJ}
 \]
 \[
-\Delta S^\circ=(188,7+197,9)-(130,5+213,8)=42,3 \\mathrm{J/K}
+\Delta S^\circ=(188,7+197,9)-(130,5+213,8)=42,3 \mathrm{J/K}
 \]
 \[
-\Delta G^\circ=41,2-(298,15)(0,0423)=oxed{28,59 \\mathrm{kJ}}
+\Delta G^\circ=41,2-(298,15)(0,0423)=\b\boxed{28,59 \mathrm{kJ}}
 \]
 **b)**
 \[
-T_{\\mathrm{umbral}}=rac{41,2}{0,0423}=oxed{973,995 \mathrm K}
+T_{\mathrm{umbral}}=\f\frac{41,2}{0,0423}=\b\boxed{973,995 \mathrm K}
 \]
 Es favorable para T > 974 K, aproximadamente.
 
 **c) A 1200 K con valores estándar constantes**
 \[
-\Delta G^\circ_{1200,\\mathrm{estimado}}=41,2-1200(0,0423)=oxed{-9,56 \\mathrm{kJ}}
+\Delta G^\circ_{1200\,\mathrm{estimado}}=41,2-1200(0,0423)=\b\boxed{-9,56 \mathrm{kJ}}
 \]
 **d) A 1200 K con los valores reales que suministra la guía**
 \[
-\Delta G^\circ_{1200,\\mathrm{real}}=32,93-1200(0,0296)=oxed{-2,59 \\mathrm{kJ}}
+\Delta G^\circ_{1200\,\mathrm{real}}=32,93-1200(0,0296)=\b\boxed{-2,59 \mathrm{kJ}}
 \]
 \[
-	ext{Diferencia absoluta}=|-9,56-(-2,59)|=6,97 \\mathrm{kJ}
+\t\text{Diferencia absoluta}=|-9,56-(-2,59)|=6,97 \mathrm{kJ}
 \]
 Tomando el valor real como referencia:
 \[
-	ext{Error porcentual}=rac{6,97}{2,59}	imes100=oxed{269,1%}
+\t\text{Error porcentual}=\f\frac{6,97}{2,59}\times100=\b\boxed{269,1%}
 \]
 La aproximación predice correctamente el signo, pero exagera mucho la magnitud. **Nota:** el inciso d remite a «estimación en b», aunque la estimación de ΔG a 1200 K se realiza en **c**.
 
@@ -257,14 +255,14 @@ La aproximación predice correctamente el signo, pero exagera mucho la magnitud.
 
 **Reacción I — Carbonato de sodio con agua**
 \[
-\\mathrm{Na_2CO_3(s)}+\\mathrm{H_2O(l)}ightarrow2,\\mathrm{NaOH(s)}+\\mathrm{CO_2(g)}
+\mathrm{Na_2CO_3(s)}+\mathrm{H_2O(l)}\r\rightarrow2\,\mathrm{NaOH(s)}+\mathrm{CO_2(g)}
 \]
 **a) Entalpía**
 \[
 \Delta H^\circ=[2(-426,60)-393,51]-[-1127,42-285,5]
 \]
 \[
-oxed{\Delta H^\circ=166,21 \\mathrm{kJ}}
+\b\boxed{\Delta H^\circ=166,21 \mathrm{kJ}}
 \]
 **b) Predicción:** aparece CO₂ gaseoso, por lo que se espera ΔS° > 0.
 
@@ -273,47 +271,47 @@ La aproximación predice correctamente el signo, pero exagera mucho la magnitud.
 \Delta G^\circ=[2(-379,07)-394,38]-[-1044,12-237,19]
 \]
 \[
-\Delta G^\circ=128,79 \\mathrm{kJ}
+\Delta G^\circ=128,79 \mathrm{kJ}
 \]
 \[
-\Delta S^\circ=rac{166,21-128,79}{298,15}=oxed{0,12551 \\mathrm{kJ/K}}
+\Delta S^\circ=\f\frac{166,21-128,79}{298,15}=\b\boxed{0,12551 \mathrm{kJ/K}}
 \]
 **d) A 650 °C**
 \[
 T=650+273,15=923,15 \mathrm K
 \]
 \[
-\Delta G^\circ_{923,15}=166,21-923,15(0,12551)\approxoxed{50,35 \\mathrm{kJ}}
+\Delta G^\circ_{923,15}=166,21-923,15(0,12551)\approx\b\boxed{50,35 \mathrm{kJ}}
 \]
 No espontánea según el modelo.
 \[
-T_{\\mathrm{umbral}}=rac{166,21}{0,12551}\approxoxed{1324,3 \mathrm K}\approx1051,2,^\circ\mathrm C
+T_{\mathrm{umbral}}=\f\frac{166,21}{0,12551}\approx\b\boxed{1324,3 \mathrm K}\approx1051,2,^\circ\mathrm C
 \]
 
 **Reacción II — Descomposición del carbonato de calcio**
 \[
-\\mathrm{CaCO_3(s)}ightarrow\\mathrm{CaO(s)}+\\mathrm{CO_2(g)}
+\mathrm{CaCO_3(s)}\r\rightarrow\mathrm{CaO(s)}+\mathrm{CO_2(g)}
 \]
 **a)**
 \[
-\Delta H^\circ=[-634,71-393,51]-(-1211,27)=oxed{183,05 \\mathrm{kJ}}
+\Delta H^\circ=[-634,71-393,51]-(-1211,27)=\b\boxed{183,05 \mathrm{kJ}}
 \]
 **b)** Se genera un gas: ΔS° esperada positiva.
 
 **c)**
 \[
-\Delta G^\circ=[-603,75-394,38]-(-1133,03)=134,90 \\mathrm{kJ}
+\Delta G^\circ=[-603,75-394,38]-(-1133,03)=134,90 \mathrm{kJ}
 \]
 \[
-\Delta S^\circ=rac{183,05-134,90}{298,15}=oxed{0,16150 \\mathrm{kJ/K}}
+\Delta S^\circ=\f\frac{183,05-134,90}{298,15}=\b\boxed{0,16150 \mathrm{kJ/K}}
 \]
 **d)**
 \[
-\Delta G^\circ_{923,15}=183,05-923,15(0,16150)\approxoxed{33,96 \\mathrm{kJ}}
+\Delta G^\circ_{923,15}=183,05-923,15(0,16150)\approx\b\boxed{33,96 \mathrm{kJ}}
 \]
 No espontánea a 650 °C en condiciones estándar con la aproximación dada.
 \[
-T_{\\mathrm{umbral}}=rac{183,05}{0,16150}\approxoxed{1133,4 \mathrm K}\approx860,3,^\circ\mathrm C
+T_{\mathrm{umbral}}=\f\frac{183,05}{0,16150}\approx\b\boxed{1133,4 \mathrm K}\approx860,3,^\circ\mathrm C
 \]
 **Conclusión:** a 650 °C ninguna de las dos reacciones es espontánea según estos datos. A mayor temperatura, primero se vuelve favorable la descomposición del CaCO₃. Las temperaturas calculadas son aproximadas: ΔH y ΔS reales varían con T, y la presión parcial de CO₂ también importa.
 
