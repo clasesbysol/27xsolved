@@ -65,7 +65,7 @@ const unit=document.createElement('section');unit.id='u6-gibbs';unit.className='
 unit.innerHTML='<div class="section-title"><div><small>PROCESOS · UNIDAD 6</small><h2>Tercer principio y energía libre de Gibbs</h2></div></div><p>Cargando teoría y ejercicios resueltos…</p>';
 main.insertBefore(unit,document.getElementById('emptySearch'));
 try{
-const res=await fetch('./content/procesos/4to/unidad-6-gibbs.md?v=1.0.3',{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);
+const res=await fetch('./content/procesos/4to/unidad-6-gibbs.md?v=1.2.0',{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);
 const md=await res.text();const split=md.indexOf('## Ejercicios resueltos');const theory=split<0?md:md.slice(0,split),exercises=split<0?'':md.slice(split);
 unit.innerHTML='<div class="section-title"><div><small>PROCESOS · UNIDAD 6</small><h2>Tercer principio y energía libre de Gibbs</h2></div></div><p class="u6-lead">Espontaneidad, entalpía, entropía, temperatura de equilibrio y energía libre. Siete ejercicios de la guía resueltos paso por paso.</p><section class="u5-subsection" id="u6-teoria"><h2>Teoría completa</h2><div class="u6-reading">'+parse(theory)+'</div></section><section class="u5-subsection" id="u6-ejercicios"><h2>Ejercicios resueltos</h2><div class="u6-reading">'+renderExercises(exercises)+'</div></section>';
 renderMath(unit);unit.addEventListener('toggle',()=>renderMath(unit),true);
