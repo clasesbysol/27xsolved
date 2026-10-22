@@ -10,11 +10,74 @@
   const s=[];const add=(k,l,kk,h)=>s.push({key:`qi-fi-${k}`,label:l,kicker:`FUERZAS INTERMOLECULARES · ${kk}`,html:h});
   const ver=(id,label)=>`<p class="guideLink">🔗 Repaso previo: <button type="button" class="textButton" data-result-go="qi:${id}">${label} →</button></p>`;
 
-  add('teoria','Teoría','01',`
-<div class="kitBox kitWarn"><b>⏳ Teoría pendiente</b><p>Todavía no está cargado el material de clase de esta unidad. Por ahora están los <b>ejercicios resueltos</b>; la teoría se agrega cuando tengamos las diapositivas.</p></div>
-${ver('uniones:qi-un-polaridad','Polaridad de enlace (Uniones químicas)')}
-${ver('uniones:qi-un-trepev','TREPEV e hibridación (Uniones químicas)')}
-`);
+  add('teoria','01 · De la geometría a las fuerzas','CONCEPTOS FUNDAMENTALES',\`
+<h3>Qué explica esta unidad</h3>
+<p>En la unidad anterior aprendimos a representar <b>enlaces dentro de una molécula</b> con Lewis, a contar regiones electrónicas con <b>TRePEV</b> y a determinar su <b>geometría molecular</b>. Acá usamos esos resultados para explicar <b>cómo se atraen las partículas entre sí</b> y por qué una sustancia hierve, se funde o se disuelve a determinada temperatura.</p>
+<p><b>Enlace intramolecular:</b> unión que mantiene juntos los átomos de una especie, como el enlace covalente O–H dentro de H₂O. <b>Fuerza intermolecular:</b> atracción entre moléculas diferentes, como los puentes de hidrógeno entre moléculas de agua. Al hervir agua líquida se vencen principalmente las atracciones entre moléculas; no se rompen los enlaces covalentes O–H.</p>
+\${ver('uniones:qi-un-polaridad','Repasar polaridad de enlaces y moléculas')}
+\${ver('uniones:qi-un-trepev','Repasar TRePEV y geometría molecular')}
+\${idea('Método de resolución','<ol><li>Identificar si la sustancia es molecular, iónica, metálica o una red covalente.</li><li>Si es molecular, dibujar Lewis, contar dominios y determinar la geometría.</li><li>Decidir si los dipolos de enlace se cancelan o dan un momento molecular distinto de cero.</li><li>Identificar London (siempre), dipolo–dipolo (si hay polaridad permanente) y puentes de H (cuando corresponda).</li><li>Para comparar propiedades, considerar además masa, tamaño, polarizabilidad, estructura, estado y posibles reacciones químicas.</li></ol>')}
+\`);
+
+  add('polaridad','02 · Polaridad molecular','MOMENTO DIPOLAR',\`
+<h3>Polaridad del enlace y polaridad de toda la molécula</h3>
+<p><b>Electronegatividad:</b> capacidad de un átomo enlazado para atraer hacia sí los electrones compartidos. Si dos átomos tienen electronegatividades diferentes, el enlace puede tener un extremo parcialmente negativo (<b>δ−</b>) y otro parcialmente positivo (<b>δ+</b>). <b>Dipolo:</b> separación de cargas de signos opuestos. <b>Momento dipolar (μ):</b> magnitud que cuantifica esa separación; para dos cargas puntuales opuestas se expresa como μ = q × d, donde q es el valor de la carga y d la distancia entre ellas. Su unidad frecuente es el <b>debye (D)</b>.</p>
+<p>En una molécula con varios enlaces, los momentos dipolares son <b>vectores</b>: tienen magnitud y dirección, y se suman teniendo en cuenta la geometría. <b>Vector:</b> cantidad representada por una flecha que señala dirección y sentido. Una molécula puede tener enlaces polares y, aun así, ser apolar si la suma vectorial se anula.</p>
+\${table(['Molécula','Lewis y geometría','¿Se cancelan los dipolos?','Resultado'],[
+['CO₂','O=C=O, lineal, 180°','Sí: dos enlaces C=O opuestos e iguales','Apolar, μ = 0'],
+['SO₂','dos regiones S–O y un par libre, angular','No: las flechas no son opuestas','Polar, μ ≠ 0'],
+['H₂O','dos enlaces O–H y dos pares libres, angular','No: ángulo 104,5°','Polar'],
+['BF₃','tres enlaces B–F, trigonal plana','Sí: tres direcciones simétricas','Apolar'],
+['NH₃','tres enlaces N–H y un par libre, piramidal','No','Polar'],
+['CCl₄','cuatro enlaces C–Cl, tetraédrica','Sí: cuatro enlaces equivalentes','Apolar']])}
+\${idea('Ejemplo de examen: NF₃ y NH₃','<p>Ambas moléculas son piramidales, pero la magnitud de sus momentos dipolares difiere: en NH₃ la contribución de los enlaces N–H se suma en la dirección del par libre; en NF₃ la contribución de los enlaces N–F se opone parcialmente a la del par libre. Por eso μ(NF₃) es menor que μ(NH₃). No alcanza con comparar solamente las electronegatividades.</p>')}
+\`);
+
+  add('london','03 · Fuerzas de London','DISPERSIÓN',\`
+<h3>Dipolos instantáneos e inducidos</h3>
+<p><b>Fuerzas de dispersión de London:</b> atracciones que aparecen porque los electrones están en movimiento y su distribución puede fluctuar. Por un instante, una partícula adquiere un <b>dipolo instantáneo</b>, que deforma la nube electrónica vecina y genera un <b>dipolo inducido</b>. La atracción resultante existe en <b>todas</b> las partículas, incluso las apolares y los átomos de gases nobles.</p>
+<p><b>Polarizabilidad:</b> facilidad con que se deforma la nube electrónica. Suele aumentar cuando hay más electrones, mayor tamaño y una nube electrónica más extendida. El <b>efecto pantalla</b> es la disminución de la atracción neta que sienten los electrones externos debido a la presencia de electrones internos. La <b>carga nuclear efectiva</b> es la atracción neta del núcleo sobre un electrón una vez considerado ese apantallamiento.</p>
+\${step('Comparación razonada: F₂, Cl₂, Br₂ e I₂','<p><b>1.</b> Todas son moléculas diatómicas homonucleares (dos átomos del mismo elemento), así que son apolares. <b>2.</b> Todas presentan London. <b>3.</b> Al bajar por el grupo aumenta el tamaño de la nube electrónica y la polarizabilidad. <b>4.</b> En general se intensifican las fuerzas de London y aumentan los puntos de ebullición: F₂ &lt; Cl₂ &lt; Br₂ &lt; I₂.</p>')}
+<p><b>Precisión:</b> la masa molar es un indicador útil cuando se comparan sustancias semejantes, pero no es por sí sola la causa de London. También influyen la forma molecular y la superficie de contacto.</p>
+\`);
+
+  add('dipolos','04 · Dipolo–dipolo','MOLÉCULAS POLARES',\`
+<h3>Atracción entre dipolos permanentes</h3>
+<p>Una <b>molécula polar</b> presenta una distribución asimétrica de carga y un momento dipolar permanente. Sus extremos parcialmente positivos y negativos pueden orientarse de manera favorable y atraerse: esto se llama <b>interacción dipolo–dipolo</b>. Es una interacción <b>electrostática</b>, es decir, debida a la atracción entre regiones con cargas de signos opuestos.</p>
+\${step('HCl frente a CO₂','<p><b>HCl:</b> el Cl es más electronegativo que H; como es diatómica, el dipolo de enlace también es el dipolo molecular. Presenta London y dipolo–dipolo. <b>CO₂:</b> cada enlace C=O es polar, pero la molécula es lineal y los dipolos se cancelan. Presenta London, no dipolo–dipolo permanente. La diferencia de electronegatividad de un enlace, por sí sola, no determina la polaridad total.</p>')}
+<p><b>No usar la regla «más diferencia de electronegatividad = más dipolo molecular» sin considerar geometría y longitud de enlace.</b> El momento dipolar depende de la distribución real de cargas y de la estructura de toda la molécula.</p>
+\`);
+
+  add('puentes','05 · Puentes de hidrógeno','INTERACCIÓN ESPECÍFICA',\`
+<h3>¿Cuándo aparecen?</h3>
+<p>El <b>puente de hidrógeno</b> es una interacción atractiva específica en la que un H unido covalentemente a un átomo electronegativo —habitualmente <b>N, O o F</b>— interactúa con una región rica en electrones, generalmente un <b>par libre</b> de N, O o F de otra molécula. <b>Par libre:</b> dos electrones de valencia que no forman parte de un enlace. La interacción tiene contribuciones electrostáticas y de otras naturalezas; no es un nuevo enlace covalente ordinario entre las dos moléculas.</p>
+\${table(['Sustancia','¿Puentes H entre sus moléculas?','Razón'],[
+['H₂O','Sí','Enlaces O–H y pares libres en O'],
+['HF','Sí','Enlace H–F y pares libres en F'],
+['NH₃','Sí','Enlaces N–H y par libre en N'],
+['H₂S','No, en la clasificación escolar','H está unido a S; no cumple el criterio N/O/F'],
+['CH₄','No','H unido a C'],
+['PH₃','No, en la clasificación escolar','H unido a P']])}
+\${step('Por qué el agua es líquida y H₂S gaseoso a temperatura ambiente','<p><b>1.</b> Las dos moléculas son angulares y polares. <b>2.</b> Ambas tienen London y dipolo–dipolo. <b>3.</b> El agua, además, forma una red extensa de puentes de hidrógeno. <b>4.</b> Se requiere más energía para separar sus moléculas y pasar al gas, lo que eleva su temperatura de ebullición. H₂S no forma esa red de puentes de H.</p>')}
+\`);
+
+  add('propiedades','06 · Propiedades físicas y solubilidad','APLICACIONES',\`
+<h3>Puntos de fusión y ebullición</h3>
+<p><b>Punto de fusión:</b> temperatura a la que un sólido y su líquido coexisten en equilibrio a una presión determinada. <b>Punto de ebullición:</b> temperatura a la que la presión de vapor del líquido iguala la presión externa. <b>Vaporización:</b> transformación de líquido a gas. Cuanto mayores sean las atracciones entre partículas comparables, generalmente más energía se necesita para separarlas y mayor es el punto de ebullición.</p>
+<p>En una <b>red iónica</b> como KCl hay cationes y aniones unidos electrostáticamente en un cristal, no moléculas discretas de KCl. En un <b>metal</b> como Cu hay enlace metálico y electrones deslocalizados; en una <b>red covalente</b> como SiO₂ se extienden enlaces covalentes por el sólido. No comparar estas redes como si solo tuvieran fuerzas intermoleculares.</p>
+\${table(['Sustancia','Partículas e interacción dominante','Consecuencia'],[
+['CH₄','Moléculas pequeñas y apolares; London débiles','Gas, ebullición muy baja'],
+['Cl₂','Moléculas apolares más polarizables; London','Hierve más alto que CH₄'],
+['CCl₄','Moléculas apolares grandes; London más intensas','Líquido a temperatura ambiente'],
+['H₂O','Moléculas polares; puentes de H, dipolo–dipolo y London','Ebullición alta para su masa'],
+['KCl','Red de K⁺ y Cl⁻','Altos puntos de fusión y ebullición']])}
+<h3>Solubilidad: no basta decir «semejante disuelve semejante»</h3>
+<p><b>Solubilidad:</b> cantidad máxima de soluto que puede disolverse en un solvente a temperatura y presión dadas. <b>Soluto:</b> sustancia que se incorpora; <b>solvente:</b> medio en que se incorpora. Disolver requiere separar partículas del soluto y del solvente y formar nuevas interacciones favorables. El balance energético y el aumento o disminución de desorden determinan si la mezcla resulta favorable.</p>
+<p><b>Ion–dipolo:</b> atracción entre un ion y una molécula polar; explica la hidratación de Na⁺ y Cl⁻ al disolver NaCl en agua. <b>Dipolo inducido:</b> una molécula polar o un ion deforma la nube electrónica de una especie apolar; puede favorecer solubilidades parciales. El I₂, apolar y polarizable, se disuelve mejor en varios solventes orgánicos que en agua; CCl₄ es apolar.</p>
+\${warn('Atención a las reacciones químicas','<p>Que una sustancia desaparezca en agua no siempre significa una simple disolución: Na₂O reacciona con agua formando NaOH; HCl se ioniza en agua; BF₃ y BCl₃ se hidrolizan. No clasificar esos casos solo por polaridad.</p>')}
+<h3>Conductividad eléctrica</h3>
+<p><b>Conductor eléctrico:</b> material que permite transportar carga. Los metales conducen mediante electrones móviles; las sales iónicas conducen cuando están fundidas o disueltas porque sus iones pueden moverse. Las sustancias moleculares puras normalmente conducen poco, pero algunas generan iones al reaccionar con agua, como HCl.</p>
+\`);
 
   add('ejercitacion','Ejercitación resuelta','02',`
 <p>Doce ejercicios sobre polaridad de enlaces y moléculas, fuerzas intermoleculares y propiedades físicas. Para las diferencias de electronegatividad se usa la escala de Pauling: H 2,20 · C 2,55 · N 3,04 · O 3,44 · F 3,98 · Na 0,93 · P 2,19 · S 2,58 · Cl 3,16 · As 2,18 · Br 2,96 · Sb 2,05 · I 2,66.</p>
