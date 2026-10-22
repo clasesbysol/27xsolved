@@ -43,5 +43,5 @@ const sheet=document.querySelector('#formulaSheet .po-formula-groups');if(sheet&
 if(location.hash.startsWith('#u6-'))document.getElementById(location.hash.slice(1))?.scrollIntoView();
 }catch(e){unit.innerHTML='<h2>Unidad 6 · Gibbs</h2><p>No se pudo cargar el contenido. Actualizá la página.</p>';console.error('U6:',e)}
 }
-let tries=0;const timer=setInterval(()=>{if(document.getElementById('u5-entropia')&&document.querySelector('.subject-main')){clearInterval(timer);mount()}else if(++tries>70)clearInterval(timer)},150);
+let tries=0;const timer=setInterval(()=>{if(tries>=6&&document.getElementById('u5-entropia')&&document.querySelector('.subject-main')){clearInterval(timer);mount()}else if(++tries>70)clearInterval(timer)},150);
 })();
