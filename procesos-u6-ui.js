@@ -23,9 +23,31 @@ out.push('<p>'+inline(t)+'</p>');
 }
 flushList();flushTable();return out.join('');
 }
+
+const glossary={
+1:'Combustión completa: reacción con oxígeno que produce CO₂ y H₂O. Balancear: igualar la cantidad de átomos de cada elemento a ambos lados. Entropía: propiedad asociada a la dispersión de energía; comparar cantidad de gases sirve como primera estimación. Estado de agregación: (s) sólido, (l) líquido y (g) gaseoso.',
+2:'Energía libre estándar: cambio de Gibbs calculado para estados estándar. Exotérmico: proceso que libera calor, con entalpía negativa. Temperatura absoluta: temperatura expresada en kelvin. Favorable: sentido de reacción con cambio de Gibbs negativo bajo las condiciones indicadas.',
+3:'Espontaneidad: tendencia termodinámica, no rapidez. Temperatura umbral: valor para el cual la variación de Gibbs es cero, dentro de la aproximación de entalpía y entropía constantes. Por debajo o encima se analiza el signo de Gibbs.',
+4:'Descomposición: una sustancia origina varias especies. Coeficiente estequiométrico: número que multiplica una fórmula en una reacción balanceada. Entalpía de formación: cambio de entalpía al formar un mol de sustancia desde sus elementos en estado estándar. Entropía molar estándar: entropía de un mol de sustancia en su estado estándar.',
+5:'Productos y reactivos: sustancias a la derecha e izquierda de la flecha. Entalpía de reacción: suma de entalpías de formación de productos menos la de reactivos, multiplicadas por coeficientes. Espontánea: cambio de Gibbs negativo; no implica reacción rápida.',
+6:'Aproximación: suposición utilizada para estimar. Error porcentual: diferencia absoluta entre valor estimado y valor de referencia, dividida por el valor absoluto de referencia y multiplicada por cien. Atención: el PDF indica agua líquida, pero sus datos numéricos corresponden al vapor.',
+7:'Energía libre de formación: cambio de Gibbs al formar un mol desde elementos estándar. La tabla original rotula la última columna como entropía, pero sus valores corresponden a Gibbs de formación. La entropía de reacción se obtiene mediante la relación entre Gibbs, entalpía y temperatura.'
+};
+function renderExercises(md){
+const chunks=md.split(/(?=^### Ejercicio \d+\s*[—-])/m).filter(x=>/^### Ejercicio \d+/.test(x.trim()));
+return chunks.map((chunk,i)=>{
+const item=window.ET27_PROCESOS_U6_ORIGINAL?.[i];if(!item)return parse(chunk);
+const n=i+1,head='<article class="u6-exercise" id="u6-ej-'+n+'"><header><small>UNIDAD 6 · EJERCICIO '+n+'</small><h3>'+esc(item.title)+'</h3></header>';
+const statement='<section class="u6-statement"><h4>Consigna original de la profesora</h4><div class="u6-original-text">'+esc(item.statement)+'</div></section>';
+const explanation='<div class="u6-concepts"><h4>Conceptos que necesitamos entender</h4><p>'+esc(glossary[n])+'</p></div>';
+const solution='<details class="u6-solution"><summary>Ver resolución completa paso a paso</summary><div class="u6-solution-body">'+explanation+'<div class="u6-reading">'+parse(chunk.replace(/^### Ejercicio [^\n]+\n/,''))+'</div></div></details>';
+return head+statement+solution+'</article>';
+}).join('');
+}
+
 function renderMath(root){
 if(!window.katex){setTimeout(()=>renderMath(root),250);return}
-root.querySelectorAll('[data-u6-tex]:not([data-ready])').forEach(n=>{try{window.katex.render(decodeURIComponent(n.dataset.u6Tex),n,{displayMode:true,throwOnError:false,strict:'ignore'});n.dataset.ready='1'}catch(e){n.textContent='Fórmula no disponible';}});
+root.querySelectorAll('[data-u6-tex]:not([data-ready])').forEach(n=>{try{window.katex.render(decodeURIComponent(n.dataset.u6Tex),n,{displayMode:true,throwOnError:true,strict:'ignore'});n.dataset.ready='1'}catch(e){n.textContent='Error de fórmula: '+decodeURIComponent(n.dataset.u6Tex);console.error('Fórmula U6 inválida:',e);}});
 }
 async function mount(){
 const main=document.querySelector('.subject-main');if(!main||document.getElementById('u6-gibbs'))return;
@@ -35,8 +57,8 @@ main.insertBefore(unit,document.getElementById('emptySearch'));
 try{
 const res=await fetch('./content/procesos/4to/unidad-6-gibbs.md?v=1.0.3',{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);
 const md=await res.text();const split=md.indexOf('## Ejercicios resueltos');const theory=split<0?md:md.slice(0,split),exercises=split<0?'':md.slice(split);
-unit.innerHTML='<div class="section-title"><div><small>PROCESOS · UNIDAD 6</small><h2>Tercer principio y energía libre de Gibbs</h2></div></div><p class="u6-lead">Espontaneidad, entalpía, entropía, temperatura de equilibrio y energía libre. Siete ejercicios de la guía resueltos paso por paso.</p><section class="u5-subsection" id="u6-teoria"><h2>Teoría completa</h2><div class="u6-reading">'+parse(theory)+'</div></section><section class="u5-subsection" id="u6-ejercicios"><h2>Ejercicios resueltos</h2><div class="u6-reading">'+parse(exercises)+'</div></section>';
-renderMath(unit);
+unit.innerHTML='<div class="section-title"><div><small>PROCESOS · UNIDAD 6</small><h2>Tercer principio y energía libre de Gibbs</h2></div></div><p class="u6-lead">Espontaneidad, entalpía, entropía, temperatura de equilibrio y energía libre. Siete ejercicios de la guía resueltos paso por paso.</p><section class="u5-subsection" id="u6-teoria"><h2>Teoría completa</h2><div class="u6-reading">'+parse(theory)+'</div></section><section class="u5-subsection" id="u6-ejercicios"><h2>Ejercicios resueltos</h2><div class="u6-reading">'+renderExercises(exercises)+'</div></section>';
+renderMath(unit);unit.addEventListener('toggle',()=>renderMath(unit),true);
 const index=document.querySelector('.subject-index.po-unit-index');
 if(index&&!index.querySelector('[data-po-unit="6"]')){const nav=document.createElement('details');nav.className='po-unit';nav.dataset.poUnit='6';nav.innerHTML='<summary><span>Unidad 6 · Energía libre de Gibbs</span></summary><div class="po-unit-body"><a href="#u6-teoria">Teoría completa</a><a href="#u6-ejercicios">Ejercicios 1 a 7</a>'+Array.from({length:7},(_,i)=>'<a class="po-sub" href="#u6-ej-'+(i+1)+'">Ejercicio '+(i+1)+'</a>').join('')+'</div>';index.append(nav);}
 const sheet=document.querySelector('#formulaSheet .po-formula-groups');if(sheet&&!sheet.querySelector('.u6-formula-unit')){const d=document.createElement('details');d.className='po-formula-unit u6-formula-unit';d.innerHTML='<summary>Unidad 6 · Gibbs</summary><div class="po-formula-item"><b>Energía libre</b><div data-u6-tex="'+encodeURIComponent('\\Delta G=\\Delta H-T\\Delta S')+'"></div></div><div class="po-formula-item"><b>Temperatura límite</b><div data-u6-tex="'+encodeURIComponent('T=\\frac{\\Delta H}{\\Delta S}')+'"></div></div>';sheet.append(d);renderMath(d)}
