@@ -33,13 +33,23 @@ const glossary={
 6:'Aproximación: suposición utilizada para estimar. Error porcentual: diferencia absoluta entre valor estimado y valor de referencia, dividida por el valor absoluto de referencia y multiplicada por cien. Atención: el PDF indica agua líquida, pero sus datos numéricos corresponden al vapor.',
 7:'Energía libre de formación: cambio de Gibbs al formar un mol desde elementos estándar. La tabla original rotula la última columna como entropía, pero sus valores corresponden a Gibbs de formación. La entropía de reacción se obtiene mediante la relación entre Gibbs, entalpía y temperatura.'
 };
+
+const methodology={
+1:['Identificar el combustible (octano) y el comburente (oxígeno). En una combustión completa de hidrocarburos los productos son dióxido de carbono y agua.','Balancear primero carbono, después hidrógeno y por último oxígeno. Si aparecen fracciones, multiplicar toda la ecuación por dos.','Comparar los moles gaseosos de reactivos y productos para predecir el signo de la entropía. Aplicar la ecuación de Gibbs y explicar qué significa «más negativo».'],
+2:['Copiar la reacción y los dos datos termodinámicos. Como la entropía está en joules y la entalpía en kilojoules, convertir la entropía dividiendo por mil.','Convertir cada temperatura Celsius a kelvin sumando 273,15. Sustituir en Gibbs con los signos originales, incluyendo el signo negativo de la entropía.','Comparar el resultado con cero: negativo favorece la reacción directa, positivo favorece la inversa bajo condiciones estándar. No confundir favorabilidad con rapidez.'],
+3:['Reconocer que tanto la entalpía como la entropía son negativas: la reacción se favorece a bajas temperaturas.','Plantear Gibbs igual a cero para encontrar la temperatura límite; despejar sin cambiar signos arbitrariamente.','Probar el signo a cada lado de 300 K y elegir la opción que indique temperatura estrictamente menor.'],
+4:['Balancear la descomposición y mantener los estados físicos porque influyen en la entropía.','Predecir cualitativamente el signo de la entropía por formación de gases. Después calcular productos menos reactivos con los coeficientes estequiométricos.','Repetir el procedimiento para la entalpía; convertir la entropía a kilojoules por kelvin y calcular Gibbs. Finalmente igualar Gibbs a cero y despejar la temperatura.'],
+5:['Comprobar que la reacción esté balanceada y distinguir las sustancias iniciales de las finales.','Calcular entalpía y entropía por separado, sumando propiedades de los productos y restando las de los reactivos.','Pasar la entropía a kilojoules por kelvin, calcular Gibbs a temperatura estándar e interpretar su signo.'],
+6:['Leer primero la advertencia: la guía dice agua líquida, pero los valores tabulados son de vapor. Mostrar ambos y explicar cuál se utiliza para el cálculo.','Obtener entalpía y entropía mediante productos menos reactivos. Calcular Gibbs a temperatura estándar y luego despejar la temperatura umbral.','Estimar Gibbs a 1200 K, recalcular con los valores reales y hallar el error porcentual tomando como referencia el valor real.'],
+7:['Reconocer el error del encabezado: la última columna contiene energías libres de formación, no entropías molares.','Escribir y balancear ambas reacciones. Calcular la entalpía de cada una y predecir la entropía a partir de la formación de gas.','Calcular Gibbs de reacción desde la tabla; despejar la entropía de la ecuación de Gibbs. Evaluar a 650 °C y hallar la temperatura umbral de cada reacción.']
+};
 function renderExercises(md){
 const chunks=md.split(/(?=^### Ejercicio \d+\s*[—-])/m).filter(x=>/^### Ejercicio \d+/.test(x.trim()));
 return chunks.map((chunk,i)=>{
 const item=window.ET27_PROCESOS_U6_ORIGINAL?.[i];if(!item)return parse(chunk);
 const n=i+1,head='<article class="u6-exercise" id="u6-ej-'+n+'"><header><small>UNIDAD 6 · EJERCICIO '+n+'</small><h3>'+esc(item.title)+'</h3></header>';
 const statement='<section class="u6-statement"><h4>Consigna original de la profesora</h4><div class="u6-original-text">'+esc(item.statement)+'</div></section>';
-const explanation='<div class="u6-concepts"><h4>Conceptos que necesitamos entender</h4><p>'+esc(glossary[n])+'</p></div>';
+const explanation='<div class="u6-concepts"><h4>Conceptos que necesitamos entender</h4><p>'+esc(glossary[n])+'</p></div><div class="u6-method"><h4>Cómo vamos a resolverlo</h4><ol>'+methodology[n].map(x=>'<li>'+esc(x)+'</li>').join('')+'</ol></div>';
 const solution='<details class="u6-solution"><summary>Ver resolución completa paso a paso</summary><div class="u6-solution-body">'+explanation+'<div class="u6-reading">'+parse(chunk.replace(/^### Ejercicio [^\n]+\n/,''))+'</div></div></details>';
 return head+statement+solution+'</article>';
 }).join('');
