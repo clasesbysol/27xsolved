@@ -45,13 +45,11 @@ Solo tiene sentido físico si el cociente es positivo y si el modelo de ΔH y Δ
 ### 5. Propiedades de formación
 Para cualquier propiedad de reacción X = H, G:
 \[
-\Delta X^\circ_{\mathrm{rxn}}=\sum\nu\Delta X^\circ_f(\text{productos})-\sum\nu\Delta X^\circ_f(\text{reactivos})
+\Delta X^\circ_{\mathrm{rxn}}=\sum_{i}\nu_i \Delta X^\circ_{f,i}(\text{productos})-\sum_{i}\nu_i \Delta X^\circ_{f,i}(\text{reactivos})
 \]
 Para la entropía se usan **entropías molares estándar absolutas**:
 \[
-\Delta S^\circ_{\mathrm{rxn}}=\sum
-\nu S^\circ(\text{productos})-\sum
-\nu S^\circ(\text{reactivos})
+\Delta S^\circ_{\mathrm{rxn}}=\sum_{i}\nu_i S^\circ_i(\text{productos})-\sum_{i}\nu_i S^\circ_i(\text{reactivos})
 \]
 Los coeficientes estequiométricos multiplican cada valor. Los elementos en su estado estándar tienen ΔH°f = ΔG°f = 0, pero **no** S° = 0.
 
@@ -78,7 +76,7 @@ Los coeficientes estequiométricos multiplican cada valor. Los elementos en su e
 \Delta G^\circ=\Delta H^\circ-T\Delta S^\circ
 \]
 \[
-\Delta S^\circ<0\R\rightarrow -T\Delta S^\circ>0
+\Delta S^\circ<0\Rightarrow -T\Delta S^\circ>0
 \]
 \[
 \boxed{\Delta G^\circ>\Delta H^\circ}
@@ -132,7 +130,7 @@ Favorece NO respecto de NO₂. Son predicciones termodinámicas estándar; no de
 \Delta G^\circ=-60,0-T(-0,200)=-60,0+0,200T
 \]
 \[
-0=-60,0+0,200T\R\rightarrow T=300 \mathrm K
+0=-60,0+0,200T\Rightarrow T=300 \mathrm K
 \]
 \[
 \boxed{\Delta G^\circ<0\text{ para }T<300 \mathrm K}
