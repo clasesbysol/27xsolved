@@ -186,6 +186,14 @@ ${fix('Interpretación de órdenes ',`<p>Para identificar el orden, se suman los
 ${table(['Si duplicar [A]…','el orden en A es'],[['no cambia v','0'],['duplica v','1'],['cuadruplica v','2']])}
 <p>En general: si [A] se multiplica por f y v se multiplica por f<sup>m</sup>, el orden es m. ${simple('Triplicar [A] y que v se triplique también es orden 1')}</p>
 
+<h3>Cómo sacar el orden con una tabla de experimentos: fórmula que sirve siempre</h3>
+<p><b>Idea clave:</b> dividir la velocidad del experimento 2 por la del 1 <b>no da directamente el orden</b>: da el factor por el que cambió la velocidad. También hay que comparar cuánto cambió la concentración. Elegí dos filas donde <b>solo cambie la concentración del reactivo que estás estudiando</b>; las demás deben permanecer constantes.</p>
+${chain([R`v=k[A]^m[B]^n`,'Ley de velocidad: m y n son los órdenes parciales'],[R`\\frac{v_2}{v_1}=\\left(\\frac{[A]_2}{[A]_1}\\right)^m`,'Al comparar dos experimentos con [B] constante, k y [B] se cancelan'],[R`m=\\frac{\\log(v_2/v_1)}{\\log([A]_2/[A]_1)}`,'Fórmula general para calcular el orden en A'],[R`n=\\frac{\\log(v_2/v_1)}{\\log([B]_2/[B]_1)}`,'Para calcular el orden en B, compará otras dos filas con [A] constante'],[R`\\text{Orden total}=m+n`,'Sumá los órdenes parciales'])}
+<p><b>Ejemplo explicado:</b> si al duplicar [A] la velocidad se cuadruplica, la relación de velocidades es 4 y la relación de concentraciones es 2. Buscamos el exponente m que convierte 2 en 4:</p>
+${chain([R`\\frac{v_2}{v_1}=4`,'La velocidad se multiplicó por cuatro'],[R`\\frac{[A]_2}{[A]_1}=2`,'La concentración se duplicó'],[R`4=2^m`,'El orden es el exponente, no el cociente de velocidades'],[R`m=\\frac{\\log 4}{\\log 2}=2`,'Segundo orden respecto de A'])}
+<p><b>Atajo cuando la concentración se duplica:</b> si la velocidad no cambia, orden 0; si se duplica, orden 1; si se cuadruplica, orden 2; si se multiplica por ocho, orden 3. <b>La fórmula con logaritmos funciona también cuando la concentración se triplica, se reduce a la mitad o cambia por cualquier otro factor positivo distinto de 1.</b></p>
+<p><b>Atención:</b> si en las dos filas cambian simultáneamente A y B, no podés usar directamente la fórmula de un solo reactivo: necesitás otra comparación o resolver los exponentes conjuntamente.</p>
+
 <h3>Método de velocidades iniciales: resolución completa</h3>
 <p>Para v = k[A]<sup>m</sup>[B]<sup>n</sup>, los exponentes m y n se determinan experimentalmente. Compará dos experimentos donde una concentración permanezca fija. Si A cambia por un factor f y la velocidad por un factor g, entonces g = f<sup>m</sup> y m = log(g)/log(f). Repetí con B. El orden global es m + n; finalmente calculá k = v/([A]<sup>m</sup>[B]<sup>n</sup>) y verificá otra fila. <b>Los órdenes no se deducen de los coeficientes de la ecuación global.</b></p>
 <h3>Cuatro ejercicios modelo con tablas experimentales</h3>
