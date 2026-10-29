@@ -191,9 +191,9 @@
         if(wanted.map(key).sort().join()!==saved.map(key).sort().join())throw new Error('Los permisos guardados no coinciden con lo elegido. Revisá la conexión y volvé a guardar.');
         // Una notificación por materia con permisos nuevos, nunca por cada unidad.
         const notices=changed.filter(s=>{
-          const before=T().normalize ? T().normalize(s.id,st.orig[s.id]) : st.orig[s.id];
+          const before=st.orig[s.id]||new Set();
           const after=sel(s.id);
-          return [...after].some(node=>!T().covers(before,node));
+          return [...after].some(node=>!before.has(node));
         }).map(s=>({email,subject:s.db,message:'Tenés nuevos permisos en '+s.name+'.'}));
         changed.forEach(s=>{st.orig[s.id]=new Set(sel(s.id));st.legacy[s.id]=false});
         if(notices.length){
