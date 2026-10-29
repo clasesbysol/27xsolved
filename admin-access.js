@@ -189,7 +189,17 @@
         for(const r of toDelete)await api(`access_grants?email=eq.${enc(email)}&subject=eq.${enc(r.subject)}&unit_no=eq.${Number(r.unit_no)}&grant_type=eq.${enc(r.grant_type)}&grant_key=eq.${enc(r.grant_key)}`,{method:'DELETE',headers:{Prefer:'return=minimal'}});
         const saved=await api(`access_grants?select=subject,unit_no,grant_type,grant_key&email=eq.${enc(email)}&subject=${enc(inList(dbs))}`)||[];
         if(wanted.map(key).sort().join()!==saved.map(key).sort().join())throw new Error('Los permisos guardados no coinciden con lo elegido. Revisá la conexión y volvé a guardar.');
+        // Una notificación por materia con permisos nuevos, nunca por cada unidad.
+        const notices=changed.filter(s=>{
+          const before=T().normalize ? T().normalize(s.id,st.orig[s.id]) : st.orig[s.id];
+          const after=sel(s.id);
+          return [...after].some(node=>!T().covers(before,node));
+        }).map(s=>({email,subject:s.db,message:'Tenés nuevos permisos en '+s.name+'.'}));
         changed.forEach(s=>{st.orig[s.id]=new Set(sel(s.id));st.legacy[s.id]=false});
+        if(notices.length){
+          try{await api('student_notifications',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify(notices)})}
+          catch(error){console.warn('Permisos guardados; no se pudo registrar la notificación',error);setMsg('Permisos guardados, pero no se pudo crear la notificación.','error',true)}
+        }
       }
       st.profile={...(st.profile||{}),email,active:true,access_starts_at:starts,access_expires_at:expires};
       st.duration='keep';
