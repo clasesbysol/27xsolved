@@ -257,6 +257,31 @@ ${example('Respuestas del ejercicio','',
 ${table(['','Sustitución','Adición'],[['Qué pasa','Un grupo sale y otro entra en su lugar','Se rompe el doble enlace y se suman dos grupos'],['Ejemplo ','R₃C–Br + Nu⁻ → R₃C–Nu + Br⁻','C=C + E⁺ + Nu⁻ → E–C–C–Nu'],['Intermediario','carbocatión','carbocatión']])}
 `);
 
+
+  { const sec=sections.find(x=>x.key==='qg5-mecanismos'); if(sec) sec.html += `<h3>Guía para explicar en clase: mecanismos desde cero</h3>
+<p><b>Primero, tres ideas distintas:</b> (1) sumar etapas para obtener la reacción global; (2) reconocer un intermediario que se forma y luego se consume; (3) obtener una ley de velocidad, que exige conocer el paso lento y las hipótesis del mecanismo.</p>
+<h3>1. Cómo se suman las etapas</h3>
+${chain(R`A+B\rightarrow C`,R`C+D\rightarrow E`,R`A+B+C+D\rightarrow C+E`,R`A+B+D\rightarrow E`)}
+<p>C aparece como producto de la primera etapa y reactivo de la segunda. Se cancela de ambos lados. Por eso C es un <b>intermediario</b> y no aparece en la ecuación global. La suma no permite deducir automáticamente la ley de velocidad.</p>
+<h3>2. Ejemplo con NO y oxígeno</h3>
+${chain(R`2NO\rightleftharpoons N_2O_2`,R`N_2O_2+O_2\rightarrow2NO_2`,R`2NO+O_2\rightarrow2NO_2`)}
+<p>En este mecanismo didáctico propuesto, N₂O₂ se forma en el primer paso y se consume en el segundo. <b>No se debe confundir el intermediario con el estado de transición:</b> el primero está en un valle del gráfico energético; el segundo, en un pico.</p>
+<h3>3. ¿Por qué se reemplaza una concentración por otra?</h3>
+<p><b>Supongamos</b> que la primera etapa reversible alcanza un equilibrio rápido y que la segunda etapa es lenta. La velocidad del paso lento depende de N₂O₂, pero podemos expresar su concentración usando el equilibrio de la primera etapa.</p>
+${step('Paso A. Velocidad de la etapa lenta',chain(R`v=k_2[N_2O_2][O_2]`))}
+${step('Paso B. Equilibrio rápido de la primera etapa',chain(R`K_1=\frac{[N_2O_2]}{[NO]^2}`))}
+${step('Paso C. Despejar el intermediario',chain(R`K_1[NO]^2=[N_2O_2]`,R`[N_2O_2]=K_1[NO]^2`))}
+${step('Paso D. Reemplazar en la velocidad',chain(R`v=k_2[N_2O_2][O_2]`,R`v=k_2(K_1[NO]^2)[O_2]`,R`v=(k_2K_1)[NO]^2[O_2]`,R`v=k[NO]^2[O_2]`))}
+<p><b>Frase para decir en clase:</b> “No reemplazamos N₂O₂ por NO porque sí. Primero despejamos cuánto N₂O₂ hay usando el equilibrio rápido. Recién entonces sustituimos esa expresión en la fórmula de velocidad del paso lento”. Es un reemplazo algebraico, no una reacción química adicional.</p>
+<p><b>Advertencia:</b> si el primer paso no está en preequilibrio, esta sustitución no es válida automáticamente. También puede necesitarse un análisis de estado estacionario. Si el primer paso es lento y reversible, su velocidad neta incluye la reacción inversa.</p>
+<h3>4. Cómo leer el gráfico</h3>
+<p>Cada <b>pico</b> corresponde a un estado de transición y cada <b>valle entre picos</b> a un intermediario. Dos etapas suelen representarse con dos picos y un valle. La energía de activación de cada etapa se mide desde su nivel inicial hasta el pico siguiente. Los productos más bajos que los reactivos indican reacción exotérmica; más altos, endotérmica.</p>
+${chain(R`\Delta H=H_{productos}-H_{reactivos}`,R`\Delta H<0\quad\text{exotérmica}`,R`\Delta H>0\quad\text{endotérmica}`)}
+<h3>5. Ejemplo sin intermediario: sustitución SN2</h3>
+<p>En condiciones que favorecen SN2, OH⁻ ataca al 2-clorobutano mientras sale Cl⁻. Ambos cambios ocurren en una sola etapa: hay un estado de transición, pero no un intermediario discreto. Otras condiciones pueden favorecer SN1 o eliminación.</p>
+${M(R`CH_3CH(Cl)CH_2CH_3+OH^-\rightarrow CH_3CH(OH)CH_2CH_3+Cl^-`)}
+<h3>Preguntas de repaso para la clase</h3>
+${cards([['Intermediario','¿Por qué desaparece de la ecuación global?','Porque se forma y se consume en etapas diferentes.'],['Paso lento','¿Se obtiene la ley mirando la ecuación global?','No. Se necesita el mecanismo y sus hipótesis.'],['Sustitución','¿De dónde sale [N₂O₂] = K₁[NO]²?','De despejar la constante de equilibrio de la primera etapa rápida.'],['Energía','¿Qué diferencia hay entre un pico y un valle?','Pico: estado de transición. Valle: intermediario.']])}`; }
   // ---------- 7. Factores y catalizadores ----------
   add('factores','Factores que modifican la velocidad y catalizadores','TEORÍA · 07',`
 <p>Para que una reacción ocurra, las partículas tienen que <b>chocar</b> con <b>energía suficiente</b> (al menos la <b>energía de activación</b>, E<sub>a</sub>) y con la orientación adecuada: son los <b>choques efectivos</b>.</p>
