@@ -494,62 +494,68 @@ ${table(['Experimento','[BF₃]ₜ₌₀','[NH₃]ₜ₌₀','Veloc. inicial / m
     'Qc > Kc: evolución hacia SO₃; planteo de equilibrio completo.');
 
 
-  // Dos prácticas nuevas, cinco ejercicios cada una. Consignas y soluciones originales.
+  // Prácticas A y B reconstruidas: mecanismos explícitos, consignas completas y resolución guiada.
   const practice=(n,title,statement,solution,answer)=>exercises.push({n,title,statement,solution,answer});
-  practice('A1','Velocidad y estequiometría',`<p>Para 2 N₂O₅(g) → 4 NO₂(g) + O₂(g), la concentración de N₂O₅ disminuye de 0,800 M a 0,680 M en 40 s. a) Calcular la velocidad media de desaparición de N₂O₅. b) Calcular la velocidad media de reacción. c) Calcular las velocidades de formación de NO₂ y O₂.</p>`,
-    step('1. Fórmula general',chain(R`v=-\frac1{2}\frac{\Delta[N_2O_5]}{\Delta t}=\frac1{4}\frac{\Delta[NO_2]}{\Delta t}=\frac{\Delta[O_2]}{\Delta t}`))+
-    step('2. Desaparición del reactivo',chain(R`v_{des}=-\frac{0{,}680-0{,}800}{40}=0{,}00300\ \mathrm{M/s}`))+
-    step('3. Velocidad de reacción',chain(R`v=\frac{v_{des}}2=0{,}00150\ \mathrm{M/s}`))+
-    step('4. Formación de productos',chain(R`v_{NO_2}=4v=0{,}00600\ \mathrm{M/s}`,R`v_{O_2}=v=0{,}00150\ \mathrm{M/s}`)),
-    'Desaparición: 0,00300 M/s; reacción: 0,00150 M/s; formación de NO₂: 0,00600 M/s y O₂: 0,00150 M/s.');
-  practice('A2','Órdenes a partir de experimentos',`<p>Para A + B → productos, se midieron: exp. 1: [A] = 0,10 M, [B] = 0,20 M, v = 2,0 × 10⁻⁴ M/s; exp. 2: [A] = 0,20 M, [B] = 0,20 M, v = 8,0 × 10⁻⁴ M/s; exp. 3: [A] = 0,10 M, [B] = 0,40 M, v = 4,0 × 10⁻⁴ M/s. Determinar órdenes parciales, orden global, ley de velocidad y k.</p>`,
-    step('1. Ley general',chain(R`v=k[A]^m[B]^n`))+
-    step('2. Comparar experimentos 1 y 2',chain(R`\frac{v_2}{v_1}=\frac{8{,}0\cdot10^{-4}}{2{,}0\cdot10^{-4}}=4=2^m`,R`m=2`))+
-    step('3. Comparar experimentos 1 y 3',chain(R`\frac{v_3}{v_1}=\frac{4{,}0\cdot10^{-4}}{2{,}0\cdot10^{-4}}=2=2^n`,R`n=1`))+
-    step('4. Orden total y k',chain(R`v=k[A]^2[B]`,R`m+n=3`,R`k=\frac{2{,}0\cdot10^{-4}}{(0{,}10)^2(0{,}20)}=0{,}100\ \mathrm{M^{-2}s^{-1}}`)),
-    'Orden 2 en A, 1 en B, global 3; k = 0,100 M⁻²s⁻¹.');
-  practice('A3','Cambios de concentración y velocidad',`<p>Una reacción cumple v = k[X][Y]². Si inicialmente v = 0,024 M/s, ¿cuánto vale la velocidad al triplicar [X] y reducir [Y] a la mitad? Explicar sin conocer k.</p>`,
-    step('1. Relación general',chain(R`\frac{v_2}{v_1}=\left(\frac{[X]_2}{[X]_1}\right)\left(\frac{[Y]_2}{[Y]_1}\right)^2`))+
-    step('2. Sustituir factores',chain(R`\frac{v_2}{v_1}=3\left(\frac12\right)^2=\frac34`))+
-    step('3. Calcular velocidad nueva',chain(R`v_2=0{,}024\cdot\frac34=0{,}018\ \mathrm{M/s}`)),
-    'La velocidad disminuye a 0,018 M/s, es decir, queda en el 75 % de la inicial.');
-  practice('A4','Identificar orden con concentraciones en el tiempo',`<p>Un reactivo A presenta [A] = 0,800 M a t = 0 s; 0,400 M a 20 s; 0,200 M a 40 s. a) Verificar si es de primer orden. b) Calcular k. c) Calcular el tiempo de vida media.</p>`,
-    step('1. Ley integrada de orden uno',chain(R`\ln[A]=\ln[A]_0-kt`))+
-    step('2. Despejar k y reemplazar',chain(R`k=\frac{\ln([A]_0/[A])}{t}`,R`k=\frac{\ln(0{,}800/0{,}400)}{20}=0{,}03466\ \mathrm{s^{-1}}`))+
-    step('3. Verificar con otro intervalo',chain(R`k=\frac{\ln(0{,}800/0{,}200)}{40}=0{,}03466\ \mathrm{s^{-1}}`))+
-    step('4. Vida media',chain(R`t_{1/2}=\frac{\ln2}{k}=20{,}0\ \mathrm s`)),
-    'Es compatible con primer orden; k = 0,03466 s⁻¹ y t½ = 20,0 s.');
-  practice('A5','Calcular k y sus unidades',`<p>La ley de velocidad es v = k[P]². En un experimento [P] = 0,30 M y v = 0,018 M/s. a) Hallar k y unidades. b) Calcular v para [P] = 0,15 M. c) Explicar por qué la velocidad cambia en ese factor.</p>`,
-    step('1. Despejar k',chain(R`k=\frac{v}{[P]^2}`))+
-    step('2. Sustituir',chain(R`k=\frac{0{,}018}{(0{,}30)^2}=0{,}200\ \mathrm{M^{-1}s^{-1}}`))+
-    step('3. Nueva velocidad',chain(R`v_2=0{,}200(0{,}15)^2=0{,}00450\ \mathrm{M/s}`))+
-    step('4. Comprobar el factor',chain(R`\frac{v_2}{v_1}=\left(\frac{0{,}15}{0{,}30}\right)^2=\frac14`)),
-    'k = 0,200 M⁻¹s⁻¹; v₂ = 0,00450 M/s.');
-  practice('B1','Sumar etapas y encontrar el intermediario',`<p>Se propone el mecanismo: (1) A + B → C; (2) C + D → E + B. a) Sumar las etapas. b) Identificar intermediario y especie regenerada. c) Explicar por qué B no aparece en la ecuación neta.</p>`,
-    step('1. Sumar ambos lados',chain(R`A+B+C+D\rightarrow C+E+B`))+
-    step('2. Cancelar especies idénticas',chain(R`A+D\rightarrow E`)),
-    'C es intermediario (se forma y consume); B se consume y regenera en la secuencia, por lo que actúa como catalizador formal. Ecuación global: A + D → E.');
-  practice('B2','Paso lento y ley de velocidad',`<p>Mecanismo propuesto: (1) A + B → I (lento, elemental); (2) I + C → P (rápido). a) Identificar intermediario. b) Escribir ecuación global. c) Deducir la ley de velocidad suponiendo que el paso lento controla la velocidad.</p>`,
-    step('1. Sumar etapas',chain(R`A+B+I+C\rightarrow I+P`,R`A+B+C\rightarrow P`))+
-    step('2. Ley del paso lento elemental',chain(R`v=k_1[A][B]`)),
-    'Intermediario I; reacción global A + B + C → P; bajo la hipótesis indicada, v = k₁[A][B], sin [C].');
-  practice('B3','Sustituir la concentración del intermediario',`<p>Mecanismo hipotético: (1) 2 NO ⇌ N₂O₂ (preequilibrio rápido); (2) N₂O₂ + O₂ → 2 NO₂ (lento, elemental). a) Obtener la reacción global. b) Escribir la velocidad del paso lento. c) Despejar [N₂O₂] desde K₁ y reemplazar para obtener la ley final.</p>`,
-    step('1. Suma de etapas',chain(R`2NO+O_2\rightarrow2NO_2`))+
-    step('2. Velocidad del paso lento',chain(R`v=k_2[N_2O_2][O_2]`))+
-    step('3. Equilibrio rápido',chain(R`K_1=\frac{[N_2O_2]}{[NO]^2}`,R`[N_2O_2]=K_1[NO]^2`))+
-    step('4. Sustitución justificada',chain(R`v=k_2(K_1[NO]^2)[O_2]`,R`v=(k_2K_1)[NO]^2[O_2]`,R`v=k[NO]^2[O_2]`)),
-    'El reemplazo procede del preequilibrio rápido, no de la ecuación global. Ley final: v = k[NO]²[O₂].');
-  practice('B4','Arrhenius: cambio de temperatura',`<p>Una reacción tiene k₁ = 0,0200 s⁻¹ a 300 K y Eₐ = 50,0 kJ/mol. Calcular k₂ a 330 K con R = 8,314 J·mol⁻¹·K⁻¹. Explicar el resultado.</p>`,
-    step('1. Ecuación entre dos temperaturas',chain(R`\ln\frac{k_2}{k_1}=\frac{E_a}{R}\left(\frac1{T_1}-\frac1{T_2}\right)`))+
-    step('2. Sustituir datos',chain(R`\ln\frac{k_2}{0{,}0200}=\frac{50000}{8{,}314}\left(\frac1{300}-\frac1{330}\right)`))+
-    step('3. Calcular',chain(R`\ln\frac{k_2}{0{,}0200}\approx1{,}822`,R`k_2=0{,}0200e^{1{,}822}\approx0{,}124\ \mathrm{s^{-1}}`)),
-    'k₂ ≈ 0,124 s⁻¹. La constante aumenta al elevar la temperatura.');
-  practice('B5','Interpretar dos perfiles energéticos',`<p>Dos reacciones tienen los siguientes niveles de energía (kJ/mol): reacción I: reactivos 80, transición 140, productos 30; reacción II: reactivos 50, transición 120, productos 90. a) Calcular Eₐ directa y ΔH de cada una. b) Clasificar exotérmica o endotérmica. c) Indicar qué representa el máximo energético.</p>`,
-    step('1. Fórmulas generales',chain(R`E_a=E_{TS}-E_R`,R`\Delta H=E_P-E_R`))+
-    step('2. Reacción I',chain(R`E_{a,I}=140-80=60\ \mathrm{kJ/mol}`,R`\Delta H_I=30-80=-50\ \mathrm{kJ/mol}`))+
-    step('3. Reacción II',chain(R`E_{a,II}=120-50=70\ \mathrm{kJ/mol}`,R`\Delta H_{II}=90-50=40\ \mathrm{kJ/mol}`)),
-    'I: exotérmica, Eₐ = 60 kJ/mol, ΔH = −50 kJ/mol. II: endotérmica, Eₐ = 70 kJ/mol, ΔH = +40 kJ/mol. El máximo es el estado de transición.');
-
+  practice('A1','Mecanismo de dos etapas: formación de NO₂',`<p>Se propone el siguiente mecanismo hipotético para la oxidación del monóxido de nitrógeno. La primera etapa es rápida y reversible; la segunda es lenta.</p><p><b>Etapa 1:</b></p>${M(R`2NO\\rightleftharpoons N_2O_2`)}<p><b>Etapa 2:</b></p>${M(R`N_2O_2+O_2\\rightarrow2NO_2`)}<p><b>a)</b> Sumar las etapas y obtener la reacción global. <b>b)</b> Identificar el intermediario y justificar por qué no aparece en la ecuación neta. <b>c)</b> Escribir la ley de velocidad del paso lento. <b>d)</b> Utilizar el preequilibrio para reemplazar la concentración del intermediario y deducir la ley final.</p>`,
+    step('a. Sumar las etapas',chain(R`2NO+N_2O_2+O_2\\rightarrow N_2O_2+2NO_2`,R`2NO+O_2\\rightarrow2NO_2`)+`<p>El N₂O₂ aparece a ambos lados: se forma y luego se consume; por eso se cancela.</p>`)+
+    step('b. Identificar el intermediario',chain(R`N_2O_2`)+`<p>Es intermediario porque se forma en la primera etapa y se consume en la segunda; no figura en la reacción global.</p>`)+
+    step('c. Ley del paso lento',chain(R`v=k_2[N_2O_2][O_2]`)+`<p>La segunda etapa es elemental y lenta. Por eso su ley utiliza las concentraciones de sus reactivos, no los coeficientes de la ecuación global.</p>`)+
+    step('d. Despejar y reemplazar',chain(R`K_1=\\frac{[N_2O_2]}{[NO]^2}`,R`[N_2O_2]=K_1[NO]^2`,R`v=k_2(K_1[NO]^2)[O_2]`,R`v=(k_2K_1)[NO]^2[O_2]`,R`v=k[NO]^2[O_2]`)+`<p>La sustitución se justifica exclusivamente por el preequilibrio rápido de la primera etapa.</p>`),
+    'Global: 2NO + O₂ → 2NO₂; intermediario N₂O₂; v = k[NO]²[O₂].');
+  practice('A2','Mecanismo con catalizador regenerado',`<p>Una reacción entre A y B ocurre mediante las siguientes etapas elementales. La especie X se agrega al sistema y se recupera al finalizar el mecanismo.</p><p><b>Etapa 1:</b></p>${M(R`A+X\\rightarrow AX`)}<p><b>Etapa 2:</b></p>${M(R`AX+B\\rightarrow AB+X`)}<p><b>a)</b> Obtener la ecuación global. <b>b)</b> Identificar el intermediario y el catalizador. <b>c)</b> Explicar por qué X no figura en la reacción global. <b>d)</b> Si el primer paso es lento e irreversible, escribir su ley de velocidad.</p>`,
+    step('a. Sumar y cancelar',chain(R`A+X+AX+B\\rightarrow AX+AB+X`,R`A+B\\rightarrow AB`)+`<p>AX se forma y se consume. X se consume y se regenera, de modo que ambos desaparecen de la suma neta.</p>`)+
+    step('b. Identificar especies',chain(R`AX`,R`X`)+`<p>AX es el intermediario; X actúa como catalizador en la secuencia propuesta.</p>`)+
+    step('c. Interpretación',chain(R`A+B\\rightarrow AB`)+`<p>El catalizador participa en el recorrido, pero se recupera al final; por eso no figura en el balance global.</p>`)+
+    step('d. Ley de la etapa lenta',chain(R`v=k_1[A][X]`)+`<p>La etapa lenta elemental utiliza A y X; la ausencia de X en la reacción global no significa que no afecte la velocidad.</p>`),
+    'Global A + B → AB; intermediario AX; catalizador X; v = k₁[A][X].');
+  practice('A3','Tres etapas: intermediarios y etapa determinante',`<p>Una transformación se desarrolla mediante tres etapas elementales consecutivas. La segunda es la etapa lenta; las otras dos son rápidas.</p><p><b>Etapa 1:</b></p>${M(R`A+B\\rightarrow I_1`)}<p><b>Etapa 2:</b></p>${M(R`I_1+C\\rightarrow I_2`)}<p><b>Etapa 3:</b></p>${M(R`I_2+D\\rightarrow P`)}<p><b>a)</b> Escribir la reacción global. <b>b)</b> Identificar todos los intermediarios. <b>c)</b> Indicar cuántos máximos y mínimos intermedios tendrá el perfil energético idealizado. <b>d)</b> Escribir la velocidad de la segunda etapa y explicar por qué no se puede sustituir automáticamente [I₁] por [A][B].</p>`,
+    step('a. Ecuación global',chain(R`A+B+I_1+C+I_2+D\\rightarrow I_1+I_2+P`,R`A+B+C+D\\rightarrow P`)+`<p>Se cancelan I₁ e I₂ porque cada uno se forma y luego se consume.</p>`)+
+    step('b. Intermediarios',chain(R`I_1`,R`I_2`)+`<p>Hay dos intermediarios distintos, no dos estados de transición.</p>`)+
+    step('c. Perfil energético',`<p>Tres etapas elementales implican tres estados de transición (tres picos) y dos mínimos intermedios. La etapa lenta no necesariamente corresponde al pico más alto medido desde el origen: importa la barrera desde el mínimo precedente.</p>`)+
+    step('d. Velocidad',chain(R`v_2=k_2[I_1][C]`)+`<p>No se conoce una relación de preequilibrio para I₁. No corresponde reemplazarlo por [A][B] sin una hipótesis cinética adicional.</p>`),
+    'Global A + B + C + D → P; dos intermediarios; tres máximos; v₂ = k₂[I₁][C].');
+  practice('A4','Preequilibrio y orden experimental',`<p>Para una reacción global A + 2B → P se propone un mecanismo con una asociación rápida reversible seguida de una transformación lenta elemental.</p><p><b>Etapa 1:</b></p>${M(R`A+B\\rightleftharpoons I`)}<p><b>Etapa 2:</b></p>${M(R`I+B\\rightarrow P`)}<p><b>a)</b> Verificar que la suma de las etapas reproduce la reacción global. <b>b)</b> Escribir la ley del paso lento. <b>c)</b> Despejar [I] desde la constante K₁ del preequilibrio. <b>d)</b> Obtener la ley global y determinar los órdenes parciales y el orden total.</p>`,
+    step('a. Suma',chain(R`A+B+I+B\\rightarrow I+P`,R`A+2B\\rightarrow P`)+`<p>I es un intermediario y se cancela.</p>`)+
+    step('b. Paso lento',chain(R`v=k_2[I][B]`)+`<p>La velocidad depende inicialmente de un intermediario.</p>`)+
+    step('c. Preequilibrio',chain(R`K_1=\\frac{[I]}{[A][B]}`,R`[I]=K_1[A][B]`)+`<p>Despejamos [I] multiplicando ambos lados por [A][B].</p>`)+
+    step('d. Sustitución y órdenes',chain(R`v=k_2(K_1[A][B])[B]`,R`v=k[A][B]^2`,R`n_A=1`,R`n_B=2`,R`n_{total}=3`)+`<p>Los exponentes surgen del mecanismo bajo las hipótesis dadas, no de copiar la estequiometría global.</p>`),
+    'v = k[A][B]²; orden 1 en A, 2 en B, total 3.');
+  practice('A5','Paso lento y velocidades iniciales',`<p>Se propone el mecanismo A + B → I (lento, elemental) seguido de I + C → P (rápido). Se realizan tres experimentos a temperatura constante: exp. 1: [A] = 0,10 M, [B] = 0,20 M, [C] = 0,10 M y v = 0,0020 M/s; exp. 2: [A] = 0,20 M, [B] = 0,20 M, [C] = 0,10 M y v = 0,0040 M/s; exp. 3: [A] = 0,10 M, [B] = 0,20 M, [C] = 0,30 M y v = 0,0020 M/s.</p><p><b>Etapa 1:</b></p>${M(R`A+B\\rightarrow I`)}<p><b>Etapa 2:</b></p>${M(R`I+C\\rightarrow P`)}<p><b>a)</b> Escribir la reacción global. <b>b)</b> Deducir la ley cinética del paso lento. <b>c)</b> Verificar con los experimentos que A es de primer orden y C no aparece en la ley. <b>d)</b> Calcular k con el experimento 1.</p>`,
+    step('a. Suma',chain(R`A+B+C\\rightarrow P`)+`<p>I es intermediario y desaparece de la suma.</p>`)+
+    step('b. Paso lento',chain(R`v=k[A][B]`)+`<p>La primera etapa es elemental y controla la velocidad.</p>`)+
+    step('c. Comparación',chain(R`\\frac{v_2}{v_1}=\\frac{0{,}0040}{0{,}0020}=2`,R`\\frac{[A]_2}{[A]_1}=2`,R`\\frac{v_3}{v_1}=1`)+`<p>Duplicar A duplica la velocidad. Triplicar C no la modifica: concuerda con el mecanismo supuesto.</p>`)+
+    step('d. Constante',chain(R`k=\\frac{v_1}{[A]_1[B]_1}`,R`k=\\frac{0{,}0020}{0{,}10\\cdot0{,}20}=0{,}100\\ \\mathrm{M^{-1}s^{-1}}`)+`<p>La unidad de k corresponde a orden total 2.</p>`),
+    'Global A + B + C → P; v = k[A][B]; k = 0,100 M⁻¹s⁻¹.');
+  practice('B1','Perfil energético de un mecanismo de dos etapas',`<p>En un perfil de energía potencial de dos etapas se leen los siguientes valores: reactivos = 70 kJ/mol; primer estado de transición = 145 kJ/mol; intermediario = 90 kJ/mol; segundo estado de transición = 125 kJ/mol; productos = 30 kJ/mol.</p><p><b>Etapa 1:</b></p>${M(R`A+B\\rightarrow I`)}<p><b>Etapa 2:</b></p>${M(R`I\\rightarrow P`)}<p><b>a)</b> Calcular la energía de activación de cada etapa en el sentido directo. <b>b)</b> Calcular el cambio global de entalpía y clasificar la reacción. <b>c)</b> Identificar los dos máximos y el mínimo intermedio. <b>d)</b> Explicar qué barrera es mayor y por qué eso no basta para demostrar experimentalmente cuál es el paso lento.</p>`,
+    step('a. Barreras',chain(R`E_{a,1}=145-70=75\\ \\mathrm{kJ/mol}`,R`E_{a,2}=125-90=35\\ \\mathrm{kJ/mol}`)+`<p>Cada barrera se mide desde el nivel de energía inmediatamente anterior.</p>`)+
+    step('b. Entalpía',chain(R`\\Delta H=30-70=-40\\ \\mathrm{kJ/mol}`)+`<p>Es exotérmica porque los productos tienen menor energía.</p>`)+
+    step('c. Interpretación',`<p>Los dos picos son estados de transición. El valle de 90 kJ/mol representa al intermediario I.</p>`)+
+    step('d. Comparación',chain(R`75>35`)+`<p>La primera barrera es mayor; aun así, para identificar rigurosamente el paso lento pueden importar factores preexponenciales, concentraciones y condiciones cinéticas.</p>`),
+    'Eₐ₁ = 75 kJ/mol; Eₐ₂ = 35 kJ/mol; ΔH = −40 kJ/mol.');
+  practice('B2','Catalizador y caminos alternativos',`<p>Para la reacción global A → P, el camino sin catalizador tiene reactivos a 50 kJ/mol, un estado de transición a 140 kJ/mol y productos a 20 kJ/mol. Un mecanismo catalizado alternativo consta de dos etapas, con un intermediario de 65 kJ/mol y estados de transición de 95 y 100 kJ/mol.</p><p><b>Etapa 1:</b></p>${M(R`A+X\\rightarrow I`)}<p><b>Etapa 2:</b></p>${M(R`I\\rightarrow P+X`)}<p><b>a)</b> Identificar intermediario y catalizador. <b>b)</b> Calcular la barrera del camino sin catalizador y las dos barreras del catalizado. <b>c)</b> Calcular ΔH y explicar por qué el catalizador no lo modifica. <b>d)</b> Indicar qué se representa en cada máximo.</p>`,
+    step('a. Suma y especies',chain(R`A+X+I\\rightarrow I+P+X`,R`A\\rightarrow P`)+`<p>I se forma y consume; X se consume y regenera.</p>`)+
+    step('b. Energías de activación',chain(R`E_{a,sin}=140-50=90\\ \\mathrm{kJ/mol}`,R`E_{a,cat,1}=95-50=45\\ \\mathrm{kJ/mol}`,R`E_{a,cat,2}=100-65=35\\ \\mathrm{kJ/mol}`)+`<p>El camino alternativo tiene barreras menores en este ejemplo.</p>`)+
+    step('c. Cambio energético',chain(R`\\Delta H=20-50=-30\\ \\mathrm{kJ/mol}`)+`<p>Reactivos y productos son los mismos, por eso ΔH no cambia al agregar catalizador.</p>`)+
+    step('d. Máximos',`<p>Cada máximo representa un estado de transición de una etapa; el valle intermedio representa I.</p>`),
+    'Eₐ sin catalizador = 90 kJ/mol; barreras catalizadas 45 y 35 kJ/mol; ΔH = −30 kJ/mol.');
+  practice('B3','Arrhenius y mecanismo propuesto',`<p>La constante de velocidad de una reacción aumenta al elevar la temperatura. A 300 K vale 0,0200 s⁻¹ y la energía de activación aparente es 50,0 kJ/mol. Se propone además un mecanismo de dos etapas, A → I (lenta) e I → P (rápida).</p><p><b>Etapa 1:</b></p>${M(R`A\\rightarrow I`)}<p><b>Etapa 2:</b></p>${M(R`I\\rightarrow P`)}<p><b>a)</b> Calcular k a 330 K con R = 8,314 J·mol⁻¹·K⁻¹. <b>b)</b> Sumar las etapas e identificar el intermediario. <b>c)</b> Escribir la ley del paso lento si es elemental. <b>d)</b> Explicar la diferencia entre energía de activación e intermediario.</p>`,
+    step('a. Arrhenius',chain(R`\\ln\\frac{k_2}{k_1}=\\frac{E_a}{R}\\left(\\frac1{T_1}-\\frac1{T_2}\\right)`,R`\\ln\\frac{k_2}{0{,}0200}=\\frac{50000}{8{,}314}\\left(\\frac1{300}-\\frac1{330}\\right)`,R`k_2\\approx0{,}124\\ \\mathrm{s^{-1}}`)+`<p>Se utilizan temperaturas absolutas y energía en J/mol.</p>`)+
+    step('b. Suma',chain(R`A+I\\rightarrow I+P`,R`A\\rightarrow P`)+`<p>I se cancela y es el intermediario.</p>`)+
+    step('c. Ley del paso lento',chain(R`v=k_1[A]`)+`<p>Se supone que la primera etapa es elemental e irreversible y determina la velocidad.</p>`)+
+    step('d. Conceptos',`<p>La energía de activación es una diferencia de energía hasta un estado de transición; el intermediario es una especie química situada entre etapas.</p>`),
+    'k(330 K) ≈ 0,124 s⁻¹; global A → P; intermediario I; v = k₁[A].');
+  practice('B4','Formación de HI por etapas',`<p>Se propone el siguiente mecanismo radicalario ilustrativo para la formación de ioduro de hidrógeno. Las etapas están escritas en el sentido directo para analizar su suma; no se afirma que representen por sí solas el mecanismo experimental completo.</p><p><b>Etapa 1:</b></p>${M(R`I_2\\rightarrow2I`)}<p><b>Etapa 2:</b></p>${M(R`H_2+I\\rightarrow H_2I`)}<p><b>Etapa 3:</b></p>${M(R`H_2I+I\\rightarrow2HI`)}<p><b>a)</b> Verificar la conservación de átomos en cada etapa. <b>b)</b> Sumar las tres etapas y obtener la reacción global. <b>c)</b> Identificar las especies intermediarias. <b>d)</b> Explicar por qué no se puede determinar la ley global sin información sobre la rapidez de las etapas.</p>`,
+    step('a. Conservación',`<p>En cada etapa se conserva el número de átomos de H y de I. El símbolo I representa yodo atómico, no I₂.</p>`)+
+    step('b. Sumar y cancelar',chain(R`I_2+H_2+2I+H_2I\\rightarrow2I+H_2I+2HI`,R`I_2+H_2\\rightarrow2HI`)+`<p>Los dos átomos I y H₂I aparecen a ambos lados y se cancelan.</p>`)+
+    step('c. Intermediarios',chain(R`I`,R`H_2I`)+`<p>Se forman en una etapa y se consumen en otras. No aparecen en la reacción global.</p>`)+
+    step('d. Ley cinética',`<p>Sin conocer las etapas rápidas y lentas, la reversibilidad y posibles preequilibrios, no corresponde inventar exponentes para la ley global.</p>`),
+    'Global H₂ + I₂ → 2HI; intermediarios I y H₂I; la ley global no se deduce solo de la suma.');
+  practice('B5','Sustitución SN1 frente a SN2',`<p>Se estudia la sustitución de un halogenuro orgánico R–Cl por OH⁻. Se proponen dos caminos alternativos. Camino I: ionización lenta R–Cl → R⁺ + Cl⁻, seguida de ataque rápido R⁺ + OH⁻ → R–OH. Camino II: reacción concertada R–Cl + OH⁻ → R–OH + Cl⁻ en una sola etapa.</p><p><b>Etapa 1:</b></p>${M(R`RCl\\rightarrow R^++Cl^-`)}<p><b>Etapa 2:</b></p>${M(R`R^++OH^-\\rightarrow ROH`)}<p><b>Etapa 3:</b></p>${M(R`RCl+OH^-\\rightarrow ROH+Cl^-`)}<p><b>a)</b> Sumar las etapas del camino I. <b>b)</b> Identificar el intermediario del camino I y explicar por qué el camino II no tiene intermediario. <b>c)</b> Escribir las leyes de velocidad de los pasos determinantes, suponiéndolos elementales. <b>d)</b> Comparar la cantidad de máximos de energía de ambos caminos.</p>`,
+    step('a. Camino I',chain(R`RCl+R^++OH^-\\rightarrow R^++Cl^-+ROH`,R`RCl+OH^-\\rightarrow ROH+Cl^-`)+`<p>El carbocatión R⁺ se cancela.</p>`)+
+    step('b. Intermediario',chain(R`R^+`)+`<p>El camino I tiene carbocatión intermedio. El camino II es concertado: solo tiene estado de transición, no un mínimo intermedio.</p>`)+
+    step('c. Leyes cinéticas',chain(R`v_{SN1}=k_1[RCl]`,R`v_{SN2}=k_2[RCl][OH^-]`)+`<p>En SN1 la ionización unimolecular es lenta; en SN2 el único paso es bimolecular.</p>`)+
+    step('d. Perfiles',`<p>El camino I tiene dos máximos y un mínimo intermedio. El camino II tiene un máximo y ningún mínimo intermedio. Las condiciones reales determinan qué vía predomina.</p>`),
+    'SN1: v = k₁[RCl], dos picos; SN2: v = k₂[RCl][OH⁻], un pico.');
   const n=Math.max(0,...QG.units.map(u=>Number(u.n)||0))+1;
   if(QG.units.some(u=>u.id==='cinetica'))return;
   QG.units.push({
