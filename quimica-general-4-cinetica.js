@@ -493,11 +493,72 @@ ${table(['Experimento','[BF₃]ₜ₌₀','[NH₃]ₜ₌₀','Veloc. inicial / m
     step('c. Le Châtelier','<p>Agregar O₂ favorece SO₃; comprimir favorece el lado con menos moles gaseosos, SO₃; enfriar favorece los productos si la reacción directa es exotérmica. Comprimir implica modificar el volumen, aunque inicialmente el recipiente se describa como rígido.</p>'),
     'Qc > Kc: evolución hacia SO₃; planteo de equilibrio completo.');
 
+
+  // Dos prácticas nuevas, cinco ejercicios cada una. Consignas y soluciones originales.
+  const practiceExercises=[];
+  const practice=(n,title,statement,solution,answer)=>practiceExercises.push({n,title,statement,solution,answer});
+  practice('A1','Velocidad y estequiometría',`<p>Para 2 N₂O₅(g) → 4 NO₂(g) + O₂(g), la concentración de N₂O₅ disminuye de 0,800 M a 0,680 M en 40 s. a) Calcular la velocidad media de desaparición de N₂O₅. b) Calcular la velocidad media de reacción. c) Calcular las velocidades de formación de NO₂ y O₂.</p>`,
+    step('1. Fórmula general',chain(R`v=-\\frac1{2}\\frac{\\Delta[N_2O_5]}{\\Delta t}=\\frac1{4}\\frac{\\Delta[NO_2]}{\\Delta t}=\\frac{\\Delta[O_2]}{\\Delta t}`))+
+    step('2. Desaparición del reactivo',chain(R`v_{des}=-\\frac{0{,}680-0{,}800}{40}=0{,}00300\\ \\mathrm{M/s}`))+
+    step('3. Velocidad de reacción',chain(R`v=\\frac{v_{des}}2=0{,}00150\\ \\mathrm{M/s}`))+
+    step('4. Formación de productos',chain(R`v_{NO_2}=4v=0{,}00600\\ \\mathrm{M/s}`,R`v_{O_2}=v=0{,}00150\\ \\mathrm{M/s}`)),
+    'Desaparición: 0,00300 M/s; reacción: 0,00150 M/s; formación de NO₂: 0,00600 M/s y O₂: 0,00150 M/s.');
+  practice('A2','Órdenes a partir de experimentos',`<p>Para A + B → productos, se midieron: exp. 1: [A] = 0,10 M, [B] = 0,20 M, v = 2,0 × 10⁻⁴ M/s; exp. 2: [A] = 0,20 M, [B] = 0,20 M, v = 8,0 × 10⁻⁴ M/s; exp. 3: [A] = 0,10 M, [B] = 0,40 M, v = 4,0 × 10⁻⁴ M/s. Determinar órdenes parciales, orden global, ley de velocidad y k.</p>`,
+    step('1. Ley general',chain(R`v=k[A]^m[B]^n`))+
+    step('2. Comparar experimentos 1 y 2',chain(R`\\frac{v_2}{v_1}=\\frac{8{,}0\\cdot10^{-4}}{2{,}0\\cdot10^{-4}}=4=2^m`,R`m=2`))+
+    step('3. Comparar experimentos 1 y 3',chain(R`\\frac{v_3}{v_1}=\\frac{4{,}0\\cdot10^{-4}}{2{,}0\\cdot10^{-4}}=2=2^n`,R`n=1`))+
+    step('4. Orden total y k',chain(R`v=k[A]^2[B]`,R`m+n=3`,R`k=\\frac{2{,}0\\cdot10^{-4}}{(0{,}10)^2(0{,}20)}=0{,}100\\ \\mathrm{M^{-2}s^{-1}}`)),
+    'Orden 2 en A, 1 en B, global 3; k = 0,100 M⁻²s⁻¹.');
+  practice('A3','Cambios de concentración y velocidad',`<p>Una reacción cumple v = k[X][Y]². Si inicialmente v = 0,024 M/s, ¿cuánto vale la velocidad al triplicar [X] y reducir [Y] a la mitad? Explicar sin conocer k.</p>`,
+    step('1. Relación general',chain(R`\\frac{v_2}{v_1}=\\left(\\frac{[X]_2}{[X]_1}\\right)\\left(\\frac{[Y]_2}{[Y]_1}\\right)^2`))+
+    step('2. Sustituir factores',chain(R`\\frac{v_2}{v_1}=3\\left(\\frac12\\right)^2=\\frac34`))+
+    step('3. Calcular velocidad nueva',chain(R`v_2=0{,}024\\cdot\\frac34=0{,}018\\ \\mathrm{M/s}`)),
+    'La velocidad disminuye a 0,018 M/s, es decir, queda en el 75 % de la inicial.');
+  practice('A4','Identificar orden con concentraciones en el tiempo',`<p>Un reactivo A presenta [A] = 0,800 M a t = 0 s; 0,400 M a 20 s; 0,200 M a 40 s. a) Verificar si es de primer orden. b) Calcular k. c) Calcular el tiempo de vida media.</p>`,
+    step('1. Ley integrada de orden uno',chain(R`\\ln[A]=\\ln[A]_0-kt`))+
+    step('2. Despejar k y reemplazar',chain(R`k=\\frac{\\ln([A]_0/[A])}{t}`,R`k=\\frac{\\ln(0{,}800/0{,}400)}{20}=0{,}03466\\ \\mathrm{s^{-1}}`))+
+    step('3. Verificar con otro intervalo',chain(R`k=\\frac{\\ln(0{,}800/0{,}200)}{40}=0{,}03466\\ \\mathrm{s^{-1}}`))+
+    step('4. Vida media',chain(R`t_{1/2}=\\frac{\\ln2}{k}=20{,}0\\ \\mathrm s`)),
+    'Es compatible con primer orden; k = 0,03466 s⁻¹ y t½ = 20,0 s.');
+  practice('A5','Calcular k y sus unidades',`<p>La ley de velocidad es v = k[P]². En un experimento [P] = 0,30 M y v = 0,018 M/s. a) Hallar k y unidades. b) Calcular v para [P] = 0,15 M. c) Explicar por qué la velocidad cambia en ese factor.</p>`,
+    step('1. Despejar k',chain(R`k=\\frac{v}{[P]^2}`))+
+    step('2. Sustituir',chain(R`k=\\frac{0{,}018}{(0{,}30)^2}=0{,}200\\ \\mathrm{M^{-1}s^{-1}}`))+
+    step('3. Nueva velocidad',chain(R`v_2=0{,}200(0{,}15)^2=0{,}00450\\ \\mathrm{M/s}`))+
+    step('4. Comprobar el factor',chain(R`\\frac{v_2}{v_1}=\\left(\\frac{0{,}15}{0{,}30}\\right)^2=\\frac14`)),
+    'k = 0,200 M⁻¹s⁻¹; v₂ = 0,00450 M/s.');
+  practice('B1','Sumar etapas y encontrar el intermediario',`<p>Se propone el mecanismo: (1) A + B → C; (2) C + D → E + B. a) Sumar las etapas. b) Identificar intermediario y especie regenerada. c) Explicar por qué B no aparece en la ecuación neta.</p>`,
+    step('1. Sumar ambos lados',chain(R`A+B+C+D\\rightarrow C+E+B`))+
+    step('2. Cancelar especies idénticas',chain(R`A+D\\rightarrow E`)),
+    'C es intermediario (se forma y consume); B se consume y regenera en la secuencia, por lo que actúa como catalizador formal. Ecuación global: A + D → E.');
+  practice('B2','Paso lento y ley de velocidad',`<p>Mecanismo propuesto: (1) A + B → I (lento, elemental); (2) I + C → P (rápido). a) Identificar intermediario. b) Escribir ecuación global. c) Deducir la ley de velocidad suponiendo que el paso lento controla la velocidad.</p>`,
+    step('1. Sumar etapas',chain(R`A+B+I+C\\rightarrow I+P`,R`A+B+C\\rightarrow P`))+
+    step('2. Ley del paso lento elemental',chain(R`v=k_1[A][B]`)),
+    'Intermediario I; reacción global A + B + C → P; bajo la hipótesis indicada, v = k₁[A][B], sin [C].');
+  practice('B3','Sustituir la concentración del intermediario',`<p>Mecanismo hipotético: (1) 2 NO ⇌ N₂O₂ (preequilibrio rápido); (2) N₂O₂ + O₂ → 2 NO₂ (lento, elemental). a) Obtener la reacción global. b) Escribir la velocidad del paso lento. c) Despejar [N₂O₂] desde K₁ y reemplazar para obtener la ley final.</p>`,
+    step('1. Suma de etapas',chain(R`2NO+O_2\\rightarrow2NO_2`))+
+    step('2. Velocidad del paso lento',chain(R`v=k_2[N_2O_2][O_2]`))+
+    step('3. Equilibrio rápido',chain(R`K_1=\\frac{[N_2O_2]}{[NO]^2}`,R`[N_2O_2]=K_1[NO]^2`))+
+    step('4. Sustitución justificada',chain(R`v=k_2(K_1[NO]^2)[O_2]`,R`v=(k_2K_1)[NO]^2[O_2]`,R`v=k[NO]^2[O_2]`)),
+    'El reemplazo procede del preequilibrio rápido, no de la ecuación global. Ley final: v = k[NO]²[O₂].');
+  practice('B4','Arrhenius: cambio de temperatura',`<p>Una reacción tiene k₁ = 0,0200 s⁻¹ a 300 K y Eₐ = 50,0 kJ/mol. Calcular k₂ a 330 K con R = 8,314 J·mol⁻¹·K⁻¹. Explicar el resultado.</p>`,
+    step('1. Ecuación entre dos temperaturas',chain(R`\\ln\\frac{k_2}{k_1}=\\frac{E_a}{R}\\left(\\frac1{T_1}-\\frac1{T_2}\\right)`))+
+    step('2. Sustituir datos',chain(R`\\ln\\frac{k_2}{0{,}0200}=\\frac{50000}{8{,}314}\\left(\\frac1{300}-\\frac1{330}\\right)`))+
+    step('3. Calcular',chain(R`\\ln\\frac{k_2}{0{,}0200}\\approx1{,}822`,R`k_2=0{,}0200e^{1{,}822}\\approx0{,}124\\ \\mathrm{s^{-1}}`)),
+    'k₂ ≈ 0,124 s⁻¹. La constante aumenta al elevar la temperatura.');
+  practice('B5','Interpretar dos perfiles energéticos',`<p>Dos reacciones tienen los siguientes niveles de energía (kJ/mol): reacción I: reactivos 80, transición 140, productos 30; reacción II: reactivos 50, transición 120, productos 90. a) Calcular Eₐ directa y ΔH de cada una. b) Clasificar exotérmica o endotérmica. c) Indicar qué representa el máximo energético.</p>`,
+    step('1. Fórmulas generales',chain(R`E_a=E_{TS}-E_R`,R`\\Delta H=E_P-E_R`))+
+    step('2. Reacción I',chain(R`E_{a,I}=140-80=60\\ \\mathrm{kJ/mol}`,R`\\Delta H_I=30-80=-50\\ \\mathrm{kJ/mol}`))+
+    step('3. Reacción II',chain(R`E_{a,II}=120-50=70\\ \\mathrm{kJ/mol}`,R`\\Delta H_{II}=90-50=40\\ \\mathrm{kJ/mol}`)),
+    'I: exotérmica, Eₐ = 60 kJ/mol, ΔH = −50 kJ/mol. II: endotérmica, Eₐ = 70 kJ/mol, ΔH = +40 kJ/mol. El máximo es el estado de transición.');
+  add('practicas-nuevas','Dos prácticas integradoras: 10 ejercicios nuevos','PRÁCTICA A Y B · 12',`
+<p>Dos prácticas originales de cinco ejercicios cada una. Combinan los ejercicios clásicos de velocidades y órdenes con Arrhenius, intermediarios, paso lento y perfiles energéticos. Cada tarjeta incluye consigna y resolución desarrollada.</p>
+<div data-qg-practices></div>`);
+
   const n=Math.max(0,...QG.units.map(u=>Number(u.n)||0))+1;
   if(QG.units.some(u=>u.id==='cinetica'))return;
   QG.units.push({
     id:'cinetica',n,title:'Cinética química',
     lead:'Velocidad de reacción, ley de velocidad, órdenes y mecanismos, en una secuencia conceptual progresiva. Ejemplos , gráfico, hoja de fórmulas y la guía de ejercitación resuelta.',
-    sections,exercises,modelExercises
+    sections,exercises,modelExercises,practiceExercises
   });
 })();
