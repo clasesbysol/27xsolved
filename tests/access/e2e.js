@@ -318,6 +318,25 @@ const html=p=>p.evaluate(()=>document.body.innerHTML);
     assert(await p.$('#formulaSheet'),'hoja de fórmulas visible');
     await p.close();
   });
+  await test('Procesos: Unidad 6 y partes del TP de Electroquímica se habilitan por separado',async()=>{
+    await openSubject(A,4,'procesos-operaciones-4');
+    await tick(A,'procesos-operaciones-4','u6/teoria');
+    await tick(A,'procesos-operaciones-4','tp/electroquimica/pilas');
+    assert(/Guardado/.test(await save(A)));
+    const g=mock.grants(ST).filter(x=>x.subject==='procesos-operaciones-4').map(x=>x.grant_key);
+    assert(g.includes('u6/teoria')&&g.includes('tp/electroquimica/pilas'),'filas guardadas: '+g.join(', '));
+    const p=await H.page(stc,base+'/materia.html?subject=procesos-operaciones-4');
+    await p.waitForSelector('#u6-teoria',{timeout:10000});await sleep(800);
+    assert(!(await p.$('#u6-teoria [data-et27-section-lock]'))&&(await p.$eval('#u6-teoria',n=>n.textContent.length))>500,'U6 teoría visible');
+    assert(await p.$('#u6-ejercicios [data-et27-section-lock]'),'U6 ejercicios bloqueados');
+    await p.close();
+    const t=await H.page(stc,base+'/materia.html?subject=tp-procesos-operaciones-4');
+    await t.waitForSelector('#tpx-pilas',{timeout:10000});await sleep(800);
+    assert(!(await t.$('#tpx-pilas [data-et27-section-lock]'))&&(await t.$$('#tpx-pilas .exercise-list > *')).length>=11,'TP pilas visible');
+    assert(await t.$('#tpx-teoria [data-et27-section-lock]'),'TP teoría bloqueada');
+    assert(await t.$('#tpx-electrolisis [data-et27-section-lock]'),'TP electrólisis bloqueada');
+    await t.close();
+  });
   await test('Sin la migración 20261020 el guardado parcial avisa y no borra nada',async()=>{
     mock.migration=false;
     const before=JSON.stringify(mock.grants(ST));

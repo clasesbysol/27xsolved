@@ -18,7 +18,12 @@
 //   · Si tiene otra organización, agregá una entrada en DEFS con `children` (estático) o
 //     `build()` (generado a partir de los datos cargados) y, si la página es estática, el mapa
 //     `pages` de id de sección del HTML → ruta del árbol.
+//     Si el TP de la materia (entrada aparte en el catálogo) tiene página propia en
+//     materia.html, su mapa va en `pages['materia.html#tp']` con rutas completas ("tp/…").
 //   · kind:'exercises' marca un bloque de ejercicios (con sus resoluciones).
+//   · REGLA: todo contenido nuevo (unidad, sección, guía, TP, página) tiene que quedar en este
+//     árbol para que el profe pueda habilitarlo desde el panel. Comprobalo con
+//     `cd tests/access && npm run coverage` (falla y lista lo que falte).
 (function(){
   'use strict';
 
@@ -141,9 +146,27 @@
         node('ejercicios','Los nueve ejercicios de la guía',{kind:'exercises',legacyTheory:true}),
         node('original','Material original completo'),
         node('errores','Antes de entregar')
+      ]}),
+      node('u6','Unidad 6 · Tercer principio y energía libre de Gibbs',{kind:'unit',children:[
+        node('teoria','Teoría completa'),
+        node('ejercicios','Ejercicios resueltos (7)',{kind:'exercises'})
+      ]}),
+      // TP / Laboratorio (materia.html?subject=tp-procesos-operaciones-4): procesos-tp-ui.js
+      // legacySkip: con los permisos anteriores el TP se daba aparte; "teórica" no lo incluía.
+      node('tp','TP / Laboratorio',{kind:'section',legacySkip:true,children:[
+        node('electroquimica','TP 1 · Electroquímica: pilas, corrosión y electrólisis',{kind:'unit',children:[
+          node('teoria','Teoría'),
+          node('pilas','Guía de ejercicios de pilas (11)',{kind:'exercises'}),
+          node('electrolisis','Guía de ejercicios de electrólisis (9)',{kind:'exercises'}),
+          node('errores','Antes de entregar')
+        ]})
       ]})
     ],
-    pages:{'materia.html':{resumen:'u4/resumen',mapa:'u4/mapa',ejercicios:'u4/ejercicios',parciales:'u4/parciales','u5-simbolos':'u5/simbolos','u5-teoria':'u5/teoria','u5-mapa':'u5/mapa','u5-ejercicios':'u5/ejercicios','u5-original':'u5/original','u5-errores':'u5/errores'}}
+    pages:{
+      'materia.html':{resumen:'u4/resumen',mapa:'u4/mapa',ejercicios:'u4/ejercicios',parciales:'u4/parciales','u5-simbolos':'u5/simbolos','u5-teoria':'u5/teoria','u5-mapa':'u5/mapa','u5-ejercicios':'u5/ejercicios','u5-original':'u5/original','u5-errores':'u5/errores','u6-teoria':'u6/teoria','u6-ejercicios':'u6/ejercicios'},
+      // Página del TP (el TP figura aparte en el catálogo): rutas completas, ya con "tp/".
+      'materia.html#tp':{'tpx-teoria':'tp/electroquimica/teoria','tpx-pilas':'tp/electroquimica/pilas','tpx-electrolisis':'tp/electroquimica/electrolisis','tpx-errores':'tp/electroquimica/errores'}
+    }
   };
 
   // ---------- Materias con la estructura estándar de materia.html ----------
@@ -291,15 +314,17 @@
     }
     const evalOk=level==='theory_eval';
     const answers=rows.some(g=>g.grant_type==='resource'&&g.grant_key==='answers');
+    const skip=[];walk(root,n=>{if(n.legacySkip)skip.push(n.path)});
+    const skipped=p=>skip.some(s=>p===s||p.startsWith(`${s}/`));
     walk(root,n=>{
-      if(n.children?.length||n.path==='*'||n.external)return;
+      if(n.children?.length||n.path==='*'||n.external||skipped(n.path))return;
       const isEval=(n.tags||[]).includes('eval');
       if(n.kind==='exercises'){
         if((isEval&&evalOk)||n.legacyTheory||(n.legacyAnswers&&answers))out.add(n.path);
       }else out.add(n.path);
     });
     // Unidades pendientes sin capítulos (contenido futuro): el nivel "teórica" las incluía.
-    walk(root,n=>{if(n.kind==='unit'&&!n.children?.length&&!n.external)out.add(n.path)});
+    walk(root,n=>{if(n.kind==='unit'&&!n.children?.length&&!n.external&&!skipped(n.path))out.add(n.path)});
     return compress(subjectId,out);
   }
 

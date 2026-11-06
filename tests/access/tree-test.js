@@ -11,7 +11,7 @@ assert.equal(T.state(S,g,T.find(S,'teoria/cinetica')),'partial');assert.equal(T.
 // select whole unit
 g=T.toggle(S,g,'teoria/cinetica',true);eq([...g],['teoria/cinetica']);
 // uncheck one chapter → parent expanded
-g=T.toggle(S,g,'teoria/cinetica/qg5-guia',false);assert(!g.has('teoria/cinetica'));assert(g.has('teoria/cinetica/qg5-ley'));assert(!T.covers(g,'teoria/cinetica/qg5-guia'));assert.equal(g.size,10);
+g=T.toggle(S,g,'teoria/cinetica/qg5-guia',false);assert(!g.has('teoria/cinetica'));assert(g.has('teoria/cinetica/qg5-ley'));assert(!T.covers(g,'teoria/cinetica/qg5-guia'));assert.equal(g.size,T.find(S,'teoria/cinetica').children.length-1);
 // recheck → compress back
 g=T.toggle(S,g,'teoria/cinetica/qg5-guia',true);eq([...g],['teoria/cinetica']);
 // whole subject

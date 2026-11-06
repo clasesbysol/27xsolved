@@ -345,7 +345,7 @@
 
   // Aplica el árbol a una página estática: cada sección del mapa se deja o se reemplaza.
   // Las secciones que no figuran en el mapa sólo se muestran con la materia completa.
-  function patchSections(subjectId,map,rootSel,prefixPath){
+  function patchSections(subjectId,map,rootSel,prefixPath,unmappedPath='*'){
     const root=document.querySelector(rootSel);
     if(!root)return{allowed:0,total:0};
     let allowed=0,total=0;
@@ -364,7 +364,7 @@
       if(mapped.has(el.id))return;
       if([...mapped].some(id=>el.querySelector(`#${CSS.escape(id)}`)))return; // contenedor de secciones mapeadas
       total+=1;
-      if(can(subjectId)){allowed+=1;return}
+      if(can(subjectId,unmappedPath)){allowed+=1;return}
       lockSection(el,el.querySelector('h2')?.textContent?.trim()||'Contenido nuevo',''); markNav(el.id,true);
     });
     return{allowed,total};
@@ -430,8 +430,14 @@
       return lockGenericPage(subjectId);
     }
     const r=T()?.resolve(subjectId)||{subject:subjectId,prefix:''};
-    const map=r.prefix?Object.fromEntries(Object.keys(T().pageMap('__standard__','materia.html')||{}).map(k=>[k,k])):T()?.pageMap(r.subject,'materia.html');
-    patchSections(subjectId,map,'.subject-main',r.prefix?'tp':'');
+    // TP con árbol propio dentro de su materia (mapa 'materia.html#tp' con rutas completas):
+    // cada parte del TP se habilita por separado; lo que no esté en el mapa pide el TP entero.
+    const tpMap=r.prefix?T()?.pageMap(r.subject,`materia.html#${r.prefix}`):null;
+    if(tpMap)patchSections(r.subject,tpMap,'.subject-main','',r.prefix);
+    else{
+      const map=r.prefix?Object.fromEntries(Object.keys(T().pageMap('__standard__','materia.html')||{}).map(k=>[k,k])):T()?.pageMap(r.subject,'materia.html');
+      patchSections(subjectId,map,'.subject-main',r.prefix?'tp':'');
+    }
     document.documentElement.dataset.et27Answers=can(subjectId,'u4/ejercicios')?'1':'0';
     document.documentElement.dataset.et27Evaluations=can(subjectId,'u4/parciales')?'1':'0';
     if(subjectId==='procesos-operaciones-4')patchProcessAnswers();

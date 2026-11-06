@@ -7,7 +7,7 @@ const KEY='sb-rdfpugfthvfuqokecqwd-auth-token';
 let server,port;
 function serve(){return new Promise(res=>{server=http.createServer((q,r)=>{let p=decodeURIComponent(new URL(q.url,'http://x').pathname);if(p.endsWith('/'))p+='index.html';const f=path.join(ROOT,p);fs.readFile(f,(e,d)=>{if(e){r.writeHead(404);r.end();return}const t={'.js':'text/javascript; charset=utf-8','.html':'text/html; charset=utf-8','.css':'text/css','.json':'application/json','.svg':'image/svg+xml','.webmanifest':'application/manifest+json'}[path.extname(f)]||'application/octet-stream';r.writeHead(200,{'content-type':t});r.end(d)})}).listen(0,()=>{port=server.address().port;res(port)})})}
 let browser;
-async function start(){await serve();browser=await chromium.launch();return{base:`http://127.0.0.1:${port}`}}
+async function start(){await serve();browser=await chromium.launch(process.env.CHROME?{executablePath:process.env.CHROME}:{});return{base:`http://127.0.0.1:${port}`}}
 async function stop(){await browser?.close();server?.close()}
 async function context(mock,{email=null,storage={}}={}){
   const ctx=await browser.newContext({serviceWorkers:'block',viewport:{width:1280,height:900}});

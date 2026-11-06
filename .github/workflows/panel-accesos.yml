@@ -1,0 +1,29 @@
+# Comprueba en cada cambio que todo el contenido de las materias figure en el panel de accesos.
+# Si algo nuevo no se puede habilitar desde el panel, este chequeo queda en rojo y lista qué falta.
+name: Panel de accesos completo
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  cobertura:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: tests/access
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci || npm i
+      - run: npm run bundle
+      - run: npx playwright install --with-deps chromium
+      - name: Lógica del árbol
+        run: npm run tree
+      - name: Todo el contenido está en el panel
+        run: npm run coverage

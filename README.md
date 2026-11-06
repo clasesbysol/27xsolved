@@ -46,6 +46,10 @@
 - **Límite importante:** el contenido de las materias está en archivos `.js`/`.html` públicos del repositorio (y de GitHub Pages). El control impide verlo dentro de la app, pero alguien con conocimientos técnicos puede abrir esos archivos directamente. Para protección total hay que servir el contenido desde Supabase (tablas con RLS usando `has_cbc_node_access`) o hacer privado el sitio.
 
 ### Agregar o editar una materia
+**Todo contenido nuevo tiene que quedar en el panel de accesos** (ver `CLAUDE.md`). Para
+comprobarlo: `cd tests/access && npm run coverage`, que lista lo que exista en las páginas y no
+se pueda habilitar desde el panel.
+
 1. Agregarla en `academic-catalog.js`.
 2. Si usa `materia.html` con las secciones estándar, no hace falta nada más.
 3. Si tiene otra organización, agregar una entrada en `DEFS` de `access-tree.js` con `children` (o `build()` si se arma desde los datos) y, si es una página estática, `pages: {'archivo.html': {idDeSeccion: 'ruta/del/arbol'}}`. Marcar los bloques de ejercicios con `kind:'exercises'`.
