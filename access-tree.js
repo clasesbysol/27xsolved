@@ -70,9 +70,14 @@
   };
 
   // ---------- Química General · 4.º (datos de quimica-general-4-*.js) ----------
+  // Dos partes: teoría (unidades) y trabajos prácticos (unidades con part:'tp').
   function buildQG(){
     const units=window.ET27_QG4?.units||[];
-    return [node('teoria','Teoría',{kind:'section',children:units.map(u=>node(u.id,`Unidad ${u.n} · ${clean(u.title)}`,{kind:'unit',pending:!!u.pending,children:(u.sections||[]).map(x=>node(x.key,clean(x.label),/data-qg-(guide|modelo)/.test(x.html||'')?{kind:'exercises'}:{}))}))})];
+    const unit=(u,label)=>node(u.id,label,{kind:'unit',pending:!!u.pending,children:(u.sections||[]).map(x=>node(x.key,clean(x.label),/data-qg-(guide|modelo)/.test(x.html||'')?{kind:'exercises'}:{}))});
+    const T=units.filter(u=>u.part!=='tp'),P=units.filter(u=>u.part==='tp');
+    const out=[node('teoria','Teoría',{kind:'section',children:T.map(u=>unit(u,`Unidad ${u.n} · ${clean(u.title)}`))})];
+    if(P.length)out.push(node('tp','Trabajos prácticos',{kind:'section',children:P.map(u=>unit(u,`${u.numLabel||'TP '+u.n} · ${clean(u.title)}`))}));
+    return out;
   }
 
   // ---------- Química Inorgánica · 4.º ----------

@@ -24,9 +24,9 @@ window.ET27_ACADEMIC_CATALOG = {
         { id: 'procesos-operaciones-4', name: 'Procesos y Operaciones Químicas', kind: 'Materia', status: 'Unidades 4, 5 y 6 cargadas', letter: 'PO', href: './materia.html?subject=procesos-operaciones-4' },
         { id: 'fisica-aplicada-4', name: 'Física Aplicada', kind: 'Materia', status: 'Disponible', letter: 'FA', href: './?view=physics', existing: true },
         { id: 'matematica-4', name: 'Matemática de 4.º', kind: 'Materia', status: 'Esqueleto listo', letter: 'M4', href: './materia.html?subject=matematica-4' },
-        { id: 'tp-quimica-general-4', name: 'TP / Laboratorio de Química General', kind: 'TP / Laboratorio', status: 'Esqueleto listo', letter: 'TP', href: './materia.html?subject=tp-quimica-general-4' },
+        { id: 'tp-quimica-general-4', name: 'TP / Laboratorio de Química General', kind: 'TP / Laboratorio', status: 'Titulaciones ácido-base cargadas', letter: 'TP', href: './?view=chemistry&tab=tp' },
         { id: 'tp-quimica-inorganica-4', name: 'TP / Laboratorio de Química Inorgánica', kind: 'TP / Laboratorio', status: 'TP 4, 5 y 6 cargados', letter: 'TP', href: './?view=inorganic&tab=tp' },
-        { id: 'tp-procesos-operaciones-4', name: 'TP / Laboratorio de Procesos y Operaciones Químicas', kind: 'TP / Laboratorio', status: 'Esqueleto listo', letter: 'TP', href: './materia.html?subject=tp-procesos-operaciones-4' }
+        { id: 'tp-procesos-operaciones-4', name: 'TP / Laboratorio de Procesos y Operaciones Químicas', kind: 'TP / Laboratorio', status: 'Electroquímica cargada', letter: 'TP', href: './materia.html?subject=tp-procesos-operaciones-4' }
       ]
     },
     {

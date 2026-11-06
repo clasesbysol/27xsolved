@@ -19,6 +19,11 @@
 - Preparado para Supabase Auth + Google y seguridad RLS.
 - Sin sincronización de progreso, favoritos o resaltados para alumnos: sólo persisten localmente preferencias visuales y la sesión de acceso.
 
+## Trabajos prácticos de 4.º (v1.4.0)
+
+- **Química General → Trabajos prácticos** (`./?view=chemistry&tab=tp`): la materia ahora tiene dos partes, Teoría y TP, como Inorgánica. TP 1 · Titulaciones ácido-base (`quimica-general-4-tp-titulaciones.js`): teoría de laboratorio, esquemas, curva de titulación y los 14 ejercicios resueltos. En el árbol de accesos aparece como `tp/titulaciones`.
+- **Procesos y Operaciones Químicas → TP** (`materia.html?subject=tp-procesos-operaciones-4`): TP 1 · Electroquímica (`procesos-tp-electroquimica.js` + `procesos-tp-ui.js` + `procesos-tp.css`): redox, pila de Daniell, potenciales estándar y tabla, Nernst, corrosión, electrólisis (agua, NaCl fundido y acuoso), leyes de Faraday, 11 ejercicios de pilas y 9 de electrólisis resueltos.
+
 ## Inicio nuevo (v1.2.0)
 
 - **Arranque:** solcito amarillo con forma de balón que se llena mientras busca actualizaciones (`boot-splash.js`). Se ve una vez por apertura.
