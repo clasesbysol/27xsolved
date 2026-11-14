@@ -82,29 +82,28 @@
     children:[
       node('mapa','Mapa mental interactivo de los tiempos verbales'),
       node('clases','Clase desde cero',{kind:'section',children:[
-        node('inicio','00 · Empezá acá'),
-        node('base','01 · Las piezas: pronombres, to be y auxiliares'),
+        node('base','01 · The basics: pronouns and sentence order'),
         node('present-simple','02 · Present simple'),
         node('present-continuous','03 · Present continuous'),
         node('presente-contraste','04 · Simple vs continuous'),
         node('past-simple','05 · Past simple'),
         node('past-continuous','06 · Past continuous'),
         node('when-while','07 · When / while'),
-        node('preguntas','08 · Armar preguntas'),
-        node('extras','09 · Used to, can/could, comparativos, must'),
+        node('preguntas','08 · Questions'),
+        node('extras','09 · More grammar'),
         node('vocabulario','10 · Vocabulary'),
         node('writing','11 · Reading & writing'),
         node('errores','12 · Errores de la carpeta'),
         node('machete','16 · Machete final')
       ]}),
       node('practica','Práctica e integrador',{kind:'section',children:[
-        node('ejercicios','13 · Práctica interactiva',{kind:'exercises'}),
+        node('ejercicios','13 · Exercises: 30 multiple choice + word order',{kind:'exercises'}),
         node('readings','14 · Readings',{kind:'exercises'}),
         node('simulacro','15 · Simulacro integrador (100 puntos)',{kind:'exercises',tags:['eval']})
       ]})
     ],
     pages:{
-      'ingles-2.html':{inicio:'clases/inicio',base:'clases/base','present-simple':'clases/present-simple','present-continuous':'clases/present-continuous','presente-contraste':'clases/presente-contraste','past-simple':'clases/past-simple','past-continuous':'clases/past-continuous','when-while':'clases/when-while',preguntas:'clases/preguntas',extras:'clases/extras',vocabulario:'clases/vocabulario',writing:'clases/writing',errores:'clases/errores',machete:'clases/machete',practica:'practica/ejercicios',readings:'practica/readings',simulacro:'practica/simulacro'},
+      'ingles-2.html':{base:'clases/base','present-simple':'clases/present-simple','present-continuous':'clases/present-continuous','presente-contraste':'clases/presente-contraste','past-simple':'clases/past-simple','past-continuous':'clases/past-continuous','when-while':'clases/when-while',preguntas:'clases/preguntas',extras:'clases/extras',vocabulario:'clases/vocabulario',writing:'clases/writing',errores:'clases/errores',machete:'clases/machete',practica:'practica/ejercicios',readings:'practica/readings',simulacro:'practica/simulacro'},
       'ingles-2-mapa.html':{mapa:'mapa'}
     }
   };

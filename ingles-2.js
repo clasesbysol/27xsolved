@@ -64,7 +64,7 @@
       li.classList.remove('shown');
       li.classList.toggle('ok',ok);li.classList.toggle('no',!ok);
       const why=li.dataset.why?` <span>${li.dataset.why}</span>`:'';
-      feedback(li,ok?`✓ ¡Bien!${why}`:`✗ Revisalo. Correcto: <b>${expected(li)}</b>.${why}`);
+      feedback(li,ok?`✓ Correct!${why}`:`✗ Correct answer: <b>${expected(li)}</b>.${why}`);
       return ok;
     }
     if(!bar)return;
@@ -125,7 +125,28 @@
     card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle()}});
   }
 
+  // ---------- Película de cuadros ----------
+  function setupFilm(box){
+    const frames=[...box.querySelectorAll('.fr')],count=box.querySelector('.film-count'),strip=box.querySelector('.film-strip');
+    let i=0,timer=null;
+    const show=k=>{i=(k+frames.length)%frames.length;frames.forEach((f,j)=>f.classList.toggle('on',j<=i));count.textContent=`${i+1} / ${frames.length}`;strip.scrollTo({left:Math.max(0,frames[i].offsetLeft-strip.offsetLeft-20),behavior:'smooth'})};
+    const stop=()=>{clearInterval(timer);timer=null;box.querySelector('[data-film-play]').textContent='Play'};
+    box.querySelector('[data-film-next]').addEventListener('click',()=>{stop();show(i+1)});
+    box.querySelector('[data-film-prev]').addEventListener('click',()=>{stop();show(i-1)});
+    box.querySelector('[data-film-play]').addEventListener('click',e=>{if(timer){stop();return}e.target.textContent='Pause';show(0);timer=setInterval(()=>{if(i>=frames.length-1){stop();return}show(i+1)},1600)});
+    frames.forEach((f,j)=>f.addEventListener('click',()=>{stop();show(j)}));
+    show(0);
+  }
+  function setupTaps(){
+    document.querySelectorAll('.word-tap:not([data-ready])').forEach(b=>{b.dataset.ready='1';b.addEventListener('click',()=>{
+      const box=document.getElementById('tap-box');if(!box)return;
+      document.querySelectorAll('.word-tap').forEach(x=>x.classList.toggle('sel',x===b));
+      box.innerHTML=`<span class="en">${b.dataset.def}</span><small class="tr">${b.dataset.tr}</small><p class="en" style="margin:8px 0 0">${b.dataset.ex}</p>`;
+    })});
+  }
   function init(){
+    document.querySelectorAll('[data-film]:not([data-ready])').forEach(f=>{f.dataset.ready='1';setupFilm(f)});
+    setupTaps();
     document.querySelectorAll('[data-drill]:not([data-ready])').forEach(l=>{l.dataset.ready='1';setupDrill(l)});
     document.querySelectorAll('.order li[data-words]:not([data-ready])').forEach(l=>{l.dataset.ready='1';setupOrder(l)});
     document.querySelectorAll('.flip:not([data-ready])').forEach(c=>{c.dataset.ready='1';setupFlip(c)});

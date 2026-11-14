@@ -11,7 +11,7 @@
     <article class="f-sa"><small><i>✓</i>RESPUESTA CORTA</small>${sa.map(x=>`<p class="en">${x}</p>`).join('')}</article></div>`;
   const sig=(cls,words)=>`<div class="signals ${cls}">${words.map(w=>`<span>${w}</span>`).join('')}</div>`;
   const rel=ids=>`<h3>Relacionado</h3><div class="related">${ids.map(([id,l])=>`<button type="button" data-open="${id}">${l}</button>`).join('')}</div>`;
-  const go=(hash,label)=>`<a class="go-class" href="${CLASS}#${hash}">${label||'Ver la explicación completa en la clase'} →</a>`;
+  const go=(hash,label)=>`<a class="go-class" href="${CLASS}#${hash}">${label||'See the class'} →</a>`;
 
   const NODES={
     center:{c:'c-center',kicker:'MAPA MENTAL',title:'Los tiempos verbales de 2.º año',html:`
@@ -143,7 +143,7 @@
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&drawer?.classList.contains('open'))close()});
 
   // ---------- Líneas del mapa ----------
-  const LINKS=[['center','present'],['center','past'],['present','ps'],['present','pc'],['past','pas'],['past','pac'],['past','ww'],['center','q'],['center','ex'],['center','pick']];
+  const LINKS=[];
   function drawLines(){
     const map=$('#mm'),svg=$('#mmLines');if(!map||!svg)return;
     if(getComputedStyle(svg).display==='none')return;
