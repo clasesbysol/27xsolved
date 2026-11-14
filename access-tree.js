@@ -74,6 +74,41 @@
     }
   };
 
+  // ---------- Inglés · 2.º año (páginas estáticas ingles-2.html e ingles-2-mapa.html) ----------
+  // Títulos tomados del índice real de ingles-2.html.
+  const ENGLISH2={
+    label:'Inglés',
+    rules:'Las reglas rápidas del costado quedan siempre visibles para quien tenga acceso a Inglés.',
+    children:[
+      node('mapa','Mapa mental interactivo de los tiempos verbales'),
+      node('clases','Clase desde cero',{kind:'section',children:[
+        node('inicio','00 · Empezá acá'),
+        node('base','01 · Las piezas: pronombres, to be y auxiliares'),
+        node('present-simple','02 · Present simple'),
+        node('present-continuous','03 · Present continuous'),
+        node('presente-contraste','04 · Simple vs continuous'),
+        node('past-simple','05 · Past simple'),
+        node('past-continuous','06 · Past continuous'),
+        node('when-while','07 · When / while'),
+        node('preguntas','08 · Armar preguntas'),
+        node('extras','09 · Used to, can/could, comparativos, must'),
+        node('vocabulario','10 · Vocabulary'),
+        node('writing','11 · Reading & writing'),
+        node('errores','12 · Errores de la carpeta'),
+        node('machete','16 · Machete final')
+      ]}),
+      node('practica','Práctica e integrador',{kind:'section',children:[
+        node('ejercicios','13 · Práctica interactiva',{kind:'exercises'}),
+        node('readings','14 · Readings',{kind:'exercises'}),
+        node('simulacro','15 · Simulacro integrador (100 puntos)',{kind:'exercises',tags:['eval']})
+      ]})
+    ],
+    pages:{
+      'ingles-2.html':{inicio:'clases/inicio',base:'clases/base','present-simple':'clases/present-simple','present-continuous':'clases/present-continuous','presente-contraste':'clases/presente-contraste','past-simple':'clases/past-simple','past-continuous':'clases/past-continuous','when-while':'clases/when-while',preguntas:'clases/preguntas',extras:'clases/extras',vocabulario:'clases/vocabulario',writing:'clases/writing',errores:'clases/errores',machete:'clases/machete',practica:'practica/ejercicios',readings:'practica/readings',simulacro:'practica/simulacro'},
+      'ingles-2-mapa.html':{mapa:'mapa'}
+    }
+  };
+
   // ---------- Química General · 4.º (datos de quimica-general-4-*.js) ----------
   // Dos partes: teoría (unidades) y trabajos prácticos (unidades con part:'tp').
   function buildQG(){
@@ -180,6 +215,7 @@
 
   const DEFS={
     'matematica-1':MATH1,
+    'ingles-2':ENGLISH2,
     'quimica-general-4':{label:'Química General',build:buildQG,legacyStatements:true,standalone:{'quimica-general.html':'*'}},
     'quimica-inorganica-4':{label:'Química Inorgánica',build:buildQI,legacyStatements:true,hasOwnTp:true},
     'quimica-analitica-cualitativa-5':{label:'Química Analítica Cualitativa',build:buildQAC,legacyStatements:true,hasOwnTp:true,rules:'El machete y las tablas de constantes quedan siempre disponibles para quien tenga acceso a la materia.'},

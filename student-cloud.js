@@ -185,6 +185,7 @@
   const VIEW_OF={'quimica-general-4':'chemistry','fisica-aplicada-4':'physics','quimica-inorganica-4':'inorganic','quimica-analitica-cualitativa-5':'cualitativa'};
   const PAGE_SUBJECT={
     'matematica-1-inicio.html':'matematica-1','matematica-1.html':'matematica-1','matematica-1-examen-1.html':'matematica-1',
+    'ingles-2.html':'ingles-2','ingles-2-mapa.html':'ingles-2',
     'quimica-general.html':'quimica-general-4','fisica-aplicada.html':'fisica-aplicada-4','fisica-formulas-a4.html':'fisica-aplicada-4'
   };
   function catalogSubject(id){

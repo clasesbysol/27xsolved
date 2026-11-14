@@ -1,0 +1,37 @@
+<!doctype html><html lang="es" data-theme="light"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#15579D"><meta name="description" content="Inglés de 2.º año · mapa mental interactivo de los tiempos verbales"><link rel="icon" href="./assets/brand/favicon-32.png?v=1.1.21"><link rel="stylesheet" href="./matematica-1-previas.css?v=1.1.21"><link rel="stylesheet" href="./ingles-2.css?v=1.0.0"><title>Mapa mental · Tiempos verbales · Inglés 2.º · 27xSOLved</title></head><body><div class="math-app">
+<header class="math-topbar"><a class="math-brand" href="./"><img src="./assets/brand/27xsolved-logo-small.jpg?v=1.1.28" alt="27xSOLved"><b>27x<span>SOLved</span></b></a><div class="math-crumbs"><a href="./?view=subjects">Plan y materias</a><span>›</span><a href="./ingles-2.html">Inglés · 2.º año</a><span>›</span><b>Mapa mental</b></div><a class="map-back" href="./ingles-2.html" style="justify-self:end">← Volver a la clase</a></header>
+<main class="map-main"><section id="mapa">
+<div class="map-head"><div><span class="eyebrow">INGLÉS · 2.º AÑO · MAPA MENTAL</span><h1>Los tiempos verbales, de un vistazo</h1><p>Tocá cualquier cuadro para ver cómo se arma, cuándo se usa, ejemplos de la carpeta y los errores típicos. Abajo tenés una máquina de conjugar y un juego para practicar.</p></div><a class="map-back" href="./ingles-2.html">📘 Ir a la clase completa</a></div>
+
+<div class="mm" id="mm"><svg class="mm-lines" id="mmLines" aria-hidden="true"></svg>
+<button type="button" class="mm-node center c-center n-center" data-node="center" style="--o:1"><small>TOCÁ PARA EMPEZAR</small><b>Tiempos verbales</b><code>2 presentes · 2 pasados</code></button>
+<button type="button" class="mm-node hub c-present n-present" data-node="present" style="--o:2"><small>RAMA</small><b>Presente</b><code>¿siempre o ahora?</code></button>
+<button type="button" class="mm-node leaf c-ps n-ps" data-node="ps" style="--o:3"><small>PRESENT SIMPLE · RUTINA</small><b>I play · she plays</b><code>do / does + verbo base</code><span class="ex">always · usually · every day</span></button>
+<button type="button" class="mm-node leaf c-pc n-pc" data-node="pc" style="--o:4"><small>PRESENT CONTINUOUS · AHORA</small><b>I am playing</b><code>am / is / are + -ing</code><span class="ex">now · today · Look!</span></button>
+<button type="button" class="mm-node hub c-past n-past" data-node="past" style="--o:5"><small>RAMA</small><b>Pasado</b><code>¿hecho o escena?</code></button>
+<button type="button" class="mm-node leaf c-pas n-pas" data-node="pas" style="--o:6"><small>PAST SIMPLE · HECHO</small><b>I played · I went</b><code>was / were · did + verbo base</code><span class="ex">yesterday · in 2012 · ago</span></button>
+<button type="button" class="mm-node leaf c-pac n-pac" data-node="pac" style="--o:7"><small>PAST CONTINUOUS · ESCENA</small><b>I was playing</b><code>was / were + -ing</code><span class="ex">at 10:30 last night · while</span></button>
+<button type="button" class="mm-node leaf c-ww n-ww" data-node="ww" style="--o:8"><small>LOS DOS PASADOS JUNTOS</small><b>When / while</b><code>larga (was doing) + corta (arrived)</code></button>
+<button type="button" class="mm-node leaf tool c-q n-q" data-node="q" style="--o:9"><small>HERRAMIENTA</small><b>Cómo preguntar</b><code>Wh- + aux + sujeto + verbo?</code></button>
+<button type="button" class="mm-node leaf c-ex n-ex" data-node="ex" style="--o:10"><small>TEMAS EXTRA</small><b>used to · can/could</b><code>comparativos · must</code></button>
+<button type="button" class="mm-node leaf tool c-pick n-pick" data-node="pick" style="--o:11"><small>HERRAMIENTA</small><b>¿Qué tiempo uso?</b><code>respondé y te digo</code></button>
+</div>
+<p class="mm-hint">👆 Cada cuadro se abre. Los colores son los mismos que en la clase.</p>
+
+<div class="mm-tools">
+<div class="tool-card"><small>MÁQUINA DE CONJUGAR</small><h2>Elegí quién y qué verbo</h2><p>Mirá cómo cambia el mismo verbo en los cuatro tiempos, en afirmativa, negativa, pregunta y respuesta corta.</p>
+<div class="conj-pick"><label>Sujeto<div class="pron" id="conjPron"><button type="button" data-p="I">I</button><button type="button" data-p="you">you</button><button type="button" data-p="he">he</button><button type="button" data-p="she">she</button><button type="button" data-p="it">it</button><button type="button" data-p="we">we</button><button type="button" data-p="they">they</button></div></label><label>Verbo<select id="conjVerb" aria-label="Verbo"></select></label></div>
+<p id="conjMeaning" style="font-weight:800;font-size:13px"></p>
+<div class="conj-out" id="conjOut"></div></div>
+<div class="tool-card"><small>JUEGO</small><h2>¿Qué tiempo es?</h2><p>Leé la oración y elegí el tiempo verbal. Después te muestra la pista.</p>
+<div class="quiz-sent en" id="quizSent"></div>
+<div class="quiz-opts" id="quizOpts"><button type="button" class="c-ps" data-t="ps">Present simple</button><button type="button" class="c-pc" data-t="pc">Present continuous</button><button type="button" class="c-pas" data-t="pas">Past simple</button><button type="button" class="c-pac" data-t="pac">Past continuous</button></div>
+<div class="quiz-fb" id="quizFb"></div>
+<div class="quiz-score"><span>Puntaje: <span id="quizScore">0 / 0</span></span><button type="button" id="quizNext">Otra oración →</button></div></div>
+</div>
+</section></main>
+<div class="mm-scrim" id="mmScrim"></div>
+<aside class="mm-drawer" id="mmDrawer" aria-live="polite"><header><div><small id="mmKicker"></small><h2 id="mmTitle"></h2></div><button type="button" class="x" id="mmClose" aria-label="Cerrar">✕</button></header><div class="mm-body" id="mmBody"></div></aside>
+<footer class="math-footer"><b>27xSOLved</b> · Inglés de 2.º año · Mapa mental de los tiempos verbales</footer></div>
+<script defer src="./matematica-1-previas.js?v=1.1.21"></script><script defer src="./ingles-2-mapa.js?v=1.0.0"></script><script src="./config.js?v=1.1.28"></script><script src="./academic-catalog.js?v=1.5.0"></script><script src="./access-tree.js?v=1.6.0"></script>
+<script src="./access-control.js?v=1.6.0"></script></body></html>

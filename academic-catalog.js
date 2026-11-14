@@ -10,7 +10,9 @@ window.ET27_ACADEMIC_CATALOG = {
     },
     {
       year: 2,
-      subjects: []
+      subjects: [
+        { id: 'ingles-2', name: 'Inglés', kind: 'Materia', status: 'Integrador cargado', letter: 'IN', href: './ingles-2.html' }
+      ]
     },
     {
       year: 3,

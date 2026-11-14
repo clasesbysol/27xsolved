@@ -17,6 +17,8 @@
     'matematica-1-inicio.html':'matematica-1',
     'matematica-1.html':'matematica-1',
     'matematica-1-examen-1.html':'matematica-1',
+    'ingles-2.html':'ingles-2',
+    'ingles-2-mapa.html':'ingles-2',
     'quimica-general.html':'quimica-general-4',
     'fisica-aplicada.html':'fisica-aplicada-4',
     'fisica-formulas-a4.html':'fisica-aplicada-4'
