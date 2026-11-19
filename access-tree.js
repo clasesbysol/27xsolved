@@ -123,6 +123,20 @@
   const QI_PARTS=[['teoria','Teoría'],['tp','Trabajos prácticos'],['apoyo','Material teórico de los TP'],['elementos','Fichas de elementos']];
   function qiPart(u){return u.part==='tp'&&u.kind==='apoyo'?'apoyo':u.part}
   function qiUnitPath(u){const part=qiPart(u);return part==='elementos'?'elementos':`${part}/${u.id}`}
+  // La teoría de los TP 4, 5 y 6 estaba en unidades de «Material teórico» (apoyo/<unidad>) y se mudó
+  // adentro de cada TP (quimica-inorganica-4-orden.js). Los permisos guardados con las rutas viejas
+  // siguen valiendo: se traducen a las rutas nuevas sin tocar la base de datos.
+  function migrate(subjectId,set){
+    const mv=subjectId==='quimica-inorganica-4'&&window.ET27_QI4?.moved;
+    if(!mv)return set;
+    for(const g of [...set]){
+      for(const [from,m] of Object.entries(mv)){
+        if(g==='apoyo'||g===from)m.keys.forEach(k=>set.add(`${m.to}/${k}`));
+        else if(g.startsWith(`${from}/`))set.add(m.to+g.slice(from.length));
+      }
+    }
+    return set;
+  }
   function buildQI(){
     const units=[...(window.ET27_QI4?.units||[])].sort((a,b)=>a.n-b.n);
     const secs=u=>(u.sections||[]).map(x=>node(x.key,clean(x.label),/data-qi-guide/.test(x.html||'')?{kind:'exercises'}:{}));
@@ -394,7 +408,7 @@
   }
 
   window.ET27AccessTree={
-    defs:DEFS,tree,find,walk,leaves,resolve,tpOf,pageMap,qiUnitPath,qiPart,
+    defs:DEFS,tree,find,walk,leaves,resolve,tpOf,pageMap,qiUnitPath,qiPart,migrate,
     covers,touches,compress,toggle,state,legacyLevel,legacyPaths,rowsFor,describe,
     legacyStatements:id=>!!DEFS[id]?.legacyStatements,
     standalone:(id,file)=>DEFS[id]?.standalone?.[file]||null,

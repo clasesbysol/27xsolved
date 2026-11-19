@@ -204,13 +204,30 @@ const html=p=>p.evaluate(()=>document.body.innerHTML);
     assert(await p.$('#sec-qg-crioscopico [data-et27-section-lock]'),'crioscópico debería estar bloqueado');
     assert(await p.$('#sec-qg-guia [data-et27-section-lock]'),'la guía de coligativas debería estar bloqueada');
     const q=await H.page(stc,base+'/?view=inorganic&tab=tp');
-    await q.waitForSelector('.units');
-    const open=await q.$$eval('.units button.unitCard',n=>n.map(x=>x.dataset.qiUnit));
-    assert(open.sort().join()==='tp5,uniones','sólo TP 5 y Uniones abren: '+open);
-    await q.click('button.unitCard[data-qi-unit="tp5"]');await q.waitForSelector('#sec-qi-tp5-cuestionario');
+    await q.waitForSelector('.qxMods');
+    const open=await q.$$eval('.qxMods button.qxMod:not(:disabled)',n=>n.map(x=>x.dataset.qiUnit));
+    assert(open.sort().join()==='tp5','en los TP sólo abre el TP 5: '+open);
+    await q.click('.qxPartPick [data-qi-part="teoria"]');await q.waitForSelector('.qxMods');
+    const openT=await q.$$eval('.qxMods button.qxMod:not(:disabled)',n=>n.map(x=>x.dataset.qiUnit));
+    assert(openT.join()==='uniones','en la teoría sólo abre Uniones: '+openT);
+    await q.click('.qxPartPick [data-qi-part="tp"]');await q.waitForSelector('.qxMods');
+    await q.click('button.qxMod[data-qi-unit="tp5"]');await q.waitForSelector('#sec-qi-tp5-cuestionario');
     assert(await q.$('#sec-qi-tp5-cuestionario .solutionCard'),'cuestionario con resoluciones');
     assert(await q.$('#sec-qi-tp5-intro [data-et27-section-lock]'),'intro del TP 5 bloqueada');
     await p.close();await q.close();
+  });
+  await test('8b. Química Inorgánica: permisos guardados del material teórico viejo siguen valiendo dentro del TP',async()=>{
+    const email='migracion-qi@gmail.com';mock.addUser(email);
+    mock.db.access_profiles.push({email,active:true,role:'student',access_starts_at:new Date(Date.now()-864e5).toISOString(),access_expires_at:null,max_unit:1});
+    mock.db.access_grants.push({email,subject:'quimica-inorganica-4',unit_no:1,grant_type:'node',grant_key:'apoyo/carbono'});
+    const ctx=await H.context(mock,{email});
+    const q=await H.page(ctx,base+'/?view=inorganic&tab=tp');
+    await q.waitForSelector('.qxMods');
+    await q.click('button.qxMod[data-qi-unit="tp5"]');await q.waitForSelector('#sec-qi-c-co2');
+    assert(!(await q.$('#sec-qi-c-co2 [data-et27-section-lock]')),'la teoría del carbono (ruta vieja apoyo/carbono) debería verse');
+    assert(await q.$('#sec-qi-n-nh3 [data-et27-section-lock]'),'la teoría del nitrógeno no estaba habilitada');
+    assert(await q.$('#sec-qi-tp5-c1-co2 [data-et27-section-lock]'),'los ensayos del TP 5 no estaban habilitados');
+    await q.close();await ctx.close();
   });
   await test('9. Lo no habilitado sigue bloqueado: materias, TP aparte, URL y datos locales manipulados',async()=>{
     // Analítica (sin permisos) bloqueada

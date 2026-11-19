@@ -117,6 +117,7 @@
     const nodes=rows.filter(g=>g.grant_type==='node').map(g=>g.grant_key);
     const legacy=tree?tree.legacyPaths(subjectId,rows.filter(g=>g.grant_type!=='node')):[];
     const set=new Set([...nodes,...legacy]);
+    tree?.migrate?.(tree.resolve(subjectId).subject||subjectId,set);
     pathCache.set(subjectId,{sig,set});
     return set;
   }
