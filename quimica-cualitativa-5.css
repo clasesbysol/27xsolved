@@ -185,3 +185,9 @@
 .qacMTable tbody tr:nth-child(even){background:color-mix(in srgb,var(--accent) 3%,var(--surface))}
 .qacMTable .qacTNote{margin:8px 2px 0;color:var(--muted);font-size:.85rem}
 @media(max-width:760px){.qacMBar,.qacMBody{padding-left:12px;padding-right:12px}.qacMTable table{font-size:.84rem}.qacCrumbs p{width:100%}}
+
+/* Materias en modo foco: botón para volver al menú principal */
+.menuBack{border:1px solid var(--border);background:var(--surface);border-radius:99px;padding:8px 14px;font-weight:800;font-size:13px;color:var(--text);white-space:nowrap}
+.menuBack:hover{border-color:var(--accent);color:var(--accent)}
+.appShell.subjectFocus .content{padding-bottom:60px}
+.appShell.subjectFocus .sidebar:not(.open){box-shadow:none;visibility:hidden}
