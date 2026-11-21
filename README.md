@@ -19,6 +19,12 @@
 - Preparado para Supabase Auth + Google y seguridad RLS.
 - Sin sincronización de progreso, favoritos o resaltados para alumnos: sólo persisten localmente preferencias visuales y la sesión de acceso.
 
+## Física Aplicada · Tema 3: Óptica física (v1.7.4)
+
+- `optica-content.js` (`window.ET27_OPTICA`), dentro de **Física Aplicada** como Tema 3, con el mismo diseño de tema que Circulación de fluidos (kit de estudio, esquemas SVG y calculadoras).
+- 15 secciones: ondas (v = λf), interferencia y difracción, polarización y luz natural, Malus, Snell, ángulo límite, Brewster, birrefringencia y Nicol, ley de Biot y polarímetro, Lambert-Beer, práctica (30 ejercicios), evaluación original resuelta (Óptica física: Polarización · Tema 1), 4 modelos de evaluación resueltos y repaso.
+- En el panel de accesos aparece como `optica/…` (se arma solo desde `sections`).
+
 ## Trabajos prácticos de 4.º (v1.4.0)
 
 - **Química General → Trabajos prácticos** (`./?view=chemistry&tab=tp`): la materia ahora tiene dos partes, Teoría y TP, como Inorgánica. TP 1 · Titulaciones ácido-base (`quimica-general-4-tp-titulaciones.js`): teoría de laboratorio, esquemas, curva de titulación y los 14 ejercicios resueltos. En el árbol de accesos aparece como `tp/titulaciones`.
