@@ -174,7 +174,7 @@
         node('evaluaciones','Modelos de evaluación',{kind:'exercises',tags:['eval']})
       ]}),
       node('hidro','Tema 2 · Circulación de fluidos',{kind:'unit',children:(h.sections||[]).map(x=>node(x.key,clean(x.label),['hidro-guia','hidro-ejercicios-caudal'].includes(x.key)?{kind:'exercises',legacyAnswers:true}:{}))}),
-      node('optica','Tema 3 · Óptica física',{kind:'unit',children:(o.sections||[]).map(x=>node(x.key,clean(x.label),x.key==='optica-practica'?{kind:'exercises'}:['optica-evaluacion','optica-modelos'].includes(x.key)?{kind:'exercises',tags:['eval']}:{}))})
+      node('optica','Tema 3 · Óptica física',{kind:'unit',children:(o.sections||[]).map(x=>node(x.key,clean(x.label),['optica-clase','optica-practica'].includes(x.key)?{kind:'exercises'}:['optica-evaluacion','optica-modelos'].includes(x.key)?{kind:'exercises',tags:['eval']}:{}))})
     ];
   }
 

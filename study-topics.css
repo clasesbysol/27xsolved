@@ -322,3 +322,6 @@
 .qiIE .ieCheck{margin:10px 0;padding:8px 14px;border-radius:12px;background:var(--surface2);font-weight:700;overflow-wrap:anywhere}
 .qiIE .kitTable td:nth-child(2){white-space:nowrap}
 .ieLead{margin:18px 0 6px;font-size:14px;color:var(--muted)}
+/* Óptica: partes (a), (b)… dentro de una resolución */
+.partTitle{margin:26px 0 8px!important;padding-top:14px;border-top:1px dashed var(--line,#d6deea);font-size:17px;color:var(--accent)}
+.solutionSteps>.partTitle:first-child{border-top:0;padding-top:0;margin-top:4px!important}
