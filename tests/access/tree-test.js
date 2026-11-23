@@ -26,7 +26,7 @@ g=new Set();g=T.toggle(S,g,'teoria/coligativas/qg-vapor',true);g=T.toggle(S,g,'t
 const R=(t,k,u=1)=>({subject:'chemistry',unit_no:u,grant_type:t,grant_key:k});
 eq(T.legacyPaths(S,[R('unit','*'),R('resource','answers'),R('evaluation','*')]),['*']);
 const th=new Set(T.legacyPaths(S,[R('resource','theory'),R('unit','*')]));
-assert(T.covers(th,'teoria/cinetica/qg5-ley'));assert(!T.covers(th,'teoria/cinetica/qg5-guia'));assert(T.covers(th,'teoria/soluciones'));assert(!T.covers(th,'tp'));
+assert(T.covers(th,'teoria/cinetica/qg5-ley'));assert(!T.covers(th,'teoria/cinetica/qg5-guia'));assert(T.covers(th,'teoria/coligativas/qg-vapor'));assert(!T.covers(th,'teoria/soluciones/qg-ev-sol-1'));assert(!T.covers(th,'teoria/coligativas/qg-ev-col-1'));assert(!T.covers(th,'tp'));
 eq(T.legacyPaths(S,[R('resource','answers')]),[]);
 // math
 const M='matematica-1';const mt=new Set(T.legacyPaths(M,[{grant_type:'resource',grant_key:'theory'},{grant_type:'unit',grant_key:'*'}]));

@@ -325,3 +325,9 @@
 /* Óptica: partes (a), (b)… dentro de una resolución */
 .partTitle{margin:26px 0 8px!important;padding-top:14px;border-top:1px dashed var(--line,#d6deea);font-size:17px;color:var(--accent)}
 .solutionSteps>.partTitle:first-child{border-top:0;padding-top:0;margin-top:4px!important}
+
+/* Química General · evaluaciones virtuales */
+.qgEval .exerciseStatement .qgEvItem{margin:.35em 0 .35em 1.1em}
+.qgEval .solutionSteps .qgEvPart{margin:22px 0 8px;padding-top:12px;border-top:1px dashed var(--border);font-size:1.05rem;color:var(--accent)}
+.qgEval .solutionSteps .qgEvPart:first-child{border-top:0;padding-top:0;margin-top:0}
+.qgEval .exerciseStatement .kitFigure svg{max-width:380px}
